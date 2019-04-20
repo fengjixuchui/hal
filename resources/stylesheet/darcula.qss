@@ -1322,6 +1322,10 @@ qproperty-string_color: #A5C25C;
 qproperty-comment_color: #629755;
 }
 
+dialog_overlay {
+background : rgba(0, 0, 0, 128);
+}
+
 /*
 COLOR CONTRASTS
 BACKGROUND #090b0d

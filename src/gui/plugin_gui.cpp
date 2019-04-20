@@ -7,14 +7,15 @@
 #include "netlist/gate_library/gate_library_manager.h"
 
 #include "gui/file_manager/file_manager.h"
-#include "gui/graph_relay/graph_relay.h"
 #include "gui/main_window/main_window.h"
+#include "gui/netlist_relay/netlist_relay.h"
 #include "gui/notifications/notification_manager.h"
 #include "gui/plugin_management/plugin_relay.h"
 #include "gui/python/python_context.h"
 #include "gui/selection_relay/selection_relay.h"
 #include "gui/settings/settings_relay.h"
 #include "gui/style/style.h"
+#include "gui/window_manager/window_manager.h"
 
 #include <QApplication>
 #include <QFile>
@@ -29,19 +30,27 @@
 QSettings g_settings(QString::fromStdString((core_utils::get_user_config_directory() / "/guisettings.ini").string()), QSettings::IniFormat);
 QSettings g_gui_state(QString::fromStdString((core_utils::get_user_config_directory() / "/guistate.ini").string()), QSettings::IniFormat);
 
+window_manager* g_window_manager;
+notification_manager* g_notification_manager;
+
 std::shared_ptr<netlist> g_netlist = nullptr;
 
-graph_relay g_graph_relay;
+netlist_relay g_netlist_relay;
 plugin_relay g_plugin_relay;
 selection_relay g_selection_relay;
 settings_relay g_settings_relay;
-
-notification_manager g_notification_manager;
 
 std::unique_ptr<python_context> g_python_context = nullptr;
 
 // NOTE
 // ORDER = LOGGER -> SETTINGS -> (STYLE / RELAYS / OTHER STUFF) -> MAINWINDOW (= EVERYTHING ELSE & DATA)
+// USE POINTERS FOR EVERYTHING ?
+
+static void cleanup()
+{
+    delete g_notification_manager;
+    delete g_window_manager;
+}
 
 bool plugin_gui::exec(program_arguments& args)
 {
@@ -51,8 +60,10 @@ bool plugin_gui::exec(program_arguments& args)
     QApplication a(argc, const_cast<char**>(argv));
     focus_logger focusLogger(&a);
 
+    QObject::connect(&a, &QApplication::aboutToQuit, cleanup);
+
     QApplication::setApplicationName("HAL Qt Interface");
-    QApplication::setOrganizationName("Chair for embedded security - Ruhr University Bochum");
+    QApplication::setOrganizationName("Chair for Embedded Security - Ruhr University Bochum");
     QApplication::setOrganizationDomain("emsec.rub.de");
 
     a.setAttribute(Qt::AA_DontUseNativeDialogs, true);
@@ -98,9 +109,13 @@ bool plugin_gui::exec(program_arguments& args)
     QFontDatabase::addApplicationFont(":/fonts/Montserrat/Montserrat-Black");
     QFontDatabase::addApplicationFont(":/fonts/Source Code Pro/SourceCodePro-Black");
 
+    // LOGGER HERE
+
+    gate_library_manager::load_all();
+
     // TEST
-    //    g_settings.setValue("stylesheet/base", "/home/user/Desktop/HAL/hal/test_files/test_base.qss");
-    //    g_settings.setValue("stylesheet/definitions", "/home/user/Desktop/HAL/hal/test_files/test_definitions");
+    //    g_settings.setValue("stylesheet/base", ":/style/test base");
+    //    g_settings.setValue("stylesheet/definitions", ":/style/test definitions2");
     //    a.setStyleSheet(style::get_stylesheet());
 
     QFile stylesheet(":/style/darcula");
@@ -110,8 +125,10 @@ bool plugin_gui::exec(program_arguments& args)
 
     qRegisterMetaType<spdlog::level::level_enum>("spdlog::level::level_enum");
 
+    g_window_manager       = new window_manager();
+    g_notification_manager = new notification_manager();
+
     g_settings_relay.init_defaults();
-    gate_library_manager::load_all();
     main_window w;
     file_manager::get_instance()->handle_program_arguments(args);
     w.show();

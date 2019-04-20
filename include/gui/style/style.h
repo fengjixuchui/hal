@@ -25,11 +25,14 @@
 #ifndef STYLE_H
 #define STYLE_H
 
+#include <QColor>
+#include <QIcon>
 #include <QString>
 
 namespace style
 {
     extern QString get_stylesheet();
-}
+    extern QIcon get_styled_svg_icon(const QString& from_to_colors, const QString& svg_path);
+}    // namespace style
 
 #endif    // STYLE_H

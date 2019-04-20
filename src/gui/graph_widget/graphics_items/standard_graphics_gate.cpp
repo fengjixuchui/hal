@@ -1,9 +1,15 @@
 #include "graph_widget/graphics_items/standard_graphics_gate.h"
+
 #include "core/log.h"
+
 #include "netlist/gate.h"
-#include <QtWidgets>
-#include <core/log.h>
-#include <limits>
+
+#include <QFont>
+#include <QFontMetricsF>
+#include <QPainter>
+#include <QPen>
+#include <QStyle>
+#include <QStyleOptionGraphicsItem>
 
 QPen standard_graphics_gate::s_pen;
 
@@ -32,42 +38,38 @@ qreal standard_graphics_gate::s_outer_name_type_spacing;
 
 void standard_graphics_gate::load_settings()
 {
-    s_pin_outer_horizontal_spacing = 0.2;
-    s_pin_inner_horizontal_spacing = 2;
+    // TODO STYLESHEET SUPPORT
+    s_pin_outer_horizontal_spacing = 1.2;
+    s_pin_inner_horizontal_spacing = 12;
 
-    s_pin_inner_vertical_spacing = 0.2;
-    s_pin_outer_vertical_spacing = 0.1;
-    s_pin_upper_vertical_spacing = 0.1;
-    s_pin_lower_vertical_spacing = 0.3;
+    s_pin_inner_vertical_spacing = 1.2;
+    s_pin_outer_vertical_spacing = 0.6;
+    s_pin_upper_vertical_spacing = 0.6;
+    s_pin_lower_vertical_spacing = 1.8;
 
-    //s_inner_name_type_spacing = 0.5;
-    s_inner_name_type_spacing = 0.2;
-    s_outer_name_type_spacing = 0.5;
+    s_inner_name_type_spacing = 1.2;
+    s_outer_name_type_spacing = 3;
 
     QFont font = QFont("Iosevka");
-    font.setPixelSize(1);
-    //font.setItalic(true);
+    font.setPixelSize(6);
     s_pin_font = font;
     QFontMetricsF pin_fm(s_pin_font);
-    //s_pin_font_height = pin_fm.height();
-    s_pin_font_height = 1;    //MAGIC NUMBER BECAUSE FONTMETRICS DONT WORK AS EXPECTED. TODO FIX
-    //qDebug() << "pin font height: " << s_pin_font_height;
-    s_pin_font_ascent = pin_fm.ascent();
-    //    QString string = "ascent : " + QString::number(s_pin_font_ascent);
-    //    log_info("user", string.toStdString());
-    s_pin_font_descent = pin_fm.descent();
-    //    string = "descent : " + QString::number(s_pin_font_descent);
-    //    log_info("user", string.toStdString());
+    s_pin_font_height   = pin_fm.height();
+    s_pin_font_ascent   = pin_fm.ascent();
+    s_pin_font_descent  = pin_fm.descent();
     s_pin_font_baseline = 1;
     font.setBold(true);
     s_name_font = font;
     s_type_font = font;
 
-    s_name_font_height = 1;    //MAGIC NUMBER BECAUSE FONTMETRICS DONT WORK AS EXPECTED. TODO FIX
-    s_type_font_height = 1;    //MAGIC NUMBER BECAUSE FONTMETRICS DONT WORK AS EXPECTED. TODO FIX
+    QFontMetricsF name_fm(s_name_font);
+    s_name_font_height = name_fm.height();
+
+    QFontMetricsF type_fm(s_type_font);
+    s_type_font_height = type_fm.height();
 
     s_pen.setCosmetic(true);
-    s_pen.setWidthF(1.5);
+    //s_pen.setWidth(1);
     s_pen.setJoinStyle(Qt::MiterJoin);
 }
 
@@ -131,7 +133,7 @@ void standard_graphics_gate::paint(QPainter* painter, const QStyleOptionGraphics
     //    const int lod = option->levelOfDetailFromTransform(painter->worldTransform()) * 10;
 }
 
-QPointF standard_graphics_gate::get_input_pin_scene_position(QString type)
+QPointF standard_graphics_gate::get_input_pin_scene_position(const QString& type) const
 {
     int index = m_input_pins.indexOf(type);
 
@@ -151,7 +153,7 @@ QPointF standard_graphics_gate::get_input_pin_scene_position(QString type)
     return mapToScene(QPointF(0, y));
 }
 
-QPointF standard_graphics_gate::get_output_pin_scene_position(QString type)
+QPointF standard_graphics_gate::get_output_pin_scene_position(const QString& type) const
 {
     int index = m_output_pins.indexOf(type);
 

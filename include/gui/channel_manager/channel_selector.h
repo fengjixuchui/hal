@@ -30,7 +30,7 @@
 class channel_selector : public QComboBox
 {
 public:
-    channel_selector(QWidget* parent = 0);
+    channel_selector(QWidget* parent = nullptr);
 };
 
 #endif    // CHANNEL_SELECTOR_H

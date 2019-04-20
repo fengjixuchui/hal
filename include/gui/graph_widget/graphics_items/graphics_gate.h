@@ -25,32 +25,35 @@
 #ifndef GRAPHICS_GATE_H
 #define GRAPHICS_GATE_H
 
-#include "graph_graphics_item.h"
+#include "graphics_item.h"
+
 #include <memory>
 
 class gate;
 
-class graphics_gate : public graph_graphics_item
+class graphics_gate : public graphics_item
 {
 public:
     graphics_gate(std::shared_ptr<gate> g);
 
-    QRectF boundingRect() const Q_DECL_OVERRIDE;
+    virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
     virtual QPainterPath shape() const Q_DECL_OVERRIDE;
 
-    virtual QPointF get_input_pin_scene_position(QString type)  = 0;
-    virtual QPointF get_output_pin_scene_position(QString type) = 0;
+    virtual QPointF get_input_pin_scene_position(const QString& type) const  = 0;
+    virtual QPointF get_output_pin_scene_position(const QString& type) const = 0;
+
+    qreal get_width() const;
+    qreal get_height() const;
+
+    std::string get_input_pin_type_at_position(const size_t pos) const;
+    std::string get_output_pin_type_at_position(const size_t pos) const;
 
     //uncertain about this one, might not be necessary
-    std::shared_ptr<gate> get_gate();
-
-    qreal get_width();
-    qreal get_height();
-
-    std::string get_input_pin_type_at_position(size_t pos);
-    std::string get_output_pin_type_at_position(size_t pos);
+    std::shared_ptr<gate> get_gate() const;
 
 protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) Q_DECL_OVERRIDE;
+
     qreal m_width;
     qreal m_height;
 

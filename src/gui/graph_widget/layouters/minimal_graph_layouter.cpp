@@ -1,5 +1,6 @@
 #include "graph_widget/layouters/minimal_graph_layouter.h"
-#include "graph_widget/graph_scene_manager.h"
+
+#include "graph_widget/graphics_scene.h"
 #include "graph_widget/graphics_items/graphics_gate.h"
 #include "graph_widget/graphics_items/separated_graphics_net.h"
 #include "graph_widget/graphics_items/standard_graphics_net.h"
@@ -7,16 +8,13 @@
 
 #include "graph_widget/graphics_items/standard_graphics_gate.h"
 
-minimal_graph_layouter::minimal_graph_layouter()
+minimal_graph_layouter::minimal_graph_layouter(graph_context* context, QObject* parent) : graph_layouter(context, parent)
 {
-    m_name        = "Minimal Layouter";
-    m_description = "<p>A fast and simple layouting strategy, nodes are randomly place in a grid and nets are drawn as straight lines</p>";
+
 }
 
-void minimal_graph_layouter::layout(graph_scene* scene)
+void minimal_graph_layouter::layout()
 {
-    m_scene = scene;
-
     int x;
     int y;
     int i = 0;
@@ -102,27 +100,31 @@ void minimal_graph_layouter::reset()
 {
 }
 
-void minimal_graph_layouter::handle_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> netlist, u32 associated_data)
+void minimal_graph_layouter::add(const QSet<u32> gates, const QSet<u32> nets)
 {
-    Q_UNUSED(ev);
-    Q_UNUSED(netlist);
-    Q_UNUSED(associated_data);
+    Q_UNUSED(gates)
+    Q_UNUSED(nets)
 }
-void minimal_graph_layouter::handle_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> gate, u32 associated_data)
+
+void minimal_graph_layouter::remove(const QSet<u32> gates, const QSet<u32> nets)
 {
-    Q_UNUSED(ev);
-    Q_UNUSED(gate);
-    Q_UNUSED(associated_data);
+    Q_UNUSED(gates)
+    Q_UNUSED(nets)
 }
-void minimal_graph_layouter::handle_net_event(net_event_handler::event ev, std::shared_ptr<net> net, u32 associated_data)
+
+void minimal_graph_layouter::expand(const u32 from_gate, const u32 via_net, const u32 to_gate)
 {
-    Q_UNUSED(ev);
-    Q_UNUSED(net);
-    Q_UNUSED(associated_data);
+    Q_UNUSED(from_gate)
+    Q_UNUSED(via_net)
+    Q_UNUSED(to_gate)
 }
-void minimal_graph_layouter::handle_module_event(module_event_handler::event ev, std::shared_ptr<module> module, u32 associated_data)
+
+const QString minimal_graph_layouter::name() const
 {
-    Q_UNUSED(ev);
-    Q_UNUSED(module);
-    Q_UNUSED(associated_data);
+    return "Minimal Layouter";
+}
+
+const QString minimal_graph_layouter::description() const
+{
+    return "<p>A fast and simple layouting strategy, nodes are randomly place in a grid and nets are drawn as straight lines</p>";
 }

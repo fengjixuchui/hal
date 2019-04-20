@@ -27,11 +27,11 @@
 
 #include "graph_layouter/gui_graph_gate.h"
 #include "graph_layouter/gui_graph_net.h"
-#include "graph_relay/graph_relay.h"
 #include "netlist/gate.h"
 #include "netlist/net.h"
 #include "netlist/netlist.h"
 #include "netlist/module.h"
+#include "netlist_relay/netlist_relay.h"
 #include <QGraphicsScene>
 #include <QMap>
 #include <QObject>

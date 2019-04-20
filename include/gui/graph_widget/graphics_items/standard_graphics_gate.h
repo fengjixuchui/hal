@@ -32,10 +32,12 @@ class standard_graphics_gate : public graphics_gate
 public:
     standard_graphics_gate(std::shared_ptr<gate> g);
 
-    QPainterPath shape() const Q_DECL_OVERRIDE;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) Q_DECL_OVERRIDE;
-    QPointF get_input_pin_scene_position(QString type) override;
-    QPointF get_output_pin_scene_position(QString type) override;
+
+    QPainterPath shape() const Q_DECL_OVERRIDE;
+
+    QPointF get_input_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
+    QPointF get_output_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
 
     static void load_settings();
 

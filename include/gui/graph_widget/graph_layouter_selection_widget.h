@@ -31,14 +31,14 @@
 #include <QTextEdit>
 #include <QWidget>
 
-class graph_widget;
+class old_graph_widget;
 
 class graph_layouter_selection_widget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit graph_layouter_selection_widget(graph_widget* widget, QWidget* parent = 0);
+    explicit graph_layouter_selection_widget(old_graph_widget* widget, QWidget* parent = 0);
 
 public Q_SLOTS:
     void ok_clicked(bool checked);
@@ -57,7 +57,7 @@ private:
     QPushButton* m_ok;
     QPushButton* m_cancel;
 
-    graph_widget* m_widget;
+    old_graph_widget* m_widget;
 };
 
-#endif    // GRAPH_LAYOUTER_SELECTION_WIDGET_H
+#endif // GRAPH_LAYOUTER_SELECTION_WIDGET_H

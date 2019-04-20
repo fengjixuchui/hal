@@ -1,199 +1,470 @@
 #include "graph_widget/graph_widget.h"
-#include "graph_widget/graph_layouter_manager.h"
-#include "graph_widget/graph_layouter_selection_widget.h"
-#include "graph_widget/graph_scene.h"
+
+#include "netlist/gate.h"
+#include "netlist/module.h"
+#include "netlist/net.h"
+
+#include "graph_widget/graph_context_manager.h"
+#include "graph_widget/graph_navigation_widget.h"
+#include "graph_widget/graph_layout_progress_widget.h"
+#include "graph_widget/graphics_scene.h"
+#include "graph_widget/graphics_widget.h"
 #include "gui_globals.h"
-#include "gui_utility.h"
+#include "overlay/dialog_overlay.h"
 #include "toolbar/toolbar.h"
-#include <QGraphicsScene>
-#include <QOpenGLWidget>
-#include <QtWidgets>
-#include <qmath.h>
 
-graph_widget::graph_widget(QWidget* parent) : content_widget("Graph", parent)
+#include <QFutureWatcher>
+#include <QInputDialog>
+#include <QtConcurrent>
+#include <QToolButton>
+#include <QVBoxLayout>
+
+graph_widget::graph_widget(QWidget* parent) : content_widget("Graph", parent),
+    m_graphics_widget(new graphics_widget(this)),
+    m_context(nullptr),
+    m_overlay(new dialog_overlay(this)),
+    m_navigation_widget(new graph_navigation_widget(this)),
+    m_progress_widget(new graph_layout_progress_widget(this)),
+    m_watcher(new QFutureWatcher<void>(this)),
+    m_current_expansion(0)
 {
-    m_stacked_widget = new QStackedWidget(this);
-    m_content_layout->addWidget(m_stacked_widget);
-    m_selection_widget = new graph_layouter_selection_widget(this, nullptr);
-    m_selection_widget->show();
-    m_stacked_widget->addWidget(m_selection_widget);
-    m_view = new graph_graphics_view(this);
-    m_view->setFrameStyle(QFrame::NoFrame);
-    m_view->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    m_view->setRenderHint(QPainter::Antialiasing, false);
-    m_view->setDragMode(QGraphicsView::RubberBandDrag);
+    connect(m_navigation_widget, &graph_navigation_widget::navigation_requested, this, &graph_widget::handle_navigation_jump_requested);
+    connect(m_navigation_widget, &graph_navigation_widget::close_requested, m_overlay, &dialog_overlay::hide);
 
-    m_zoom_slider = new QSlider(this);
-    m_zoom_slider->setMinimum(0);
-    m_zoom_slider->setMaximum(500);
-    //m_zoom_slider->setValue(250);
+    connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
 
-    //#ifndef QT_NO_OPENGL
-    //    m_openGlButton->setEnabled(QGLFormat::hasOpenGL());
-    //#else
-    //m_openGlButton->setEnabled(false);
-    //#endif
+    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_widget::expanded);
 
-    //    QButtonGroup *pointerModeGroup = new QButtonGroup(this);
-    //    pointerModeGroup->setExclusive(true);
-    //    pointerModeGroup->addButton(m_select_mode_button);
-    //    pointerModeGroup->addButton(m_drag_mode_button);
+    m_overlay->hide();
+    m_overlay->set_widget(m_navigation_widget);
 
-    QHBoxLayout* topLayout = new QHBoxLayout(this);
-    topLayout->setContentsMargins(0, 0, 0, 0);
-    topLayout->addWidget(m_view);
-    topLayout->addWidget(m_zoom_slider);
-    //m_content_layout.addLayout(topLayout);
-    m_view_container = new QWidget(this);
-    m_view_container->setLayout(topLayout);
-    m_stacked_widget->addWidget(m_view_container);
-
-    m_opengl_viewport = false;
-
-    connect(m_zoom_slider, &QSlider::valueChanged, this, &graph_widget::setup_matrix);
-
-    setup_matrix();
-    //m_stacked_widget->setCurrentWidget(m_selection_widget);
+    m_content_layout->addWidget(m_graphics_widget);
 }
 
-void graph_widget::setup_toolbar(toolbar* toolbarp)
+void graph_widget::setup_toolbar(toolbar* toolbar)
 {
-    Q_UNUSED(toolbarp)
+    Q_UNUSED(toolbar)
+    // DEPRECATED
+    // DELETE THIS METHOD AFTER CONTENT WIDGET REFACTOR
 
-    m_layout_button = new QToolButton(this);
-    m_layout_button->setText("Layout");
+    QToolButton* create_context_button = new QToolButton();
+    create_context_button->setText("Create Context");
 
-    //    m_select_mode_button = new QToolButton;
-    //    m_select_mode_button->setText("Select");
-    //    m_select_mode_button->setCheckable(true);
+    QToolButton* change_context_button = new QToolButton();
+    change_context_button->setText("Change Context");
 
-    //    m_drag_mode_button = new QToolButton;
-    //    m_drag_mode_button->setText("Drag");
-    //    m_drag_mode_button->setCheckable(true);
+    QToolButton* grid_button = new QToolButton();
+    grid_button->setText("Grid");
 
-    m_antialias_button = new QToolButton(this);
-    m_antialias_button->setText("Antialiasing");
-    m_antialias_button->setCheckable(true);
+    connect(create_context_button, &QToolButton::clicked, this, &graph_widget::debug_create_context);
+    connect(change_context_button, &QToolButton::clicked, this, &graph_widget::debug_change_context);
+    connect(grid_button, &QToolButton::clicked, this, &graph_widget::toggle_grid);
 
-    //    m_opengl_button = new QToolButton(this);
-    //    m_opengl_button->setText("OpenGL");
-    //    m_opengl_button->setCheckable(true);
-
-    //    if (m_view->dragMode() == QGraphicsView::RubberBandDrag)
-    //    {
-    //        m_select_mode_button->setChecked(true);
-    //        m_drag_mode_button->setChecked(false);
-    //    }
-    //    else
-    //    {
-    //        m_select_mode_button->setChecked(false);
-    //        m_drag_mode_button->setChecked(true);
-    //    }
-
-    m_antialias_button->setChecked(m_view->renderHints() & QPainter::Antialiasing);
-    //    m_opengl_button->setChecked(m_opengl_viewport);
-
-    //TODO HACK change parent
-    //    QButtonGroup* pointerModeGroup = new QButtonGroup(m_select_mode_button);
-    //    pointerModeGroup->setExclusive(true);
-    //    pointerModeGroup->addButton(m_select_mode_button);
-    //    pointerModeGroup->addButton(m_drag_mode_button);
-
-    connect(m_layout_button, &QToolButton::clicked, this, &graph_widget::show_layout_selection);
-    //    connect(m_select_mode_button, &QToolButton::toggled, this, &graph_widget::toggle_pointer_mode);
-    //    connect(m_drag_mode_button, &QToolButton::toggled, this, &graph_widget::toggle_pointer_mode);
-    connect(m_antialias_button, &QToolButton::toggled, this, &graph_widget::toggle_antialiasing);
-    //    connect(m_opengl_button, &QToolButton::toggled, this, &graph_widget::toggle_opengl);
-
-    toolbarp->addSeparator();
-    toolbarp->addWidget(m_layout_button);
-    toolbarp->addSeparator();
-    toolbarp->addWidget(m_antialias_button);
-    //    toolbarp->addWidget(m_opengl_button);
-    toolbarp->addSeparator();
-
-    m_layouter = "";
+    toolbar->addWidget(create_context_button);
+    toolbar->addWidget(change_context_button);
+    toolbar->addWidget(grid_button);
 }
 
-void graph_widget::subscribe(QString layouter)
+// TODO ADD SOUND OR ERROR MESSAGE TO FAILED NAVIGATION ATTEMPTS
+void graph_widget::handle_navigation_left_request()
 {
-    if (m_layouter == layouter)
+    switch (g_selection_relay.m_focus_type)
+    {
+    case selection_relay::item_type::none:
+    {
+        return;
+    }
+    case selection_relay::item_type::gate:
+    {
+        std::shared_ptr<gate> g = g_netlist->get_gate_by_id(g_selection_relay.m_focus_id);
+
+        if (!g)
+            return;
+
+        if (g->get_input_pin_types().size())
+        {
+            if (g_selection_relay.m_subfocus == selection_relay::subfocus::left)
+            {
+                std::string pin_type = *std::next(g->get_input_pin_types().begin(), g_selection_relay.m_subfocus_index);
+                std::shared_ptr<net> n = g->get_fan_in_net(pin_type);
+
+                if (!n)
+                    return;
+
+                if (!n->get_src().gate)
+                    return;
+
+                bool contains_net = false;
+                bool contains_gate = false;
+
+                if (m_context->nets().contains(n->get_id()))
+                    contains_net = true;
+
+                if (m_context->gates().contains(n->get_src().get_gate()->get_id()))
+                    contains_gate = true;
+
+                bool update_necessary = false;
+
+                if (!contains_net || !contains_gate)
+                {
+                    if (m_context->scope())
+                    {
+                        // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
+                        std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
+
+                        if (!m)
+                            return; // INVALID SCOPE
+
+                        if (!m->contains_net(n, true))
+                            return; // NET OUT OF SCOPE
+
+                        if (!m->contains_gate(n->get_src().gate, true))
+                            return; // GATE OUT OF SCOPE
+                    }
+
+                    QSet<u32> gates;
+                    QSet<u32> nets;
+
+                    if (!contains_net)
+                        nets.insert(n->get_id());
+
+                    if (!contains_gate)
+                        gates.insert(n->get_src().get_gate()->get_id());
+
+                    // ADD TO CONTEXT
+                    m_context->add(gates, nets);
+                    update_necessary = true;
+                }
+                // SELECT IN RELAY
+                g_selection_relay.m_selected_gates[0] = n->get_src().get_gate()->get_id();
+                g_selection_relay.m_number_of_selected_gates = 1;
+                g_selection_relay.m_focus_id = n->get_src().get_gate()->get_id();
+                g_selection_relay.m_focus_type = selection_relay::item_type::gate;
+                g_selection_relay.m_subfocus = selection_relay::subfocus::right;
+                g_selection_relay.m_subfocus_index = 0; // TODO
+
+                g_selection_relay.relay_selection_changed(nullptr);
+
+                // RELAYOUT
+                if (update_necessary)
+                    m_context->update();
+            }
+            else
+            {
+                g_selection_relay.m_subfocus = selection_relay::subfocus::left;
+                g_selection_relay.m_subfocus_index = 0;
+
+                g_selection_relay.relay_subfocus_changed(nullptr);
+            }
+        }
+
+        return;
+    }
+    case selection_relay::item_type::net:
+    {
+        std::shared_ptr<net> n = g_netlist->get_net_by_id(g_selection_relay.m_focus_id);
+
+        if (!n)
+            return;
+
+        // TODO
+
+        return;
+    }
+    case selection_relay::item_type::module:
+    {
+        return;
+    }
+    }
+}
+
+void graph_widget::handle_navigation_right_request()
+{
+    switch (g_selection_relay.m_focus_type)
+    {
+    case selection_relay::item_type::none:
+    {
+        return;
+    }
+    case selection_relay::item_type::gate:
+    {
+        std::shared_ptr<gate> g = g_netlist->get_gate_by_id(g_selection_relay.m_focus_id);
+
+        if (!g)
+            return;
+
+        if (g_selection_relay.m_subfocus == selection_relay::subfocus::right)
+        {
+            m_navigation_widget->setup();
+            m_navigation_widget->setFocus();
+            m_overlay->show();
+        }
+        else
+        {
+            g_selection_relay.m_subfocus = selection_relay::subfocus::right;
+            g_selection_relay.m_subfocus_index = 0;
+
+            g_selection_relay.relay_subfocus_changed(nullptr);
+        }
+
+        return;
+    }
+    case selection_relay::item_type::net:
+    {
+        std::shared_ptr<net> n = g_netlist->get_net_by_id(g_selection_relay.m_focus_id);
+
+        if (!n)
+            return;
+
+        // TODO
+
+        return;
+    }
+    case selection_relay::item_type::module:
+    {
+        return;
+    }
+    }
+}
+
+void graph_widget::handle_navigation_up_request()
+{
+    if (g_selection_relay.m_focus_type == selection_relay::item_type::gate)
+        if (m_context->gates().contains(g_selection_relay.m_focus_id))
+            g_selection_relay.navigate_up();
+}
+
+void graph_widget::handle_navigation_down_request()
+{
+    if (g_selection_relay.m_focus_type == selection_relay::item_type::gate)
+        if (m_context->gates().contains(g_selection_relay.m_focus_id))
+            g_selection_relay.navigate_down();
+}
+
+void graph_widget::keyPressEvent(QKeyEvent* event)
+{
+    if (!m_context)
         return;
 
-    graph_scene* scene = graph_layouter_manager::get_instance().subscribe(layouter);
+    if (!m_context->available())
+        return;
 
-    if (scene)
-        m_view->setScene(scene);
+    //if (m_context && m_context->available())
 
-    if (m_layouter != "")
-        graph_layouter_manager::get_instance().unsubscribe(m_layouter);
-
-    m_layouter = layouter;
-}
-
-graph_graphics_view* graph_widget::view() const
-{
-    return m_view;
-}
-
-QString graph_widget::get_layouter()
-{
-    return m_layouter;
-}
-
-void graph_widget::show_view()
-{
-    m_stacked_widget->setCurrentWidget(m_view_container);
-}
-
-void graph_widget::setup_matrix()
-{
-    qreal scale = qPow(qreal(2), (m_zoom_slider->value() - 250) / qreal(50));
-
-    QMatrix matrix;
-    matrix.scale(scale, scale);
-    m_view->setMatrix(matrix);
-}
-
-void graph_widget::show_layout_selection(bool checked)
-{
-    Q_UNUSED(checked)
-
-    m_stacked_widget->setCurrentWidget(m_selection_widget);
-}
-
-//void graph_widget::toggle_pointer_mode()
-//{
-//    m_view->setDragMode(m_select_mode_button->isChecked() ? QGraphicsView::RubberBandDrag : QGraphicsView::ScrollHandDrag);
-//    m_view->setInteractive(m_select_mode_button->isChecked());
-//}
-
-void graph_widget::toggle_opengl()
-{
-    if (m_opengl_button->isChecked())
+    switch (event->key())
     {
-        QOpenGLWidget* view_port = new QOpenGLWidget();
-        QSurfaceFormat format;
-        format.setSamples(16);
-        view_port->setFormat(format);
-        m_view->setViewport(view_port);
-        m_opengl_viewport = true;
+    case Qt::Key_Left:
+    {
+        handle_navigation_left_request();
+        break;
     }
-    m_view->setViewport(new QWidget());
-    m_opengl_viewport = false;
+    case Qt::Key_Right:
+    {
+        handle_navigation_right_request();
+        break;
+    }
+    case Qt::Key_Up:
+    {
+        handle_navigation_up_request();
+        break;
+    }
+    case Qt::Key_Down:
+    {
+        handle_navigation_down_request();
+        break;
+    }
+    default: break;
+    }
 }
 
-void graph_widget::toggle_antialiasing()
+void graph_widget::expanded()
 {
-    m_view->setRenderHint(QPainter::Antialiasing, m_antialias_button->isChecked());
+    connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
+
+    m_overlay->hide();
+    m_progress_widget->stop();
+    m_overlay->set_widget(m_navigation_widget);
+
+    //m_layouter->scene()->connect_all();
+
+    //m_graphics_widget->view()->setScene(m_layouter->scene());
+
+    m_graphics_widget->setFocus();
+
+    // FIND BETTER WAY TO DO THIS
+    g_selection_relay.m_selected_gates[0] = m_current_expansion;
+    g_selection_relay.m_number_of_selected_gates = 1;
+    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
+    g_selection_relay.m_focus_id = m_current_expansion;
+    // TODO SET CORRECT SUBSELECTION
+    g_selection_relay.m_subfocus = selection_relay::subfocus::none;
+    g_selection_relay.relay_selection_changed(nullptr);
+
+    // JUMP TO THE GATE
+//    const QGraphicsItem* item = m_layouter->scene()->get_gate_item(m_current_expansion);
+
+//    qDebug() << "item in scene: " << (bool)item;
+
+//    if (item)
+//        m_graphics_widget->view()->ensureVisible(item);
 }
 
-void graph_widget::zoom_in(int level)
+void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u32 via_net, const u32 to_gate)
 {
-    m_zoom_slider->setValue(m_zoom_slider->value() + level);
+    // ASSERT INPUTS ARE VALID ?
+    std::shared_ptr<gate> g = g_netlist->get_gate_by_id(from_gate);
+
+    if (!g)
+        return;
+
+    std::shared_ptr<net> n = g_netlist->get_net_by_id(via_net);
+
+    if (!n)
+        return;
+
+    g = g_netlist->get_gate_by_id(to_gate);
+
+    if (!g)
+        return;
+
+    bool contains_net = false;
+    bool contains_gate = false;
+
+    if (m_context->nets().contains(via_net))
+        contains_net = true;
+
+    if (m_context->gates().contains(to_gate))
+        contains_gate = true;
+
+    bool update_necessary = false;
+
+    if (!contains_net || !contains_gate)
+    {
+        if (m_context->scope())
+        {
+            // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
+            std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
+
+            if (!m)
+                return; // INVALID SCOPE
+
+            if (!m->contains_net(n, true))
+                return; // NET OUT OF SCOPE
+
+            if (!m->contains_gate(g, true))
+                return; // GATE OUT OF SCOPE
+        }
+
+        QSet<u32> gates;
+        QSet<u32> nets;
+
+        if (!contains_net)
+            nets.insert(via_net);
+
+        if (!contains_gate)
+            gates.insert(to_gate);
+
+        // ADD TO CONTEXT
+        m_context->add(gates, nets);
+        update_necessary = true;
+    }
+    // SELECT IN RELAY
+    g_selection_relay.m_selected_gates[0] = to_gate;
+    g_selection_relay.m_number_of_selected_gates = 1;
+    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
+    g_selection_relay.m_focus_id = to_gate;
+    g_selection_relay.m_subfocus = selection_relay::subfocus::left;
+    g_selection_relay.m_subfocus_index = 0; // TODO
+
+    g_selection_relay.relay_selection_changed(nullptr);
+
+    // RELAYOUT
+    if (update_necessary)
+        m_context->update();
+
+    // JUMP TO THE GATE
+    //const QGraphicsItem* item = m_layouter->scene()->get_gate_item(to_gate);
+
+    //        if (item)
+    //            m_graphics_widget->view()->ensureVisible(item);
+
+    m_overlay->hide();
+    m_graphics_widget->setFocus();
+
+//    expand(from_gate, via_net, to_gate);
 }
 
-void graph_widget::zoom_out(int level)
+void graph_widget::expand(const u32 selected_gate, const u32 new_net, const u32 new_gate)
 {
-    m_zoom_slider->setValue(m_zoom_slider->value() - level);
+    disconnect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
+
+    // TEST
+    // CHECK POINTERS
+    if (g_netlist->get_net_by_id(new_net)->get_src().get_gate()->get_id() == selected_gate)
+        m_progress_widget->set_direction(graph_layout_progress_widget::direction::right);
+    else
+        m_progress_widget->set_direction(graph_layout_progress_widget::direction::left);
+
+    m_graphics_widget->view()->setScene(nullptr);
+
+    //m_layouter->scene()->disconnect_all();
+
+    m_overlay->set_widget(m_progress_widget);
+    m_progress_widget->start();
+
+    if (m_overlay->isHidden())
+        m_overlay->show();
+
+    m_current_expansion = new_gate;
+
+    //m_watcher->setFuture(QtConcurrent::run(m_layouter, &cone_layouter::expand, selected_gate, new_net, new_gate));
+}
+
+void graph_widget::toggle_grid()
+{
+    // THIS SHOULD PROBABLY BE TOGGLED FOR THE VIEW INSTEAD OF THE SCENE
+    if (!m_context)
+        return;
+
+    m_context->layouter()->scene()->set_grid_enabled(!m_context->layouter()->scene()->grid_enabled());
+    m_graphics_widget->view()->update();
+}
+
+void graph_widget::debug_create_context()
+{
+    graph_context* context = graph_context_manager::debug_instance()->debug_add_context("Debug", 1);
+
+    QSet<u32> gates;
+    QSet<u32> nets;
+
+    for (u32 i = 0; i < g_selection_relay.m_number_of_selected_gates; ++i)
+        gates.insert(g_selection_relay.m_selected_gates[i]);
+
+    for (u32 i = 0; i < g_selection_relay.m_number_of_selected_nets; ++i)
+        nets.insert(g_selection_relay.m_selected_nets[i]);
+
+    context->add(gates, nets);
+    context->update();
+}
+
+void graph_widget::debug_change_context()
+{
+    bool ok;
+    QString item = QInputDialog::getItem(this, "Debug", "Context:", graph_context_manager::debug_instance()->debug_context_list(), 0, false, &ok);
+
+    if (ok && !item.isEmpty())
+    {
+        // SWITCH CONTEXT PROPERLY
+        // UNSUB FROM OLD CONTEXT
+        // DISCONNECT
+        // SUB TO NEW
+        // CONNECT
+        // IF NOT BUSY SET SCENE AND STUFF
+        m_context = graph_context_manager::debug_instance()->debug_get_context(item);
+
+        if (!m_context)
+            return;
+
+        m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+    }
 }

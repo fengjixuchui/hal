@@ -71,7 +71,7 @@ void red_pin_gate::paint(QPainter* painter, const QStyleOptionGraphicsItem* opti
     }
 }
 
-QPointF red_pin_gate::get_input_pin_scene_position(QString type)
+QPointF red_pin_gate::get_input_pin_scene_position(const QString& type) const
 {
     int index = m_input_pins.indexOf(type);
     if (index == -1)
@@ -84,7 +84,7 @@ QPointF red_pin_gate::get_input_pin_scene_position(QString type)
     return mapToScene(QPointF(0, index * s_overall_pin_height + s_drawn_pin_height));
 }
 
-QPointF red_pin_gate::get_output_pin_scene_position(QString type)
+QPointF red_pin_gate::get_output_pin_scene_position(const QString& type) const
 {
     int index = m_output_pins.indexOf(type);
     if (index == -1)

@@ -38,7 +38,10 @@ class vhdl_qss_adapter : public QWidget
     Q_PROPERTY(QColor comment_color READ comment_color WRITE set_comment_color)
 
 public:
+    explicit vhdl_qss_adapter(QWidget* parent = nullptr);
     static vhdl_qss_adapter* instance();
+
+    void repolish();
 
     QColor text_color() const;
     QColor keyword_color() const;
@@ -54,8 +57,6 @@ public:
     void set_string_color(const QColor& color);
     void set_comment_color(const QColor& color);
 
-    void repolish();
-
     // LEFT PUBLIC INTENTIONALLY
     QTextCharFormat m_keyword_format;
     QTextCharFormat m_type_format;
@@ -64,8 +65,6 @@ public:
     QTextCharFormat m_comment_format;
 
 private:
-    explicit vhdl_qss_adapter(QWidget* parent = nullptr);
-
     QColor m_text_color;
     QColor m_keyword_color;
     QColor m_type_color;

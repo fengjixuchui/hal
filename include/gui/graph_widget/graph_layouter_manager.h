@@ -30,8 +30,7 @@
 #include <QPair>
 
 class graph_layouter;
-class graph_scene_manager;
-class graph_scene;
+class graphics_scene;
 
 class graph_layouter_manager : public QObject
 {
@@ -41,7 +40,7 @@ public:
     static graph_layouter_manager& get_instance();
     ~graph_layouter_manager();
 
-    graph_scene* subscribe(QString layouter);
+    graphics_scene* subscribe(QString layouter);
     void unsubscribe(QString layouter);
 
     QStringList get_layouters();
@@ -49,10 +48,9 @@ public:
     QString get_description(QString layouter);
 
 private:
-    explicit graph_layouter_manager(QObject* parent = 0);
+    explicit graph_layouter_manager(QObject* parent = nullptr);
 
     QList<QPair<graph_layouter*, int>> m_layouters;
-    QList<QPair<graph_layouter*, graph_scene_manager*>> m_scenes;
 };
 
-#endif    // GRAPH_LAYOUTER_MANAGER_H
+#endif // GRAPH_LAYOUTER_MANAGER_H

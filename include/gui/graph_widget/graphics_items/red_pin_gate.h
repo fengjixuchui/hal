@@ -38,8 +38,8 @@ public:
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) Q_DECL_OVERRIDE;
 
-    virtual QPointF get_input_pin_scene_position(QString type) override;
-    virtual QPointF get_output_pin_scene_position(QString type) override;
+    virtual QPointF get_input_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
+    virtual QPointF get_output_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
 
 private:
     //STATIC SECTION THAT EACH NODE SHARES (design purposes)

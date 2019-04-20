@@ -44,11 +44,11 @@ old_graph_layouter::old_graph_layouter(QGraphicsScene* scene, std::shared_ptr<ne
 
     generate_gui_gates();
 
-    connect(&g_graph_relay, &graph_relay::gate_event, this, &old_graph_layouter::handle_gate_event);
+    connect(&g_netlist_relay, &netlist_relay::gate_event, this, &old_graph_layouter::handle_gate_event);
 
-    connect(&g_graph_relay, &graph_relay::net_event, this, &old_graph_layouter::handle_net_event);
+    connect(&g_netlist_relay, &netlist_relay::net_event, this, &old_graph_layouter::handle_net_event);
 
-    connect(&g_graph_relay, &graph_relay::module_event, this, &old_graph_layouter::handle_module_event);
+    connect(&g_netlist_relay, &netlist_relay::module_event, this, &old_graph_layouter::handle_module_event);
 }
 
 void old_graph_layouter::apply_gate_level_placement()

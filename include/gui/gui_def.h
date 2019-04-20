@@ -25,7 +25,4 @@
 #ifndef HAL_GUI_DEF_H
 #define HAL_GUI_DEF_H
 
-/* QString to c string */
-#define log_qstr(str) str.toLocal8Bit().constData()
-
 #endif    //HAL_GUI_DEF_H

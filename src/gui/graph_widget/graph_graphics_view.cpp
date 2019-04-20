@@ -1,27 +1,47 @@
 #include "graph_widget/graph_graphics_view.h"
-#include "graph_widget/graph_layouter_manager.h"
-#include "graph_widget/graph_scene.h"
+
 #include "graph_widget/graph_widget.h"
-#include "graph_widget/graphics_items/graph_graphics_item.h"
+#include "graph_widget/graph_layouter_manager.h"
+#include "graph_widget/old_graph_widget.h"
+#include "graph_widget/graph_widget_constants.h"
+#include "graph_widget/graphics_items/global_graphics_net.h"
 #include "graph_widget/graphics_items/graphics_gate.h"
+#include "graph_widget/graphics_items/graphics_item.h"
+#include "graph_widget/graphics_items/separated_graphics_net.h"
 #include "graph_widget/graphics_items/standard_graphics_net.h"
+#include "graph_widget/graphics_scene.h"
+#include "gui_globals.h"
+
+#include <QAction>
+#include <QColorDialog>
+#include <QMenu>
+#include <QStyleOptionGraphicsItem>
 #include <QWheelEvent>
 
-graph_graphics_view::graph_graphics_view(graph_widget* widget) : m_widget(widget)
+#include <QDebug>
+
+graph_graphics_view::graph_graphics_view(QWidget* parent) : QGraphicsView(parent)
 {
-    setContextMenuPolicy(Qt::CustomContextMenu);
-
-    //    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    //setCacheMode(QGraphicsView::CacheBackground);
-    setOptimizationFlags(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing);
-    //setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-    //setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-    setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    setMouseTracking(false);
-
     connect(this, &graph_graphics_view::customContextMenuRequested, this, &graph_graphics_view::show_context_menu);
+
+    //    connect(&g_selection_relay, &selection_relay::focus_update, this, &graph_graphics_view::conditional_update);
+    //    connect(&g_selection_relay, &selection_relay::subfocus_update, this, &graph_graphics_view::conditional_update);
+
+    connect(&g_selection_relay, &selection_relay::subfocus_changed, this, &graph_graphics_view::conditional_update);
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    setOptimizationFlags(QGraphicsView::DontSavePainterState);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    //setOptimizationFlags(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing);
+    //setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+    //setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+}
+
+void graph_graphics_view::conditional_update()
+{
+    if (QStyleOptionGraphicsItem::levelOfDetailFromTransform(transform()) >= graph_widget_constants::gate_min_lod)
+        update();
 }
 
 void graph_graphics_view::handle_change_color_action()
@@ -32,81 +52,45 @@ void graph_graphics_view::handle_change_color_action()
         m_item->set_color(color);
 }
 
+void graph_graphics_view::handle_cone_view_action()
+{
+    std::shared_ptr<gate> g = g_netlist->get_gate_by_id(m_item->id());
+
+    if (!g)
+        return;
+}
+
 void graph_graphics_view::paintEvent(QPaintEvent* event)
 {
-    graph_graphics_item::set_lod(QStyleOptionGraphicsItem::levelOfDetailFromTransform(transform()));
+    qreal lod = QStyleOptionGraphicsItem::levelOfDetailFromTransform(transform());
+
+    graphics_scene::set_lod(lod);
+    graphics_item::set_lod(lod);
+
+    // TEST
+    separated_graphics_net::update_alpha();
+    global_graphics_net::update_alpha();
+
     QGraphicsView::paintEvent(event);
 }
 
-void graph_graphics_view::wheelEvent(QWheelEvent* e)
+//void graph_graphics_view::drawForeground(QPainter* painter, const QRectF& rect)
+//{
+//    Q_UNUSED(rect)
+
+//    QRectF bar(0, 0, viewport()->width(), 30);
+//    painter->resetTransform();
+//    painter->fillRect(bar, QColor(0, 0, 0, 170));
+//}
+
+void graph_graphics_view::wheelEvent(QWheelEvent* event)
 {
-    //    if (e->modifiers() & Qt::ControlModifier)
-    //        QGraphicsView::wheelEvent(e);
-    //    else
-    //    {
-    if (e->delta() > 0)
-        m_widget->zoom_in(6);
+    if (event->delta() > 0)
+        Q_EMIT zoomed_in(6);
     else
-        m_widget->zoom_out(6);
-    e->accept();
-    //    }
-}
+        Q_EMIT zoomed_out(6);
 
-void graph_graphics_view::show_context_menu(const QPoint& pos)
-{
-    QGraphicsItem* item = itemAt(pos);
-    if (item)
-    {
-        QMenu contextMenu(this);
-        //graph_graphics_item* graphics_item = static_cast<graph_graphics_item>(item);
-        m_item = static_cast<graph_graphics_item*>(item);
-
-        //        switch(graphics_item->get_class())
-        //        {
-        //        case item_class::node:
-        //        }
-
-        QAction colorAction("Change Color");
-        QObject::connect(&colorAction, &QAction::triggered, this, &graph_graphics_view::handle_change_color_action);
-        contextMenu.addAction(&colorAction);
-        contextMenu.exec(mapToGlobal(pos));
-
-        //        switch (item->type()) {
-        //            case QGraphicsItem::UserType + 2: {
-        ////                m_context_menu_node = dynamic_cast<graph_node_ui *>(item);
-        //                QAction action1("Change Color", this);
-        //                connect(&action1, &QAction::triggered, this, &graph_graphics_widget::change_node_color);
-        //                contextMenu.addAction(&action1); //Placeholder
-
-        //                contextMenu.exec(mapToGlobal(pos));
-        //                break;
-        //            }
-        //            default: {
-        //                QAction action2("QGraphicsItem", this);
-        //                connect(&action2, SIGNAL(triggered()), this, SLOT(placeholder()));
-        //                contextMenu.addAction(&action2); //Placeholder
-
-        //                contextMenu.exec(mapToGlobal(pos));
-        //            }
-        //        }
-    }
-    //    else
-    //    {
-    //        QMenu contextMenu(tr("Context menu"), this);
-    //        if (m_background_grid->grid_visible())
-    //        {
-    //            QAction* action = new QAction("hide Grid", this);
-    //            connect(action, SIGNAL(triggered()), m_background_grid, SLOT(set_draw_grid_false()));
-    //            contextMenu.addAction(action);
-    //        }
-    //        else
-    //        {
-    //            QAction* action = new QAction("show Grid", this);
-    //            connect(action, SIGNAL(triggered()), m_background_grid, SLOT(set_draw_grid_true()));
-    //            contextMenu.addAction(action);
-    //        }
-    //        contextMenu.exec(mapToGlobal(pos));
-    //    }
+    event->accept();
 }
 
 void graph_graphics_view::keyPressEvent(QKeyEvent* event)
@@ -116,6 +100,18 @@ void graph_graphics_view::keyPressEvent(QKeyEvent* event)
         setInteractive(false);
         this->setDragMode(QGraphicsView::ScrollHandDrag);
     }
+
+    switch (event->key())
+    {
+        case Qt::Key_Space:
+        {
+            qDebug() << "Space pressed";
+        }
+        break;
+    }
+
+    event->ignore();
+
     //    QList<QGraphicsItem*> items = this->scene()->selectedItems();
     //    if (items.size() > 1 || items.size() == 0)
     //        return;
@@ -147,4 +143,51 @@ void graph_graphics_view::keyReleaseEvent(QKeyEvent* event)
         setInteractive(true);
         this->setDragMode(QGraphicsView::RubberBandDrag);
     }
+}
+
+void graph_graphics_view::show_context_menu(const QPoint& pos)
+{
+    graphics_scene* s = static_cast<graphics_scene*>(scene());
+
+    if (!s)
+        return;
+
+    QMenu context_menu(this);
+
+    QGraphicsItem* item = itemAt(pos);
+    if (item)
+    {
+        m_item = static_cast<graphics_item*>(item);
+
+        switch (m_item->get_item_class())
+        {
+            case graphics_item::item_class::gate:
+            {
+                QAction* color_action = context_menu.addAction("Change Color");
+                QObject::connect(color_action, &QAction::triggered, this, &graph_graphics_view::handle_change_color_action);
+                context_menu.addAction(color_action);
+
+                QAction* cone_view_action = context_menu.addAction("Open in Cone View");
+                QObject::connect(cone_view_action, &QAction::triggered, this, &graph_graphics_view::handle_cone_view_action);
+                context_menu.addAction(cone_view_action);
+                break;
+            }
+            default:
+                break;
+        }
+    }
+    else
+    {
+        QAction* antialiasing_action = context_menu.addAction("Antialiasing");
+        QAction* cosmetic_action = context_menu.addAction("Cosmetic Nets");
+        QMenu* grid_menu = context_menu.addMenu("Grid");
+        QMenu* type_menu = grid_menu->addMenu("Type");
+        QMenu* cluster_menu = grid_menu->addMenu("Clustering");
+        QAction* lines_action = type_menu->addAction("Lines");
+        QAction* dots_action = type_menu->addAction("Dots");
+        QAction* none_action = type_menu->addAction("None");
+        //connect(action, &QAction::triggered, this, SLOT);
+    }
+
+    context_menu.exec(mapToGlobal(pos));
 }

@@ -1,8 +1,8 @@
 #include "graph_widget/graph_layouter_selection_widget.h"
 #include "graph_widget/graph_layouter_manager.h"
-#include "graph_widget/graph_widget.h"
+#include "graph_widget/old_graph_widget.h"
 
-graph_layouter_selection_widget::graph_layouter_selection_widget(graph_widget* widget, QWidget* parent) : QWidget(parent)
+graph_layouter_selection_widget::graph_layouter_selection_widget(old_graph_widget* widget, QWidget* parent) : QWidget(parent)
 {
     m_widget = widget;
 

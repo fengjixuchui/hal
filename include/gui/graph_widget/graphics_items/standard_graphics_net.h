@@ -40,6 +40,8 @@ public:
     virtual void finalize() Q_DECL_OVERRIDE;
 
     void line_to(const QPointF& scene_position);
+    void line_to_x(const qreal scene_x);
+    void line_to_y(const qreal scene_y);
     void move_pen_to(const QPointF& scene_position);
     QPointF current_scene_position() const;
 

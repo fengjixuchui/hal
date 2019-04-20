@@ -27,32 +27,35 @@
 
 #include <QGraphicsView>
 
-class graph_widget;
-class graph_graphics_item;
+class graphics_item;
 
 class graph_graphics_view : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    graph_graphics_view(graph_widget* widget);
+    graph_graphics_view(QWidget* parent = nullptr);
 
-    //TODO REPLACE WITH RELAY
+Q_SIGNALS:
+    void zoomed_in(int value);
+    void zoomed_out(int value);
+
 private Q_SLOTS:
-    void handle_change_color_action();
+    void conditional_update();
+    void handle_change_color_action();    //TODO REPLACE WITH RELAY
+    void handle_cone_view_action();       //DEBUG CODE, TODO REPLACE
 
 private:
-    virtual void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
-    void wheelEvent(QWheelEvent*) Q_DECL_OVERRIDE;
+    void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
+    //    void drawForeground(QPainter* painter, const QRectF& rect) Q_DECL_OVERRIDE;
+    void wheelEvent(QWheelEvent* event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
 
     void show_context_menu(const QPoint& pos);
 
-    graph_widget* m_widget;
-
     //TODO REPLACE WITH RELAY
-    graph_graphics_item* m_item;
+    graphics_item* m_item;
 };
 
-#endif    // GRAPH_GRAPHICS_VIEW_H
+#endif // GRAPH_GRAPHICS_VIEW_H

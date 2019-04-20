@@ -86,7 +86,8 @@ void file_manager::open_file(const QString& file_name)
             m_file_watcher->addPath(m_file_name);
             m_file_open = true;
             update_recent_files(m_file_name);
-            g_python_context = std::make_unique<python_context>();    // TODO HANDLE PYTHON CONTEXT SEPARATELY
+            g_python_context = std::make_unique<python_context>();
+            g_selection_relay.init();
             Q_EMIT file_opened(m_file_name);
         }
         else
@@ -175,11 +176,13 @@ void file_manager::open_file(const QString& file_name)
         m_file_open = true;
         update_recent_files(file_name);
         g_python_context = std::make_unique<python_context>();
+        g_selection_relay.init();
         Q_EMIT file_opened(file_name);
         return;
     }
     log_error("gui", "Unable to find a compatible gate library. Deserialization failed!");
 
+// THIS MISSING IN LOCAL
 END OF ORIGINAL CODE */
 
     QList<QPair<std::string, std::shared_ptr<netlist>>> list;
@@ -245,7 +248,10 @@ END OF ORIGINAL CODE */
     m_file_open = true;
     update_recent_files(file_name);
     g_python_context = std::make_unique<python_context>();
+    g_selection_relay.init();
     Q_EMIT file_opened(file_name);
+
+    // END OF MISSING IN LOCAL
 }
 
 void file_manager::close_file()
