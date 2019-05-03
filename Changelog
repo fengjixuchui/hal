@@ -1,0 +1,56 @@
+hal-reverse (1.0.8) bionic; urgency=high
+
+  * Added plugin directory to include_directories
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Tue, 30 Apr 2019 19:46:40 +0200
+
+hal-reverse (1.0.7) bionic; urgency=high
+
+  * Added missing python defs
+  * Fixed misleading error message, fixed wrong module signal
+  * Fix graph_algorithm include
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Tue, 30 Apr 2019 16:12:10 +0200
+
+hal-reverse (1.0.6) bionic; urgency=high
+
+  * Added sunny theme
+  * Fixes plugin name for python import
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Mon, 29 Apr 2019 18:52:10 +0200
+
+hal-reverse (1.0.5) bionic; urgency=high
+
+  * GIT repo cleanup
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Fri, 26 Apr 2019 16:55:18 +0200
+
+hal-reverse (1.0.4) bionic; urgency=high
+
+  * Fixes GUI not start from package install again
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Fri, 26 Apr 2019 16:55:18 +0200
+
+hal-reverse (1.0.3) bionic; urgency=high
+
+  * Fixes GUI not start from package install
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Fri, 26 Apr 2019 15:20:17 +0200
+
+hal-reverse (1.0.2) bionic; urgency=high
+
+  * Fix in install buddy header again
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Fri, 26 Apr 2019 01:38:17 +0200
+
+hal-reverse (1.0.1) bionic; urgency=high
+
+  * Fix in install buddy header
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Thu, 25 Apr 2019 20:44:35 +0200
+
+hal-reverse (1.0.0) bionic; urgency=low
+
+  * Initial Release
+
+ -- Sebastian Wallat <sebastian.wallat@rub.de>  Thu, 25 Apr 2019 16:32:50 +0200

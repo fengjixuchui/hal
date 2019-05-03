@@ -1,5 +1,6 @@
 #include "python/python_console.h"
 
+#include "core/log.h"
 #include "gui_globals.h"
 
 #include <QKeyEvent>
@@ -7,6 +8,8 @@
 #include <QDebug>
 
 #include "python/python_console_history.h"
+
+#include "python/python_console_qss_adapter.h"
 
 python_console::python_console(QWidget* parent)
     : QTextEdit(parent), m_standard_prompt(">>> "), m_compound_prompt("... "), m_prompt_block_number(0), m_prompt_length(0), m_prompt_end_position(0), m_compound_prompt_end_position(0),
@@ -17,9 +20,9 @@ python_console::python_console(QWidget* parent)
     setUndoRedoEnabled(false);
     ensureCursorVisible();
 
-    m_standard_color = QColor("#BBBBBB");
-    m_error_color    = QColor("#FF6B63");
-    m_prompt_color   = QColor("#917EB7");
+    m_standard_color = python_console_qss_adapter::instance()->standard_color();
+    m_error_color = python_console_qss_adapter::instance()->error_color();
+    m_prompt_color = python_console_qss_adapter::instance()->promt_color();
     g_python_context->set_console(this);
     g_python_context->interpret("print(\"Python \" + sys.version)", false);
     g_python_context->interpret("print(sys.executable + \" on \" + sys.platform)", false);
@@ -264,7 +267,7 @@ void python_console::replace_current_command(const QString& new_command)
 {
     QTextCursor cursor = textCursor();
     cursor.setPosition(m_prompt_end_position);
-    cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+    cursor.movePosition(QTextCursor::End, QTextCursor::KeepAnchor);
     cursor.insertText(new_command);
 }
 
@@ -342,7 +345,8 @@ void python_console::handle_tab_key_pressed()
     }
     else
     {
-        auto r = g_python_context->complete(m_current_input);
+        log_info("python", "completing: '{}'", m_current_input.toStdString());
+        auto r = g_python_context->complete(m_current_input, true);
         if (r.size() == 1)
         {
             append_to_current_command(QString::fromStdString(std::get<1>(r.at(0))));

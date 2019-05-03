@@ -1,8 +1,7 @@
 //  MIT License
 //
-//  Copyright (c) 2019 Marc Fyrbiak
-//  Copyright (c) 2019 Sebastian Wallat
-//  Copyright (c) 2019 Max Hoffmann
+//  Copyright (c) 2019 Ruhr-University Bochum, Germany, Chair for Embedded Security. All Rights reserved.
+//  Copyright (c) 2019 Marc Fyrbiak, Sebastian Wallat, Max Hoffmann ("ORIGINAL AUTHORS"). All rights reserved.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -67,6 +66,8 @@ private:
 
     /*calculated the "biggest" size of the table*/
     QSize table_widget_size();
+
+    void on_item_double_clicked(QTableWidgetItem* item);
 };
 
 #endif    // gui_graph_gate_SELECTION_WIDGET_H
