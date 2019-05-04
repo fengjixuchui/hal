@@ -3,7 +3,7 @@
 #include "graph_widget/graphics_scene.h"
 #include "graph_widget/graphics_items/graphics_gate.h"
 #include "graph_widget/graphics_items/separated_graphics_net.h"
-#include "graph_widget/graphics_items/standard_graphics_net.h"
+#include "graph_widget/graphics_items/unrestricted_graphics_net.h"
 #include "gui_globals.h"
 
 #include "graph_widget/graphics_items/advanced_graphics_gate.h"
@@ -74,7 +74,7 @@ void orthogonal_graph_layouter::layout()
         }
 
         QPointF src_position            = src_node->get_output_pin_scene_position(QString::fromStdString(src_end.pin_type));
-        standard_graphics_net* net_item = new standard_graphics_net(n);
+        unrestricted_graphics_net* net_item = new unrestricted_graphics_net(n);
         net_item->setPos(src_position);
 
         for (endpoint& dst_end : n->get_dsts())

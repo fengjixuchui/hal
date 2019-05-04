@@ -1,7 +1,7 @@
 #include "graph_widget/layouters/placeholder_layouter.h"
 #include "graph_widget/graphics_items/global_graphics_net.h"
 #include "graph_widget/graphics_items/separated_graphics_net.h"
-#include "graph_widget/graphics_items/standard_graphics_net.h"
+#include "graph_widget/graphics_items/unrestricted_graphics_net.h"
 #include "graph_widget/graphics_scene.h"
 #include "gui_globals.h"
 #include <QQueue>
@@ -326,7 +326,7 @@ void placeholder_layouter::draw_output_net(std::shared_ptr<net> n)
 
 void placeholder_layouter::draw_standard_net(std::shared_ptr<net> n)
 {
-    standard_graphics_net* gui_net = new standard_graphics_net(n);
+    unrestricted_graphics_net* gui_net = new unrestricted_graphics_net(n);
     graphics_gate* gui_src_gate    = m_gate_to_gui_gate_map[n->get_src().gate];
 
     QPointF src_pin_position = gui_src_gate->get_output_pin_scene_position(QString::fromStdString(n->get_src().pin_type));

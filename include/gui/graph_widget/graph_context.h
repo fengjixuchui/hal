@@ -41,6 +41,7 @@ public:
 Q_SIGNALS:
     void updating_scene();
     void scene_ready();
+    // MAYBE DELETING SCENE IS FASTER, TODO CHECK
     // ABOUT TO BE DELETED SIGNAL ?
 
 public Q_SLOTS:
@@ -63,12 +64,16 @@ private:
 
     bool m_conform_to_grid;
 
-    bool m_scene_ready; // RENAME ?
+    bool m_scene_available;
 
     // GATE TYPE
-    // NET TYPE
 
-    // GLOBAL / SEPARATED NETS ?
+    bool m_separate_gnd;
+    bool m_separate_vcc;
+
+    bool m_extend_gnd;
+    bool m_extend_vcc;
+    bool m_extend_global;
 };
 
 #endif // GRAPH_CONTEXT_H

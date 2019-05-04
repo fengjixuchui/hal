@@ -14,7 +14,7 @@ graph_context::graph_context(const QString& name, u32 scope, QObject* parent) : 
     m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
     m_conform_to_grid(false),
-    m_scene_ready(true)
+    m_scene_available(true)
 {
     // DEBUG CODE
     Q_UNUSED(name)
@@ -122,7 +122,7 @@ bool graph_context::conform_to_grid() const
 
 bool graph_context::available() const
 {
-    return m_scene_ready;
+    return m_scene_available;
 }
 
 void graph_context::update()

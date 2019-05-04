@@ -21,8 +21,8 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-#ifndef STANDARD_GRAPHICS_NET_H
-#define STANDARD_GRAPHICS_NET_H
+#ifndef UNRESTRICTED_GRAPHICS_NET_H
+#define UNRESTRICTED_GRAPHICS_NET_H
 
 #include "graphics_net.h"
 
@@ -31,19 +31,19 @@
 
 class net;
 
-class standard_graphics_net : public graphics_net
+class unrestricted_graphics_net : public graphics_net
 {
 public:
-    standard_graphics_net(std::shared_ptr<net> n);
+    unrestricted_graphics_net(std::shared_ptr<net> n);
 
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) Q_DECL_OVERRIDE;
 
     virtual void finalize() Q_DECL_OVERRIDE;
 
+    void line_to(const QPointF& scene_position);
     void line_to_x(const qreal scene_x);
     void line_to_y(const qreal scene_y);
     void move_pen_to(const QPointF& scene_position);
-
     QPointF current_scene_position() const;
 
 private:
@@ -51,4 +51,4 @@ private:
     QVector<QLineF> m_lines;
 };
 
-#endif // STANDARD_GRAPHICS_NET_H
+#endif // UNRESTRICTED_GRAPHICS_NET_H

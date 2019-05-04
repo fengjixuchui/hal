@@ -1,4 +1,4 @@
-#include "graph_widget/graphics_items/standard_graphics_net.h"
+#include "graph_widget/graphics_items/unrestricted_graphics_net.h"
 
 //#include "gui_globals.h"
 
@@ -7,11 +7,11 @@
 #include <QPointF>
 #include <QStyleOptionGraphicsItem>
 
-standard_graphics_net::standard_graphics_net(std::shared_ptr<net> n) : graphics_net(n)
+unrestricted_graphics_net::unrestricted_graphics_net(std::shared_ptr<net> n) : graphics_net(n)
 {
 }
 
-void standard_graphics_net::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+void unrestricted_graphics_net::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     Q_UNUSED(widget);
 
@@ -30,7 +30,7 @@ void standard_graphics_net::paint(QPainter* painter, const QStyleOptionGraphicsI
     painter->drawLines(m_lines);
 }
 
-void standard_graphics_net::finalize()
+void unrestricted_graphics_net::finalize()
 {
     QPainterPathStroker stroker;
     stroker.setWidth(s_stroke_width);
@@ -38,7 +38,17 @@ void standard_graphics_net::finalize()
     m_shape = stroker.createStroke(m_path);
 }
 
-void standard_graphics_net::line_to_x(const qreal scene_x)
+void unrestricted_graphics_net::line_to(const QPointF& scene_position)
+{
+    if (scene_position == current_scene_position())
+        return;
+
+    QPointF mapped_point = mapFromScene(scene_position);
+    m_lines.append(QLineF(m_path.currentPosition(), mapped_point));
+    m_path.lineTo(mapped_point);
+}
+
+void unrestricted_graphics_net::line_to_x(const qreal scene_x)
 {
     if (scene_x == current_scene_position().x())
         return;
@@ -48,7 +58,7 @@ void standard_graphics_net::line_to_x(const qreal scene_x)
     m_path.lineTo(mapped_point);
 }
 
-void standard_graphics_net::line_to_y(const qreal scene_y)
+void unrestricted_graphics_net::line_to_y(const qreal scene_y)
 {
     if (scene_y == current_scene_position().y())
         return;
@@ -58,7 +68,7 @@ void standard_graphics_net::line_to_y(const qreal scene_y)
     m_path.lineTo(mapped_point);
 }
 
-void standard_graphics_net::move_pen_to(const QPointF& scene_position)
+void unrestricted_graphics_net::move_pen_to(const QPointF& scene_position)
 {
     if (scene_position == current_scene_position())
         return;
@@ -67,7 +77,7 @@ void standard_graphics_net::move_pen_to(const QPointF& scene_position)
     m_path.moveTo(mapped_point);
 }
 
-QPointF standard_graphics_net::current_scene_position() const
+QPointF unrestricted_graphics_net::current_scene_position() const
 {
     return mapToScene(m_path.currentPosition());
 }

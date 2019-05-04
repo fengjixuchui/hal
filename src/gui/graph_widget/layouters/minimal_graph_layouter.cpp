@@ -3,7 +3,7 @@
 #include "graph_widget/graphics_scene.h"
 #include "graph_widget/graphics_items/graphics_gate.h"
 #include "graph_widget/graphics_items/separated_graphics_net.h"
-#include "graph_widget/graphics_items/standard_graphics_net.h"
+#include "graph_widget/graphics_items/unrestricted_graphics_net.h"
 #include "gui_globals.h"
 
 #include "graph_widget/graphics_items/standard_graphics_gate.h"
@@ -64,7 +64,7 @@ void minimal_graph_layouter::layout()
         if (n->is_unrouted())
             continue;
 
-        standard_graphics_net* net_item = new standard_graphics_net(n);
+        unrestricted_graphics_net* net_item = new unrestricted_graphics_net(n);
         endpoint src_end                = n->get_src();
         graphics_gate* src_node         = map.value(src_end.gate);
         if (!src_node)
