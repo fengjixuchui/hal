@@ -28,8 +28,6 @@
 
 #include "content_widget/content_widget.h"
 
-#include "QFutureWatcher"
-
 class dialog_overlay;
 class cone_layouter;
 class graph_context;
@@ -71,8 +69,6 @@ private:
     dialog_overlay* m_overlay;
     graph_navigation_widget* m_navigation_widget;
     graph_layout_progress_widget* m_progress_widget;
-
-    QFutureWatcher<void>* m_watcher;
 
     u32 m_current_expansion;
 };

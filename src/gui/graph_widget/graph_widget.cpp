@@ -13,9 +13,7 @@
 #include "overlay/dialog_overlay.h"
 #include "toolbar/toolbar.h"
 
-#include <QFutureWatcher>
 #include <QInputDialog>
-#include <QtConcurrent>
 #include <QToolButton>
 #include <QVBoxLayout>
 
@@ -25,15 +23,12 @@ graph_widget::graph_widget(QWidget* parent) : content_widget("Graph", parent),
     m_overlay(new dialog_overlay(this)),
     m_navigation_widget(new graph_navigation_widget(this)),
     m_progress_widget(new graph_layout_progress_widget(this)),
-    m_watcher(new QFutureWatcher<void>(this)),
     m_current_expansion(0)
 {
     connect(m_navigation_widget, &graph_navigation_widget::navigation_requested, this, &graph_widget::handle_navigation_jump_requested);
     connect(m_navigation_widget, &graph_navigation_widget::close_requested, m_overlay, &dialog_overlay::hide);
 
     connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
-
-    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_widget::expanded);
 
     m_overlay->hide();
     m_overlay->set_widget(m_navigation_widget);
@@ -416,8 +411,6 @@ void graph_widget::expand(const u32 selected_gate, const u32 new_net, const u32 
         m_overlay->show();
 
     m_current_expansion = new_gate;
-
-    //m_watcher->setFuture(QtConcurrent::run(m_layouter, &cone_layouter::expand, selected_gate, new_net, new_gate));
 }
 
 void graph_widget::toggle_grid()

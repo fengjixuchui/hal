@@ -7,21 +7,28 @@
 #include "graph_widget/shaders/module_shader.h"
 #include "gui_globals.h"
 
-graph_context::graph_context(const QString& name, u32 scope, QObject* parent) : QObject(parent),
-    //m_name(name),
+#include <QtConcurrent>
+
+graph_context::graph_context(const QString& name, const u32 scope, QObject* parent) : QObject(parent),
+    m_name(name),
     m_scope(scope),
-    //m_layouter(new standard_graph_layouter(this)),
+    m_watcher(new QFutureWatcher<void>(this)),
     m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
     m_conform_to_grid(false),
     m_scene_available(true)
 {
+    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_layouter_finished);
+
     // DEBUG CODE
     Q_UNUSED(name)
 
     static int i = 1;
     m_name = "Context " + QString::number(i);
     ++i;
+
+    // USE SEPARATE CLASSES FOR MODULE AND FREE CONTEXTS
+    // SPLIT CONTEXT INTO LAYOUT, SHADING, ITEM TYPES ... AND CONTEXT TYPE
 }
 
 void graph_context::add(const QSet<u32>& gates, const QSet<u32>& nets)
@@ -157,4 +164,18 @@ void graph_context::handle_module_event(module_event_handler::event ev, std::sha
     Q_UNUSED(ev);
     Q_UNUSED(module);
     Q_UNUSED(associated_data);
+}
+
+void graph_context::handle_layouter_finished()
+{
+    // CALL SHADER
+
+    m_scene_available = true;
+    Q_EMIT scene_available();
+}
+
+void graph_context::update_scene()
+{
+    Q_EMIT updating_scene();
+    m_watcher->setFuture(QtConcurrent::run(m_layouter, &graph_layouter::layout));
 }
