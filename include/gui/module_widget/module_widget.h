@@ -27,10 +27,12 @@
 
 #include "def.h"
 
-#include "content_widget/content_widget.h"
-#include "graph_navigation_widget/navigation_filter_widget.h"
-#include "searchbar/searchbar.h"
-#include "selection_relay/selection_relay.h"
+#include "netlist/event_system/module_event_handler.h"
+#include "netlist/module.h"
+
+#include "gui/content_widget/content_widget.h"
+#include "gui/searchbar/searchbar.h"
+#include "gui/selection_relay/selection_relay.h"
 
 #include <QAction>
 #include <QItemSelection>
@@ -38,9 +40,6 @@
 #include <QObject>
 #include <QSortFilterProxyModel>
 #include <QTreeView>
-
-#include "netlist/event_system/module_event_handler.h"
-#include "netlist/module.h"
 
 class graph_navigation_model;
 class QTreeView;
@@ -90,7 +89,6 @@ public Q_SLOTS:
     void toggle_resize_columns();
 
 private:
-    navigation_filter_widget* m_filter_widget;
     QTreeView* m_tree_view;
     searchbar m_searchbar;
 

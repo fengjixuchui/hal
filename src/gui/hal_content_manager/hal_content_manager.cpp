@@ -7,6 +7,7 @@
 
 #include "file_manager/file_manager.h"
 #include "graph_widget/graph_widget.h"
+#include "gui/module_widget/module_widget.h"
 #include "gui/content_layout_area/content_layout_area.h"
 #include "gui/content_widget/content_widget.h"
 #include "gui/docking_system/tab_widget.h"
@@ -84,6 +85,10 @@ void hal_content_manager::handle_open_document(const QString& file_name)
 
     hal_logger_widget* logger_widget = new hal_logger_widget();
     m_main_window->add_content(logger_widget, 1, content_anchor::bottom);
+
+    module_widget* modules = new module_widget();
+    m_main_window->add_content(modules, 1, content_anchor::right);
+
 
     //    m_console->init();
     //    m_main_window->add_content(m_console, 2, content_anchor::bottom);

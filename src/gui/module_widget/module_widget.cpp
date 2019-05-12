@@ -3,18 +3,13 @@
 #include <core/log.h>
 
 #include "netlist/gate.h"
-#include "netlist/net.h"
 #include "netlist/module.h"
+#include "netlist/net.h"
 
-#include "graph_manager/graph_tree_model.h"
-#include "module_relay/module_relay.h"
-#include "module_relay/module_proxy_model.h"
-#include "graph_navigation_widget/navigation_filter_dialog.h"
-#include "gui_globals.h"
-
-#include "graph_navigation_widget/tree_navigation/tree_navigation_item.h"
-#include "graph_navigation_widget/tree_navigation/tree_navigation_model.h"
-#include "graph_navigation_widget/tree_navigation/tree_navigation_proxy_model.h"
+#include "gui/graph_manager/graph_tree_model.h"
+#include "gui/gui_globals.h"
+#include "gui/module_relay/module_proxy_model.h"
+#include "gui/module_relay/module_relay.h"
 
 #include <QHeaderView>
 #include <QItemSelectionModel>
@@ -24,15 +19,14 @@
 #include <QSet>
 #include <QShortcut>
 #include <QTreeView>
+#include <QVBoxLayout>
 
-module_widget::module_widget(QWidget* parent) : content_widget("Modules", parent)
+module_widget::module_widget(QWidget* parent) : content_widget("Modules", parent),
+    m_tree_view(new QTreeView(this)),
+    m_module_proxy_model(new module_proxy_model(this))
 {
-    m_module_proxy_model = new module_proxy_model(this);
     m_module_proxy_model->setFilterKeyColumn(-1);
     //m_module_proxy_model->setSourceModel();
-    m_filter_widget = new navigation_filter_widget(this);
-    m_content_layout->addWidget(m_filter_widget);
-    m_tree_view             = new QTreeView(this);
     m_tree_view->setModel(m_module_proxy_model);
     m_tree_view->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tree_view->setFocusPolicy(Qt::NoFocus);
@@ -41,7 +35,6 @@ module_widget::module_widget(QWidget* parent) : content_widget("Modules", parent
     m_content_layout->addWidget(m_tree_view);
     m_content_layout->addWidget(&m_searchbar);
     m_searchbar.hide();
-    m_filter_widget->hide();
 
     m_filter_action = new QAction("filter", this);
 
@@ -80,7 +73,8 @@ module_widget::module_widget(QWidget* parent) : content_widget("Modules", parent
 //    connect(&g_netlist_relay, &netlist_relay::net_event, m_tree_navigation_model, &tree_navigation_model::handle_net_event);
 }
 
-void module_widget::setup_toolbar(toolbar* toolbar){
+void module_widget::setup_toolbar(toolbar* toolbar)
+{
     Q_UNUSED(toolbar)
 
     //toolbar->addAction(m_filter_action);
@@ -140,13 +134,13 @@ void module_widget::filter(const QString& text)
 void module_widget::handle_filter_action_triggered()
 {
     //deprecated, use QRegularExpression instead (not supported by QSortFilterProxyModel yet)
-    QRegExp* expression              = nullptr;
-    navigation_filter_dialog* dialog = new navigation_filter_dialog(expression);
-    dialog->exec();
-    if (!expression)
-        return;
+//    QRegExp* expression              = nullptr;
+//    navigation_filter_dialog* dialog = new navigation_filter_dialog(expression);
+//    dialog->exec();
+//    if (!expression)
+//        return;
 
-    m_module_proxy_model->setFilterRegExp(*expression);
+//    m_module_proxy_model->setFilterRegExp(*expression);
 }
 
 void module_widget::handle_selection_changed(const QItemSelection& selected, const QItemSelection& deselected)
