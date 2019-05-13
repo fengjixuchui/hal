@@ -113,6 +113,18 @@ QVariant module_model::headerData(int section, Qt::Orientation orientation, int 
     return QVariant();
 }
 
+module_item* module_model::get_item(const QModelIndex& index) const
+{
+    if (index.isValid())
+    {
+        module_item* item = static_cast<module_item*>(index.internalPointer());
+        if (item)
+            return item;
+    }
+
+    return m_root_item;
+}
+
 void module_model::setupModelData()
 {
     struct less_than_gate

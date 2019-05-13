@@ -26,6 +26,7 @@
 
 #include "def.h"
 
+#include <QColor>
 #include <QList>
 #include <QString>
 #include <QVariant>
@@ -35,13 +36,14 @@ class module_item : QObject
     Q_OBJECT
 
 public:
-    module_item(QString name, int id, module_item* parent_item = nullptr);
+    module_item(const QString& name, const int id, module_item* parent_item = nullptr);
     ~module_item();
+
+    void insert_child(int row, module_item* child);
+    void remove_child(module_item* child);
 
     void append_child(module_item* child);
     void prepend_child(module_item* child);
-    void insert_child(int row, module_item* child);
-    void remove_child(module_item* child);
 
     module_item* child(int row);
     int childCount() const;
@@ -49,8 +51,11 @@ public:
     int row() const;
 
     module_item* parent_item();
-    QString name();
-    u32 id();
+    QString name() const;
+    u32 id() const;
+
+    void set_name(QString& name);
+    void set_color(QColor& color);
 
 private:
     module_item* m_parent_item;
@@ -58,6 +63,8 @@ private:
 
     QString m_name;
     u32 m_id;
+
+    QColor m_color;
 };
 
 #endif // MODULE_ITEM_H

@@ -52,6 +52,8 @@ public:
     Qt::ItemFlags flags(const QModelIndex& index) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
+    module_item* get_item(const QModelIndex& index) const;
+
     QModelIndexList corresponding_indexes(const QList<u32>& gate_ids, const QList<u32>& net_ids, const QList<u32>& module_ids);
     void add_item(const module_item* item, const module_item* parent_item);
 
