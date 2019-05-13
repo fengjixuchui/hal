@@ -31,12 +31,10 @@
 #include <QString>
 #include <QVariant>
 
-class module_item : QObject
+class module_item
 {
-    Q_OBJECT
-
 public:
-    module_item(const QString& name, const int id, module_item* parent_item = nullptr);
+    module_item(const QString& name, const int id, module_item* parent = nullptr);
     ~module_item();
 
     void insert_child(int row, module_item* child);
@@ -45,17 +43,21 @@ public:
     void append_child(module_item* child);
     void prepend_child(module_item* child);
 
+    module_item* parent();
     module_item* child(int row);
+
+    const module_item* const_parent() const;
+    const module_item* const_child(int row) const;
+
     int childCount() const;
     QVariant data(int column) const;
     int row() const;
 
-    module_item* parent_item();
     QString name() const;
     u32 id() const;
 
-    void set_name(QString& name);
-    void set_color(QColor& color);
+    void set_name(const QString& name);
+    void set_color(const QColor& color);
 
 private:
     module_item* m_parent_item;

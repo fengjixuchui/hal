@@ -46,7 +46,7 @@ QModelIndex itemless_module_model::parent(const QModelIndex& index) const
         return QModelIndex();
 
     module_item* child_item  = static_cast<module_item*>(index.internalPointer());
-    module_item* parent_item = child_item->parent_item();
+    module_item* parent_item = child_item->parent();
 
     if (parent_item == m_root_item)
         return QModelIndex();

@@ -12,10 +12,10 @@ module_relay::module_relay(QObject* parent) : QObject(parent),
 
 void module_relay::set_module_color(const u32 id, const QColor& color)
 {
-    if (!m_module_extensions.contains(id))
-        return;
+//    if (!m_module_extensions.contains(id))
+//        return;
 
-    m_module_extensions.value(id)->color = color;
+//    m_module_extensions.value(id)->color = color;
 
     // SIGNAL OR
     // MANUAL UPDATE OF SUBSCRIBERS
@@ -23,10 +23,10 @@ void module_relay::set_module_color(const u32 id, const QColor& color)
 
 void module_relay::set_module_compressed(const u32 id, const bool compressed)
 {
-    if (!m_module_extensions.contains(id))
-        return;
+//    if (!m_module_extensions.contains(id))
+//        return;
 
-    m_module_extensions.value(id)->compressed = compressed;
+//    m_module_extensions.value(id)->compressed = compressed;
 
     // SIGNAL OR
     // MANUAL UPDATE OF SUBSCRIBERS
@@ -34,10 +34,10 @@ void module_relay::set_module_compressed(const u32 id, const bool compressed)
 
 void module_relay::set_module_hidden(const u32 id, const bool hidden)
 {
-    if (!m_module_extensions.contains(id))
-        return;
+//    if (!m_module_extensions.contains(id))
+//        return;
 
-    m_module_extensions.value(id)->hidden = hidden;
+//    m_module_extensions.value(id)->hidden = hidden;
 
     // SIGNAL OR
     // MANUAL UPDATE OF SUBSCRIBERS

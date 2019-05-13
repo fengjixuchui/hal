@@ -55,8 +55,6 @@ public Q_SLOTS:
 private:
     QMap<u32, module_item*> m_module_items;
     module_model* m_model;
-
-    QMap<u32, module_extension*> m_module_extensions; // PROBABLY OBSOLETE
 };
 
 #endif // MODULE_RELAY_H

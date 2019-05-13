@@ -41,27 +41,27 @@ public:
     explicit module_model(QObject* parent = nullptr);
     ~module_model();
 
-    // MANDATORY
+    // PURE VIRTUAL
     QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QModelIndex parent(const QModelIndex& index) const Q_DECL_OVERRIDE;
     int rowCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
     int columnCount(const QModelIndex& parent = QModelIndex()) const Q_DECL_OVERRIDE;
     QVariant data(const QModelIndex& index, int role) const Q_DECL_OVERRIDE;
 
-    // OPTIONAL
+    // VIRTUAL
     Qt::ItemFlags flags(const QModelIndex& index) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
     module_item* get_item(const QModelIndex& index) const;
+    QModelIndex get_index(const module_item* const item) const;
 
-    QModelIndexList corresponding_indexes(const QList<u32>& gate_ids, const QList<u32>& net_ids, const QList<u32>& module_ids);
-    void add_item(const module_item* item, const module_item* parent_item);
+    void add_item(module_item* item, module_item* parent = nullptr);
+    void remove_item(module_item* item);
 
-    void update_modules();
+//    void insert_row(const int position, const QModelIndex& parent, module_item* child);
+//    void remove_row(const int position, const QModelIndex& parent);
 
 private:
-    void setupModelData();
-    void match_ids_recursive(module_item* item, QModelIndexList& list, const QList<u32>& gate_ids, const QList<u32>& net_ids, const QList<u32>& module_ids);
     module_item* m_root_item; // IF TOP MODULE CANT BE DELETED THIS IS NOT NECESSARY
 };
 

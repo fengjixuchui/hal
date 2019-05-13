@@ -35,7 +35,22 @@ void module_item::prepend_child(module_item* child)
     m_child_items.prepend(child);
 }
 
+module_item* module_item::parent()
+{
+    return m_parent_item;
+}
+
 module_item* module_item::child(int row)
+{
+    return m_child_items.value(row);
+}
+
+const module_item* module_item::const_parent() const
+{
+    return m_parent_item;
+}
+
+const module_item* module_item::const_child(int row) const
 {
     return m_child_items.value(row);
 }
@@ -61,11 +76,6 @@ QVariant module_item::data(int column) const
     return m_name;
 }
 
-module_item* module_item::parent_item()
-{
-    return m_parent_item;
-}
-
 QString module_item::name() const
 {
     return m_name;
@@ -76,12 +86,12 @@ u32 module_item::id() const
     return m_id;
 }
 
-void module_item::set_name(QString& name)
+void module_item::set_name(const QString& name)
 {
     m_name = name;
 }
 
-void module_item::set_color(QColor& color)
+void module_item::set_color(const QColor& color)
 {
     m_color = color;
 }
