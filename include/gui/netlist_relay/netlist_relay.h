@@ -29,7 +29,11 @@
 #include "netlist/event_system/netlist_event_handler.h"
 #include "netlist/event_system/module_event_handler.h"
 
+#include <QMap>
 #include <QObject>
+
+class module_item;
+class module_model;
 
 class netlist_relay : public QObject
 {
@@ -41,10 +45,7 @@ public:
 
     void register_callbacks();
 
-    void relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
-    void relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
-    void relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
-    void relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data);
+    module_model* get_module_model();
 
 Q_SIGNALS:
     void netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
@@ -61,6 +62,15 @@ Q_SIGNALS:
     void module_gate_removed(std::shared_ptr<module> m, u32 removed_gate);
     void module_net_inserted(std::shared_ptr<module> m, u32 inserted_net);
     void module_net_removed(std::shared_ptr<module> m, u32 removed_net);
+
+private:
+    void relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
+    void relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
+    void relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
+    void relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data);
+
+    QMap<u32, module_item*> m_module_items;
+    module_model* m_module_model;
 };
 
 #endif // NETLIST_RELAY_H

@@ -1,4 +1,4 @@
-#include "module_relay/module_item.h"
+#include "module_model/module_item.h"
 
 module_item::module_item(const QString& name, const int id, module_item* parent_item) :
     m_parent_item(parent_item),

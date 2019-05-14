@@ -1,6 +1,6 @@
-#include "module_relay/module_model.h"
+#include "module_model/module_model.h"
 
-#include "module_relay/module_item.h"
+#include "module_model/module_item.h"
 
 #include "gui_globals.h"
 

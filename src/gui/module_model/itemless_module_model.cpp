@@ -1,12 +1,11 @@
-#include "module_relay/itemless_module_model.h"
-
-#include "module_relay/module_item.h"
-
-#include "gui_globals.h"
+#include "module_model/itemless_module_model.h"
 
 #include "netlist/gate.h"
-#include "netlist/net.h"
 #include "netlist/module.h"
+#include "netlist/net.h"
+
+#include "gui_globals.h"
+#include "module_model/module_item.h"
 
 itemless_module_model::itemless_module_model(QObject* parent) : QAbstractItemModel(parent)
 {

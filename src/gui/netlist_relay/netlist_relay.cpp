@@ -1,10 +1,14 @@
 #include "netlist_relay/netlist_relay.h"
 
+#include "gui/module_model/module_item.h"
+#include "gui/module_model/module_model.h"
+
 #include <functional>
 
 #include <QDebug>
 
-netlist_relay::netlist_relay(QObject* parent) : QObject(parent)
+netlist_relay::netlist_relay(QObject* parent) : QObject(parent),
+    m_module_model(new module_model(this))
 {
     register_callbacks();
 }
@@ -40,22 +44,36 @@ void netlist_relay::register_callbacks()
                 (std::bind(&netlist_relay::relay_module_event, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 }
 
+module_model* netlist_relay::get_module_model()
+{
+    return m_module_model;
+}
+
 void netlist_relay::relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data)
 {
-    Q_EMIT netlist_event(ev, object, associated_data);
+    if (!object)
+        return; // SHOULD NEVER BE REACHED
+
     //qDebug() << "relay_netlist_event called: event ID =" << ev << "for object at" << object.get();
+    Q_EMIT netlist_event(ev, object, associated_data);
 }
 
 void netlist_relay::relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data)
 {
-    Q_EMIT net_event(ev, object, associated_data);
+    if (!object)
+        return; // SHOULD NEVER BE REACHED
+
     //qDebug() << "relay_net_event called: event ID =" << ev << "for object at" << object.get();
+    Q_EMIT net_event(ev, object, associated_data);
 }
 
 void netlist_relay::relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data)
 {
-    Q_EMIT gate_event(ev, object, associated_data);
+    if (!object)
+        return; // SHOULD NEVER BE REACHED
+
     //qDebug() << "relay_gate_event called: event ID =" << ev << "for object at" << object.get();
+    Q_EMIT gate_event(ev, object, associated_data);
 }
 
 void netlist_relay::relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data)
@@ -63,8 +81,8 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
     if (!object)
         return; // SHOULD NEVER BE REACHED
 
-    //Q_EMIT module_event(ev, object, associated_data);
     //qDebug() << "relay_module_event called: event ID =" << ev << "for object at" << object.get();
+    //Q_EMIT module_event(ev, object, associated_data);
 
     switch (ev)
     {

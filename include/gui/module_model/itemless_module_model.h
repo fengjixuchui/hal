@@ -27,7 +27,7 @@
 
 #include "def.h"
 
-#include "module_relay/module_item.h"
+#include "module_model/module_item.h"
 
 #include <QAbstractItemModel>
 #include <QModelIndex>

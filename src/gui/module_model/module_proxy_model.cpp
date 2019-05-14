@@ -1,5 +1,4 @@
-#include "module_relay/module_proxy_model.h"
-
+#include "module_model/module_proxy_model.h"
 
 module_proxy_model::module_proxy_model(QObject* parent) : QSortFilterProxyModel(parent)
 {
