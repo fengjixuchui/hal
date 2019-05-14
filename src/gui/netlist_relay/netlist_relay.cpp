@@ -60,6 +60,88 @@ void netlist_relay::relay_gate_event(gate_event_handler::event ev, std::shared_p
 
 void netlist_relay::relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data)
 {
-    Q_EMIT module_event(ev, object, associated_data);
+    if (!object)
+        return; // SHOULD NEVER BE REACHED
+
+    //Q_EMIT module_event(ev, object, associated_data);
     //qDebug() << "relay_module_event called: event ID =" << ev << "for object at" << object.get();
+
+    switch (ev)
+    {
+    case module_event_handler::event::created:
+    {
+        //< no associated_data
+
+//        module_item* parent_item = m_module_items.value(object->get_parent_module()->get_id());
+
+//        if (!parent_item)
+//            return; // SHOULD NOT BE POSSIBLE
+
+        Q_EMIT module_created(object);
+        break;
+    }
+    case module_event_handler::event::removed:
+    {
+        //< no associated_data
+
+        Q_EMIT module_removed(object);
+        break;
+    }
+    case module_event_handler::event::name_changed:
+    {
+        //< no associated_data
+
+        Q_EMIT module_name_changed(object);
+        break;
+    }
+    case module_event_handler::event::parent_changed:
+    {
+        //< no associated_data
+
+        Q_EMIT module_name_changed(object);
+        break;
+    }
+    case module_event_handler::event::submodule_added:
+    {
+        //< associated_data = id of added module
+
+        Q_EMIT module_submodule_added(object, associated_data);
+        break;
+    }
+    case module_event_handler::event::submodule_removed:
+    {
+        //< associated_data = id of removed module
+
+        Q_EMIT module_submodule_removed(object, associated_data);
+        break;
+    }
+    case module_event_handler::event::gate_inserted:
+    {
+        //< associated_data = id of inserted gate
+
+        Q_EMIT module_gate_inserted(object, associated_data);
+        break;
+    }
+    case module_event_handler::event::gate_removed:
+    {
+        //< associated_data = id of removed gate
+
+        Q_EMIT module_gate_removed(object, associated_data);
+        break;
+    }
+    case module_event_handler::event::net_inserted:
+    {
+        //< associated_data = id of added net
+
+        Q_EMIT module_net_inserted(object, associated_data);
+        break;
+    }
+    case module_event_handler::event::net_removed:
+    {
+        //< associated_data = id of removed net
+
+        Q_EMIT module_net_removed(object, associated_data);
+        break;
+    }
+    }
 }

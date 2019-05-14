@@ -51,6 +51,16 @@ Q_SIGNALS:
     void net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
     void gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
     void module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data);
+
+    void module_created(std::shared_ptr<module> m);
+    void module_removed(std::shared_ptr<module> m);
+    void module_name_changed(std::shared_ptr<module> m);
+    void module_submodule_added(std::shared_ptr<module> m, u32 added_module);
+    void module_submodule_removed(std::shared_ptr<module> m, u32 removed_module);
+    void module_gate_inserted(std::shared_ptr<module> m, u32 inserted_gate);
+    void module_gate_removed(std::shared_ptr<module> m, u32 removed_gate);
+    void module_net_inserted(std::shared_ptr<module> m, u32 inserted_net);
+    void module_net_removed(std::shared_ptr<module> m, u32 removed_net);
 };
 
 #endif // NETLIST_RELAY_H

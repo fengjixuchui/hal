@@ -51,4 +51,4 @@ extern settings_relay g_settings_relay;
 
 extern std::unique_ptr<python_context> g_python_context;
 
-#endif    // GUI_GLOBALS_H
+#endif // GUI_GLOBALS_H
