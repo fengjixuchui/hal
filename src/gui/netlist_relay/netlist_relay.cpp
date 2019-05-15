@@ -1,5 +1,7 @@
 #include "netlist_relay/netlist_relay.h"
 
+#include "netlist/module.h"
+
 #include "gui/module_model/module_item.h"
 #include "gui/module_model/module_model.h"
 
@@ -90,10 +92,14 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
     {
         //< no associated_data
 
-//        module_item* parent_item = m_module_items.value(object->get_parent_module()->get_id());
+        module_item* item = new module_item(QString::fromStdString(object->get_name()), object->get_id());
+        std::shared_ptr<module> parent_module = object->get_parent_module();
+        module_item* parent_item = nullptr;
 
-//        if (!parent_item)
-//            return; // SHOULD NOT BE POSSIBLE
+        if (parent_module)
+            parent_item = m_module_items.value(parent_module->get_id());
+
+        m_module_model->add_item(item, parent_item);
 
         Q_EMIT module_created(object);
         break;

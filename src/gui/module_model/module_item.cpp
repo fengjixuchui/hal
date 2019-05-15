@@ -1,7 +1,7 @@
 #include "module_model/module_item.h"
 
-module_item::module_item(const QString& name, const int id, module_item* parent_item) :
-    m_parent_item(parent_item),
+module_item::module_item(const QString& name, const int id) :
+    m_parent(nullptr),
     m_name(name),
     m_id(id)
 {
@@ -37,7 +37,7 @@ void module_item::prepend_child(module_item* child)
 
 module_item* module_item::parent()
 {
-    return m_parent_item;
+    return m_parent;
 }
 
 module_item* module_item::child(int row)
@@ -47,7 +47,7 @@ module_item* module_item::child(int row)
 
 const module_item* module_item::const_parent() const
 {
-    return m_parent_item;
+    return m_parent;
 }
 
 const module_item* module_item::const_child(int row) const
@@ -62,8 +62,8 @@ int module_item::childCount() const
 
 int module_item::row() const
 {
-    if (m_parent_item)
-        return m_parent_item->m_child_items.indexOf(const_cast<module_item*>(this));
+    if (m_parent)
+        return m_parent->m_child_items.indexOf(const_cast<module_item*>(this));
     else
         return 0;
 }
@@ -84,6 +84,11 @@ QString module_item::name() const
 u32 module_item::id() const
 {
     return m_id;
+}
+
+void module_item::set_parent(module_item* parent)
+{
+    m_parent = parent;
 }
 
 void module_item::set_name(const QString& name)
