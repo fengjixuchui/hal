@@ -358,7 +358,7 @@ extern void run_main(const QString file_name, const QList<QString> plugins);
 
 void main_window::run_plugin_triggered(const QString& name)
 {
-    if (!file_manager::get_instance()->is_document_open())
+    if (!file_manager::get_instance()->file_open())
     {
         return;
     }
@@ -421,7 +421,7 @@ void main_window::toggle_schedule()
 {
     if (m_stacked_widget->currentWidget() == m_schedule_widget)
     {
-        if (file_manager::get_instance()->is_document_open())
+        if (file_manager::get_instance()->file_open())
             m_stacked_widget->setCurrentWidget(m_layout_area);
         else
             m_stacked_widget->setCurrentWidget(m_welcome_screen);
@@ -439,7 +439,7 @@ void main_window::toggle_settings()
 {
     if (m_stacked_widget->currentWidget() == m_settings)
     {
-        if (file_manager::get_instance()->is_document_open())
+        if (file_manager::get_instance()->file_open())
             m_stacked_widget->setCurrentWidget(m_layout_area);
         else
             m_stacked_widget->setCurrentWidget(m_welcome_screen);

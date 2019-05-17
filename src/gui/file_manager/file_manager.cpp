@@ -7,14 +7,16 @@
 #include "netlist/netlist_factory.h"
 #include "netlist/persistent/netlist_serializer.h"
 
-#include "gui_globals.h"
+#include "gui/gui_globals.h"
 
 #include <QFile>
 #include <QFileSystemWatcher>
 #include <QInputDialog>
 #include <QTextStream>
 
-file_manager::file_manager(QObject* parent) : QObject(parent), m_file_watcher(new QFileSystemWatcher(this)), m_file_open(false)
+file_manager::file_manager(QObject* parent) : QObject(parent),
+    m_file_watcher(new QFileSystemWatcher(this)),
+    m_file_open(false)
 {
     connect(m_file_watcher, &QFileSystemWatcher::fileChanged, this, &file_manager::handle_file_changed);
     connect(m_file_watcher, &QFileSystemWatcher::directoryChanged, this, &file_manager::handle_directory_changed);
@@ -26,17 +28,7 @@ file_manager* file_manager::get_instance()
     return &manager;
 }
 
-void file_manager::handle_program_arguments(const program_arguments& args)
-{
-    if (args.is_option_set("--input-file"))
-    {
-        auto file_name = hal::path(args.get_parameter("--input-file"));
-        log_info("gui", "GUI started with file {}.", file_name.string());
-        open_file(QString::fromStdString(file_name.string()));
-    }
-}
-
-bool file_manager::is_document_open()
+bool file_manager::file_open() const
 {
     return m_file_open;
 }
@@ -277,7 +269,7 @@ void file_manager::handle_directory_changed(const QString& path)
     Q_EMIT file_directory_changed(path);
 }
 
-void file_manager::update_recent_files(const QString& file)
+void file_manager::update_recent_files(const QString& file) const
 {
     QStringList list;
 

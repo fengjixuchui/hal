@@ -63,6 +63,9 @@ Q_SIGNALS:
     void module_net_inserted(std::shared_ptr<module> m, u32 inserted_net);
     void module_net_removed(std::shared_ptr<module> m, u32 removed_net);
 
+private Q_SLOTS:
+    void debug_handle_file_opened();
+
 private:
     void relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
     void relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);

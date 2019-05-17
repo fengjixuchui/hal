@@ -152,6 +152,8 @@ void module_model::add_item(module_item* item, module_item* parent)
     if (!parent)
         parent = m_root_item;
 
+    item->set_parent(parent);
+
     QModelIndex index = get_index(parent);
 
     int row = 0; // FIND CORRECT ROW

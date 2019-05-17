@@ -46,6 +46,16 @@ std::unique_ptr<python_context> g_python_context = nullptr;
 // ORDER = LOGGER -> SETTINGS -> (STYLE / RELAYS / OTHER STUFF) -> MAINWINDOW (= EVERYTHING ELSE & DATA)
 // USE POINTERS FOR EVERYTHING ?
 
+static void handle_program_arguments(const program_arguments& args)
+{
+    if (args.is_option_set("--input-file"))
+    {
+        auto file_name = hal::path(args.get_parameter("--input-file"));
+        log_info("gui", "GUI started with file {}.", file_name.string());
+        file_manager::get_instance()->open_file(QString::fromStdString(file_name.string()));
+    }
+}
+
 static void cleanup()
 {
     delete g_notification_manager;
@@ -141,7 +151,7 @@ bool plugin_gui::exec(program_arguments& args)
 
     g_settings_relay.init_defaults();
     main_window w;
-    file_manager::get_instance()->handle_program_arguments(args);
+    handle_program_arguments(args);
     w.show();
     return a.exec();
 }

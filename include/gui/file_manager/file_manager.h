@@ -37,10 +37,8 @@ class file_manager : public QObject
 public:
     static file_manager* get_instance();
 
-    void handle_program_arguments(const program_arguments& args);
-
-    bool is_document_open();
     QString file_name() const;
+    bool file_open() const;
 
 Q_SIGNALS:
     void file_opened(const QString& file_name);
@@ -58,11 +56,11 @@ private Q_SLOTS:
 
 private:
     file_manager(QObject* parent = nullptr);
-    void update_recent_files(const QString& file);
+    void update_recent_files(const QString& file) const;
 
     QString m_file_name;
     QFileSystemWatcher* m_file_watcher;
     bool m_file_open;
 };
 
-#endif    // FILE_MANAGER_H
+#endif // FILE_MANAGER_H

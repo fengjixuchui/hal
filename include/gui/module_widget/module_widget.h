@@ -62,6 +62,7 @@ public Q_SLOTS:
     //void filter();
     void toggle_searchbar();
     void filter(const QString& text);
+    void handle_context_menu_requested(const QPoint& point);
     void handle_filter_action_triggered();
     void handle_selection_changed(const QItemSelection& selected, const QItemSelection& deselected);
     void handle_current_changed(const QModelIndex& current, const QModelIndex& previous);

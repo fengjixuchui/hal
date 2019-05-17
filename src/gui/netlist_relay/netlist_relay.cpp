@@ -5,6 +5,9 @@
 #include "gui/module_model/module_item.h"
 #include "gui/module_model/module_model.h"
 
+#include "gui/file_manager/file_manager.h" // DEBUG LINE
+#include "gui/gui_globals.h" // DEBUG LINE
+
 #include <functional>
 
 #include <QDebug>
@@ -12,6 +15,7 @@
 netlist_relay::netlist_relay(QObject* parent) : QObject(parent),
     m_module_model(new module_model(this))
 {
+    connect(file_manager::get_instance(), &file_manager::file_opened, this, &netlist_relay::debug_handle_file_opened); // DEBUG LINE
     register_callbacks();
 }
 
@@ -99,6 +103,7 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
         if (parent_module)
             parent_item = m_module_items.value(parent_module->get_id());
 
+        m_module_items.insert(object->get_id(), item);
         m_module_model->add_item(item, parent_item);
 
         Q_EMIT module_created(object);
@@ -168,4 +173,13 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
         break;
     }
     }
+}
+
+void netlist_relay::debug_handle_file_opened()
+{
+    std::shared_ptr<module> top_module = g_netlist->get_top_module();
+    module_item* item = new module_item(QString::fromStdString(top_module->get_name()), top_module->get_id());
+
+    m_module_items.insert(top_module->get_id(), item);
+    m_module_model->add_item(item, nullptr);
 }
