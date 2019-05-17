@@ -2,7 +2,8 @@
 
 #include "module_model/module_item.h"
 
-#include "gui_globals.h"
+#include "gui/gui_globals.h"
+#include "gui/gui_utility.h"
 
 #include "netlist/gate.h"
 #include "netlist/net.h"
@@ -69,6 +70,17 @@ QVariant module_model::data(const QModelIndex& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
+
+    if (role== Qt::DecorationRole)
+        {
+            if (index.column() == 0)
+            {
+                QString run_icon_style = "all->#2BAD4A";
+                QString run_icon_path  = ":/icons/filled-circle";
+
+                return gui_utility::get_styled_svg_icon(run_icon_style, run_icon_path);
+            }
+        }
 
 //    if (role == Qt::UserRole && index.column() == 0)
 //    {
