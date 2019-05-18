@@ -1383,6 +1383,19 @@ dialog_overlay {
 background : rgba(0, 0, 0, 128);
 }
 
+QTreeView {
+    selection-background-color: green; /* Used on Mac ? TODO TEST*/
+    selection-color: white; /* Used on Mac ? TODO TEST*/
+    show-decoration-selected: 1;
+    outline: none;
+}
+
+QTreeView::item:selected {
+    background-color: green; /* Used on Windows ? TODO TEST*/
+    color: white;
+    border: none;
+}
+
 /*
 COLOR CONTRASTS
 BACKGROUND #090b0d

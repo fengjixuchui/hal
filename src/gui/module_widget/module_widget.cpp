@@ -26,7 +26,7 @@ module_widget::module_widget(QWidget* parent) : content_widget("Modules", parent
     m_tree_view(new QTreeView(this)),
     m_module_proxy_model(new module_proxy_model(this))
 {
-    connect(m_tree_view, &QTreeView::customContextMenuRequested, this, &module_widget::handle_context_menu_requested);
+    connect(m_tree_view, &QTreeView::customContextMenuRequested, this, &module_widget::handle_tree_view_context_menu_requested);
 
     m_module_proxy_model->setFilterKeyColumn(-1);
     m_module_proxy_model->setSourceModel(g_netlist_relay.get_module_model());
@@ -135,24 +135,26 @@ void module_widget::filter(const QString& text)
     }
 }
 
-void module_widget::handle_context_menu_requested(const QPoint& point)
+void module_widget::handle_tree_view_context_menu_requested(const QPoint& point)
 {
-    // CHECK CURRENT VIEW
-
-    // IF MODULE TREE
     QModelIndex index = m_tree_view->indexAt(point);
 
     if (!index.isValid())
         return;
 
     QMenu context_menu;
+
+    QAction select_action("Select Module", &context_menu);
     QAction add_selection_action("Add Selection to Module", &context_menu);
     QAction add_child_action("Add Child Module", &context_menu);
+    QAction change_name_action("Change Module Name", &context_menu);
     QAction change_color_action("Change Module Color", &context_menu);
     QAction delete_action("Delete Module", &context_menu);
 
+    context_menu.addAction(&select_action);
     context_menu.addAction(&add_selection_action);
     context_menu.addAction(&add_child_action);
+    context_menu.addAction(&change_name_action);
     context_menu.addAction(&change_color_action);
     context_menu.addAction(&delete_action);
 
@@ -162,7 +164,7 @@ void module_widget::handle_context_menu_requested(const QPoint& point)
         return;
 
     if (clicked == &change_color_action)
-        g_netlist_relay.debug_change_module_color(g_netlist_relay.get_module_model()->get_item(index));
+        g_netlist_relay.debug_change_module_color(g_netlist_relay.get_module_model()->get_item(m_module_proxy_model->mapToSource(index)));
 }
 
 void module_widget::handle_filter_action_triggered()

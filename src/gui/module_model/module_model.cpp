@@ -21,11 +21,16 @@ module_model::~module_model()
 
 QModelIndex module_model::index(int row, int column, const QModelIndex& parent) const
 {
-    if (!hasIndex(row, column, parent))
+    // BEHAVIOR FOR ILLEGAL INDICES IS UNDEFINED
+    // SEE QT DOCUMENTATION
+
+    // NECESSARY ???
+    if (column != 0)
         return QModelIndex();
 
-//    if (parent.isValid() && parent.column() != 0)
-//        return QModelIndex();
+    // PROBABLY REDUNDANT
+    if (parent.isValid() && parent.column() != 0)
+        return QModelIndex();
 
     module_item* parent_item = get_item(parent);
     module_item* child_item = parent_item->child(row);
