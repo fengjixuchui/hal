@@ -55,6 +55,7 @@ public:
 
     QString name() const;
     u32 id() const;
+    QColor color() const;
 
     void set_parent(module_item* parent);
     void set_name(const QString& name);

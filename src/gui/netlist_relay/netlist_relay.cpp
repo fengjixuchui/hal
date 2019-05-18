@@ -10,6 +10,7 @@
 
 #include <functional>
 
+#include <QColorDialog> // DEBUG LINE
 #include <QDebug>
 
 netlist_relay::netlist_relay(QObject* parent) : QObject(parent),
@@ -53,6 +54,22 @@ void netlist_relay::register_callbacks()
 module_model* netlist_relay::get_module_model()
 {
     return m_module_model;
+}
+
+void netlist_relay::debug_change_module_color(module_item* item)
+{
+    // NOT THREADSAFE
+
+    if (!item)
+        return;
+
+    QColor color = QColorDialog::getColor();
+
+    if (!color.isValid())
+        return;
+
+    item->set_color(color);
+    m_module_model->dataChanged(m_module_model->get_index(item), m_module_model->get_index(item));
 }
 
 void netlist_relay::relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data)

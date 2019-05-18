@@ -19,8 +19,9 @@ qreal graphics_scene::s_lod = 0;
 const qreal graphics_scene::s_grid_fade_start = 0.4;
 const qreal graphics_scene::s_grid_fade_end = 1.0;
 
-graphics_scene::grid_type graphics_scene::s_grid_type = graphics_scene::grid_type::lines;
+bool graphics_scene::s_grid_enabled = true;
 bool graphics_scene::s_grid_clusters_enabled = true;
+graph_widget_constants::grid_type graphics_scene::s_grid_type = graph_widget_constants::grid_type::lines;
 
 QColor graphics_scene::s_grid_base_line_color = QColor(30, 30, 30);
 QColor graphics_scene::s_grid_cluster_line_color = QColor(15, 15, 15);
@@ -28,7 +29,7 @@ QColor graphics_scene::s_grid_cluster_line_color = QColor(15, 15, 15);
 QColor graphics_scene::s_grid_base_dot_color = QColor(25, 25, 25);
 QColor graphics_scene::s_grid_cluster_dot_color = QColor(170, 160, 125);
 
-void graphics_scene::set_lod(qreal lod)
+void graphics_scene::set_lod(const qreal& lod)
 {
     s_lod = lod;
 
@@ -54,6 +55,21 @@ void graphics_scene::set_lod(qreal lod)
     }
 }
 
+void graphics_scene::set_grid_enabled(const bool& value)
+{
+    s_grid_enabled = value;
+}
+
+void graphics_scene::set_grid_clusters_enabled(const bool& value)
+{
+    s_grid_clusters_enabled = value;
+}
+
+void graphics_scene::set_grid_type(const graph_widget_constants::grid_type& grid_type)
+{
+    s_grid_type = grid_type;
+}
+
 void graphics_scene::set_grid_base_line_color(const QColor& color)
 {
     s_grid_base_line_color = color;
@@ -75,7 +91,6 @@ void graphics_scene::set_grid_cluster_dot_color(const QColor& color)
 }
 
 graphics_scene::graphics_scene(QObject* parent) : QGraphicsScene(parent),
-    m_grid_enabled(true),
     m_left_gate_navigation_popup(new gate_navigation_popup(gate_navigation_popup::type::left)),
     m_right_gate_navigation_popup(new gate_navigation_popup(gate_navigation_popup::type::right))
 {
@@ -207,12 +222,7 @@ void graphics_scene::update_utility_items()
 
 bool graphics_scene::grid_enabled() const
 {
-    return m_grid_enabled;
-}
-
-void graphics_scene::set_grid_enabled(const bool value)
-{
-    m_grid_enabled = value;
+    return s_grid_enabled;
 }
 
 void graphics_scene::connect_all()
@@ -416,7 +426,7 @@ void graphics_scene::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void graphics_scene::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    if (!m_grid_enabled)
+    if (!s_grid_enabled)
         return;
 
     if (s_lod < s_grid_fade_start)
@@ -442,7 +452,7 @@ void graphics_scene::drawBackground(QPainter* painter, const QRectF& rect)
 
     switch (s_grid_type)
     {
-    case grid_type::lines:
+    case graph_widget_constants::grid_type::lines:
     {
         QVarLengthArray<QLine, 512> base_lines;
         QVarLengthArray<QLine, 64> cluster_lines;
@@ -480,7 +490,7 @@ void graphics_scene::drawBackground(QPainter* painter, const QRectF& rect)
         break;
     }
 
-    case grid_type::dots:
+    case graph_widget_constants::grid_type::dots:
     {
         QVector<QPoint> base_points;
         QVector<QPoint> cluster_points;

@@ -71,16 +71,31 @@ QVariant module_model::data(const QModelIndex& index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role== Qt::DecorationRole)
-        {
-            if (index.column() == 0)
-            {
-                QString run_icon_style = "all->#2BAD4A";
-                QString run_icon_path  = ":/icons/filled-circle";
+    module_item* item = static_cast<module_item*>(index.internalPointer());
 
-                return gui_utility::get_styled_svg_icon(run_icon_style, run_icon_path);
-            }
+    if (!item)
+        return QVariant();
+
+    switch (role)
+    {
+    case Qt::DecorationRole:
+    {
+        if (index.column() == 0)
+        {
+            QString run_icon_style = "all->" + item->color().name();
+            QString run_icon_path  = ":/icons/filled-circle";
+
+            return gui_utility::get_styled_svg_icon(run_icon_style, run_icon_path);
         }
+        break;
+    }
+    case Qt::DisplayRole:
+    {
+        return item->data(index.column());
+        break;
+    }
+    default: return QVariant();
+    }
 
 //    if (role == Qt::UserRole && index.column() == 0)
 //    {
@@ -95,15 +110,6 @@ QVariant module_model::data(const QModelIndex& index, int role) const
 //        return QVariant();
 //    }
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
-
-    module_item* item = static_cast<module_item*>(index.internalPointer());
-
-    if (item)
-        return item->data(index.column());
-    else
-        return QVariant();
 }
 
 Qt::ItemFlags module_model::flags(const QModelIndex& index) const

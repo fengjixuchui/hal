@@ -1,16 +1,15 @@
 #include "graph_widget/graph_graphics_view.h"
 
-#include "graph_widget/graph_widget.h"
-#include "graph_widget/graph_layouter_manager.h"
-#include "graph_widget/old_graph_widget.h"
-#include "graph_widget/graph_widget_constants.h"
-#include "graph_widget/graphics_items/global_graphics_net.h"
-#include "graph_widget/graphics_items/graphics_gate.h"
-#include "graph_widget/graphics_items/graphics_item.h"
-#include "graph_widget/graphics_items/separated_graphics_net.h"
-#include "graph_widget/graphics_items/standard_graphics_net.h"
-#include "graph_widget/graphics_scene.h"
-#include "gui_globals.h"
+#include "gui/graph_widget/graph_widget.h"
+#include "gui/graph_widget/graph_layouter_manager.h"
+#include "gui/graph_widget/graph_widget_constants.h"
+#include "gui/graph_widget/graphics_items/global_graphics_net.h"
+#include "gui/graph_widget/graphics_items/graphics_gate.h"
+#include "gui/graph_widget/graphics_items/graphics_item.h"
+#include "gui/graph_widget/graphics_items/separated_graphics_net.h"
+#include "gui/graph_widget/graphics_items/standard_graphics_net.h"
+#include "gui/graph_widget/graphics_scene.h"
+#include "gui/gui_globals.h"
 
 #include <QAction>
 #include <QColorDialog>
@@ -18,9 +17,12 @@
 #include <QStyleOptionGraphicsItem>
 #include <QWheelEvent>
 
-#include <QDebug>
-
-graph_graphics_view::graph_graphics_view(QWidget* parent) : QGraphicsView(parent)
+graph_graphics_view::graph_graphics_view(QWidget* parent) : QGraphicsView(parent),
+    m_antialiasing_enabled(false),
+    m_cosmetic_nets_enabled(false),
+    m_grid_enabled(true),
+    m_grid_clusters_enabled(true),
+    m_grid_type(graph_widget_constants::grid_type::lines)
 {
     connect(this, &graph_graphics_view::customContextMenuRequested, this, &graph_graphics_view::show_context_menu);
 
@@ -64,10 +66,14 @@ void graph_graphics_view::paintEvent(QPaintEvent* event)
 {
     qreal lod = QStyleOptionGraphicsItem::levelOfDetailFromTransform(transform());
 
+    // USE CONSISTENT METHOD NAMES
     graphics_scene::set_lod(lod);
+    graphics_scene::set_grid_enabled(m_grid_enabled);
+    graphics_scene::set_grid_clusters_enabled(m_grid_clusters_enabled);
+    graphics_scene::set_grid_type(m_grid_type);
+
     graphics_item::set_lod(lod);
 
-    // TEST
     separated_graphics_net::update_alpha();
     global_graphics_net::update_alpha();
 
@@ -105,7 +111,7 @@ void graph_graphics_view::keyPressEvent(QKeyEvent* event)
     {
         case Qt::Key_Space:
         {
-            qDebug() << "Space pressed";
+            //qDebug() << "Space pressed";
         }
         break;
     }
@@ -190,4 +196,10 @@ void graph_graphics_view::show_context_menu(const QPoint& pos)
     }
 
     context_menu.exec(mapToGlobal(pos));
+    update();
+}
+
+void graph_graphics_view::toggle_antialiasing()
+{
+    m_antialiasing_enabled ? setRenderHint(QPainter::Antialiasing, false) : setRenderHint(QPainter::Antialiasing, true);
 }

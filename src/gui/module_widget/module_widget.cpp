@@ -160,6 +160,9 @@ void module_widget::handle_context_menu_requested(const QPoint& point)
 
     if (!clicked)
         return;
+
+    if (clicked == &change_color_action)
+        g_netlist_relay.debug_change_module_color(g_netlist_relay.get_module_model()->get_item(index));
 }
 
 void module_widget::handle_filter_action_triggered()

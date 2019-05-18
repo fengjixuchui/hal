@@ -48,16 +48,11 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
     QToolButton* change_context_button = new QToolButton();
     change_context_button->setText("Change Context");
 
-    QToolButton* grid_button = new QToolButton();
-    grid_button->setText("Grid");
-
     connect(create_context_button, &QToolButton::clicked, this, &graph_widget::debug_create_context);
     connect(change_context_button, &QToolButton::clicked, this, &graph_widget::debug_change_context);
-    connect(grid_button, &QToolButton::clicked, this, &graph_widget::toggle_grid);
 
     toolbar->addWidget(create_context_button);
     toolbar->addWidget(change_context_button);
-    toolbar->addWidget(grid_button);
 }
 
 // TODO ADD SOUND OR ERROR MESSAGE TO FAILED NAVIGATION ATTEMPTS
@@ -411,16 +406,6 @@ void graph_widget::expand(const u32 selected_gate, const u32 new_net, const u32 
         m_overlay->show();
 
     m_current_expansion = new_gate;
-}
-
-void graph_widget::toggle_grid()
-{
-    // THIS SHOULD PROBABLY BE TOGGLED FOR THE VIEW INSTEAD OF THE SCENE
-    if (!m_context)
-        return;
-
-    m_context->layouter()->scene()->set_grid_enabled(!m_context->layouter()->scene()->grid_enabled());
-    m_graphics_widget->view()->update();
 }
 
 void graph_widget::debug_create_context()

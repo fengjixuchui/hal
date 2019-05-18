@@ -12,15 +12,14 @@ class graphics_gate;
 class graphics_item;
 class graphics_net;
 
+namespace graph_widget_constants
+{
+enum class grid_type;
+}
+
 class graphics_scene : public QGraphicsScene
 {
     Q_OBJECT
-
-    enum class grid_type
-    {
-        lines,
-        dots
-    };
 
     // TODO USE THESE TO IMPROVE READABILITY
 //    struct gate_data
@@ -36,7 +35,10 @@ class graphics_scene : public QGraphicsScene
 //    };
 
 public:
-    static void set_lod(qreal lod);
+    static void set_lod(const qreal& lod);
+    static void set_grid_enabled(const bool& value);
+    static void set_grid_clusters_enabled(const bool& value);
+    static void set_grid_type(const graph_widget_constants::grid_type& grid_type);
 
     // HACK
     // ALTERNATIVELY ADRESS ADAPTER MEMBERS DIRECTLY
@@ -56,7 +58,6 @@ public:
     void update_utility_items();
 
     bool grid_enabled() const;
-    void set_grid_enabled(const bool value);
 
     // EXPERIMENTAL METHODS
     void connect_all();
@@ -79,8 +80,9 @@ private:
     static const qreal s_grid_fade_start;
     static const qreal s_grid_fade_end;
 
-    static grid_type s_grid_type;
+    static bool s_grid_enabled;
     static bool s_grid_clusters_enabled;
+    static graph_widget_constants::grid_type s_grid_type;
 
     static QColor s_grid_base_line_color;
     static QColor s_grid_cluster_line_color;
@@ -92,8 +94,6 @@ private:
     using QGraphicsScene::removeItem;
 
     void drawBackground(QPainter* painter, const QRectF& rect) Q_DECL_OVERRIDE;
-
-    bool m_grid_enabled;
 
     QVector<QPair<u32, graphics_gate*>> m_gate_vector;
     QVector<QPair<u32, graphics_net*>> m_net_vector;

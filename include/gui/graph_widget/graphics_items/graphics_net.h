@@ -58,7 +58,6 @@ public:
 
 protected:
     static QPen s_pen;
-
     static qreal s_stroke_width;
 
     QRectF m_rect;
@@ -67,4 +66,4 @@ protected:
     std::shared_ptr<net> m_net;
 };
 
-#endif    // GRAPHICS_NET_H
+#endif // GRAPHICS_NET_H

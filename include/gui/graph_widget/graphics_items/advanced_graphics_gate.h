@@ -6,14 +6,14 @@
 class advanced_graphics_gate : public graphics_gate
 {
 public:
+    static void load_settings();
+
     advanced_graphics_gate(std::shared_ptr<gate> g, bool adjust_size_to_grid = true);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) Q_DECL_OVERRIDE;
 
     QPointF get_input_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
     QPointF get_output_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
-
-    static void load_settings();
 
 private:
     static QPen s_pen;
@@ -45,9 +45,7 @@ private:
     static qreal s_inner_name_type_spacing;
     static qreal s_outer_name_type_spacing;
 
-    static bool s_conform_to_grid;
-
-    void format(bool adjust_size_to_grid);
+    void format(const bool& adjust_size_to_grid);
 
     QPointF m_name_position;
     QPointF m_type_position;

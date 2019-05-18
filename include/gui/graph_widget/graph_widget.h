@@ -58,7 +58,6 @@ private Q_SLOTS:
 
 private:
     void expand(const u32 selected_gate, const u32 new_net, const u32 new_gate);
-    void toggle_grid();
 
     void debug_create_context();
     void debug_change_context();

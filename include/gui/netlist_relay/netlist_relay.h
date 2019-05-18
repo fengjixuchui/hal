@@ -47,6 +47,8 @@ public:
 
     module_model* get_module_model();
 
+    void debug_change_module_color(module_item* item);
+
 Q_SIGNALS:
     void netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
     void net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);

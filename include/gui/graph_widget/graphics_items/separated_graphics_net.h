@@ -55,4 +55,4 @@ private:
     QVector<QPointF> m_input_wires;
 };
 
-#endif    // SEPARATED_GRAPHICS_NET_H
+#endif // SEPARATED_GRAPHICS_NET_H

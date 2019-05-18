@@ -86,6 +86,11 @@ u32 module_item::id() const
     return m_id;
 }
 
+QColor module_item::color() const
+{
+    return m_color;
+}
+
 void module_item::set_parent(module_item* parent)
 {
     m_parent = parent;

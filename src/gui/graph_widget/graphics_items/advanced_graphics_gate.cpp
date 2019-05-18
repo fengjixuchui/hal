@@ -4,8 +4,8 @@
 
 #include "netlist/gate.h"
 
-#include "graph_widget/graph_widget_constants.h"
-#include "gui_globals.h"
+#include "gui/graph_widget/graph_widget_constants.h"
+#include "gui/gui_globals.h"
 
 #include <QFont>
 #include <QFontMetricsF>
@@ -25,35 +25,29 @@ QFont advanced_graphics_gate::s_pin_font;
 qreal advanced_graphics_gate::s_name_font_height;
 qreal advanced_graphics_gate::s_type_font_height;
 
-qreal advanced_graphics_gate::s_color_bar_height;
+qreal advanced_graphics_gate::s_color_bar_height = 30;
 
-qreal advanced_graphics_gate::s_pin_inner_horizontal_spacing;
-qreal advanced_graphics_gate::s_pin_outer_horizontal_spacing;
+qreal advanced_graphics_gate::s_pin_inner_horizontal_spacing = 12;
+qreal advanced_graphics_gate::s_pin_outer_horizontal_spacing = 2.4;
 
-qreal advanced_graphics_gate::s_pin_inner_vertical_spacing;
-qreal advanced_graphics_gate::s_pin_outer_vertical_spacing;
-qreal advanced_graphics_gate::s_pin_upper_vertical_spacing;
-qreal advanced_graphics_gate::s_pin_lower_vertical_spacing;
+qreal advanced_graphics_gate::s_pin_inner_vertical_spacing = 1.2;
+qreal advanced_graphics_gate::s_pin_outer_vertical_spacing = 0.6;
+qreal advanced_graphics_gate::s_pin_upper_vertical_spacing = 0.6;
+qreal advanced_graphics_gate::s_pin_lower_vertical_spacing = 1.8;
 
 qreal advanced_graphics_gate::s_pin_font_height;
 qreal advanced_graphics_gate::s_pin_font_ascent;
 qreal advanced_graphics_gate::s_pin_font_descent;
 qreal advanced_graphics_gate::s_pin_font_baseline;
 
-qreal advanced_graphics_gate::s_inner_name_type_spacing;
-qreal advanced_graphics_gate::s_outer_name_type_spacing;
-
-bool advanced_graphics_gate::s_conform_to_grid;
+qreal advanced_graphics_gate::s_inner_name_type_spacing = 1.2;
+qreal advanced_graphics_gate::s_outer_name_type_spacing = 3;
 
 void advanced_graphics_gate::load_settings()
 {
-    // TODO STYLESHEET SUPPORT ?
-
-    // TODO ADD USER TOGGLE FOR PEN WIDTH / COSMETIC ?
     s_pen.setCosmetic(true);
     s_pen.setJoinStyle(Qt::MiterJoin);
 
-    //s_text_color = Qt::lightGray;
     s_text_color = QColor(160, 160, 160);
 
     QFont font = QFont("Iosevka");
@@ -75,22 +69,6 @@ void advanced_graphics_gate::load_settings()
     s_pin_font_descent = pin_fm.descent();
     s_pin_font_baseline = 1;
 
-    // TODO DEFINE VALUES RELATIVE TO FONT SIZE
-    s_color_bar_height = 30;
-
-    s_pin_outer_horizontal_spacing = 2.4;
-    s_pin_inner_horizontal_spacing = 12;
-
-    s_pin_inner_vertical_spacing = 1.2;
-    s_pin_outer_vertical_spacing = 0.6;
-    s_pin_upper_vertical_spacing = 0.6;
-    s_pin_lower_vertical_spacing = 1.8;
-
-    s_inner_name_type_spacing = 1.2;
-    s_outer_name_type_spacing = 3;
-
-    s_conform_to_grid = true;
-
     s_selection_color = QColor(240, 173, 0);
 }
 
@@ -104,7 +82,6 @@ void advanced_graphics_gate::paint(QPainter* painter, const QStyleOptionGraphics
 {
     Q_UNUSED(widget);
 
-    //if (s_lod < 0.2)
     if (s_lod < graph_widget_constants::gate_min_lod)
     {
         painter->fillRect(QRect(0, 0, m_width, m_height), (option->state & QStyle::State_Selected) ? s_selection_color : m_color);
@@ -188,7 +165,7 @@ void advanced_graphics_gate::paint(QPainter* painter, const QStyleOptionGraphics
                 }
             }
 
-        if (s_lod < 0.4)
+        if (s_lod < graph_widget_constants::gate_max_lod)
         {
             QColor fade = m_color;
 
@@ -273,7 +250,7 @@ QPointF advanced_graphics_gate::get_output_pin_scene_position(const QString& typ
     return mapToScene(QPointF(m_width, y));
 }
 
-void advanced_graphics_gate::format(bool adjust_size_to_grid)
+void advanced_graphics_gate::format(const bool& adjust_size_to_grid)
 {
     QFontMetricsF name_fm(s_name_font);
     qreal name_width = name_fm.width(m_name);

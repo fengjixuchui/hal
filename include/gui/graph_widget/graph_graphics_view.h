@@ -28,6 +28,11 @@
 
 class graphics_item;
 
+namespace graph_widget_constants
+{
+enum class grid_type;
+}
+
 class graph_graphics_view : public QGraphicsView
 {
     Q_OBJECT
@@ -53,8 +58,17 @@ private:
 
     void show_context_menu(const QPoint& pos);
 
+    void toggle_antialiasing();
+
     //TODO REPLACE WITH RELAY
     graphics_item* m_item;
+
+    bool m_antialiasing_enabled;
+    bool m_cosmetic_nets_enabled;
+
+    bool m_grid_enabled;
+    bool m_grid_clusters_enabled;
+    graph_widget_constants::grid_type m_grid_type;
 };
 
 #endif // GRAPH_GRAPHICS_VIEW_H
