@@ -27,7 +27,7 @@
 
 #include "def.h"
 
-#include "module_model/module_item.h"
+#include "gui/module_model/module_item.h"
 
 #include <QAbstractItemModel>
 #include <QModelIndex>
@@ -57,9 +57,6 @@ public:
 
     void add_item(module_item* item, module_item* parent = nullptr);
     void remove_item(module_item* item);
-
-//    void insert_row(const int position, const QModelIndex& parent, module_item* child);
-//    void remove_row(const int position, const QModelIndex& parent);
 
 private:
     module_item* m_root_item; // IF TOP MODULE CANT BE DELETED THIS IS NOT NECESSARY

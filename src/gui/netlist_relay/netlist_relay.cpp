@@ -11,6 +11,7 @@
 #include <functional>
 
 #include <QColorDialog> // DEBUG LINE
+#include <QInputDialog> // DEBUG LINE
 #include <QDebug>
 
 netlist_relay::netlist_relay(QObject* parent) : QObject(parent),
@@ -70,6 +71,63 @@ void netlist_relay::debug_change_module_color(module_item* item)
 
     item->set_color(color);
     m_module_model->dataChanged(m_module_model->get_index(item), m_module_model->get_index(item));
+}
+
+void netlist_relay::debug_add_selection_to_module(module_item* item)
+{
+    // NOT THREADSAFE
+    // TODO DECIDE HOW TO HANDLE MODULES
+
+    if (!item)
+        return;
+
+    std::shared_ptr<module> m = g_netlist->get_module_by_id(item->id());
+
+    if (!m)
+        return;
+
+    if (g_selection_relay.m_number_of_selected_gates)
+    {
+        for (int i = 0; i < g_selection_relay.m_number_of_selected_gates; ++i)
+        {
+            std::shared_ptr<gate> g = g_netlist->get_gate_by_id(g_selection_relay.m_selected_gates[i]);
+
+            if (g)
+                m->insert_gate(g);
+        }
+    }
+
+    if (g_selection_relay.m_number_of_selected_nets)
+    {
+        for (int i = 0; i < g_selection_relay.m_number_of_selected_nets; ++i)
+        {
+            std::shared_ptr<net> n = g_netlist->get_net_by_id(g_selection_relay.m_selected_nets[i]);
+
+            if (n)
+                m->insert_net(n);
+        }
+    }
+}
+
+void netlist_relay::debug_add_child_module(module_item* item)
+{
+    // NOT THREADSAFE
+
+    bool ok;
+    QString name = QInputDialog::getText(nullptr, "", "Module Name:", QLineEdit::Normal, "", &ok);
+
+    if (!ok || name.isEmpty())
+        return;
+
+    if (!item)
+        return;
+
+    std::shared_ptr<module> m = g_netlist->get_module_by_id(item->id());
+
+    if (!m)
+        return;
+
+    std::shared_ptr<module> s = g_netlist->create_module(g_netlist->get_unique_module_id(), name.toStdString(), m);
 }
 
 void netlist_relay::relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data)

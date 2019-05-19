@@ -179,7 +179,15 @@ void module_model::add_item(module_item* item, module_item* parent)
 
     QModelIndex index = get_index(parent);
 
-    int row = 0; // FIND CORRECT ROW
+    int row = 0;
+
+    while (row < parent->childCount())
+    {
+        if (item->name() < parent->child(row)->name())
+            break;
+        else
+            ++row;
+    }
 
     beginInsertRows(index, row, row);
     parent->insert_child(row, item);
@@ -204,21 +212,3 @@ void module_model::remove_item(module_item* item)
     parent_item->remove_child(item);
     endRemoveRows();
 }
-
-//void module_model::insert_row(const int position, const QModelIndex& parent, module_item* child)
-//{
-//    module_item* parent_item = get_item(parent);
-
-//    beginInsertRows(parent, position, position);
-//    parent_item->insert_child(position, child);
-//    endInsertRows();
-//}
-
-//void module_model::remove_row(const int position, const QModelIndex& parent)
-//{
-//    module_item* parent_item = get_item(parent);
-
-////    beginRemoveRows(parent, position, position);
-////    parent_item->remove_child(position);
-////    endRemoveRows();
-//}
