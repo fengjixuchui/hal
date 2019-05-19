@@ -65,4 +65,4 @@ protected:
     std::shared_ptr<gate> m_gate;
 };
 
-#endif    // GRAPHICS_GATE_H
+#endif // GRAPHICS_GATE_H

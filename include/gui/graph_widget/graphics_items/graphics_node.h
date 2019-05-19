@@ -27,26 +27,28 @@ public:
     virtual QPointF get_input_pin_scene_position(const QString& type) const = 0;
     virtual QPointF get_output_pin_scene_position(const QString& type) const = 0;
 
-//    std::string get_input_pin_type_at_position(const size_t pos) const = 0;
-//    std::string get_output_pin_type_at_position(const size_t pos) const = 0;
+//    virtual std::string get_input_pin_type_at_position(const size_t pos) const = 0;
+//    virtual std::string get_output_pin_type_at_position(const size_t pos) const = 0;
 
-//    qreal x_offset() const;
-//    qreal y_offset() const;
+    virtual void set_visuals(const visuals& v) = 0;
 
     qreal width() const;
     qreal height() const;
 
+//    qreal x_offset() const;
+//    qreal y_offset() const;
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) Q_DECL_OVERRIDE;
 
-//    qreal m_x_offset;
-//    qreal m_y_offset;
+    QString m_name;
+//    QString m_type;
 
     qreal m_width;
     qreal m_height;
 
-//    QString m_name;
-//    QString m_type;
+//    qreal m_x_offset;
+//    qreal m_y_offset;
 };
 
 #endif // GRAPHICS_NODE_H
