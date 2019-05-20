@@ -35,7 +35,7 @@ public:
 
     bool conform_to_grid() const;
 
-    bool available() const;
+    bool available() const; // TODO FIX BAD NAMING
 
     void update();
 
@@ -51,7 +51,7 @@ private Q_SLOTS:
     void handle_net_event(net_event_handler::event ev, std::shared_ptr<net> net, u32 associated_data);
     void handle_module_event(module_event_handler::event ev, std::shared_ptr<module> module, u32 associated_data);
 
-    void handle_layouter_finished();
+    void handle_scene_update_finished();
 
 private:
     void update_scene();

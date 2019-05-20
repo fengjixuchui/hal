@@ -18,11 +18,9 @@ graph_context::graph_context(const QString& name, const u32 scope, QObject* pare
     m_conform_to_grid(false),
     m_scene_available(true)
 {
-    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_layouter_finished);
+    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_scene_update_finished);
 
     // DEBUG CODE
-    Q_UNUSED(name)
-
     static int i = 1;
     m_name = "Context " + QString::number(i);
     ++i;
@@ -135,7 +133,8 @@ bool graph_context::available() const
 void graph_context::update()
 {
     // TODO
-    m_layouter->layout();
+    //m_layouter->layout();
+    update_scene();
 }
 
 void graph_context::handle_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> netlist, u32 associated_data)
@@ -166,7 +165,7 @@ void graph_context::handle_module_event(module_event_handler::event ev, std::sha
     Q_UNUSED(associated_data);
 }
 
-void graph_context::handle_layouter_finished()
+void graph_context::handle_scene_update_finished()
 {
     // CALL SHADER
 

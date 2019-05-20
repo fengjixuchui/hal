@@ -44,23 +44,23 @@ public:
 
     virtual void setup_toolbar(toolbar* toolbar) Q_DECL_OVERRIDE;
 
-    void handle_navigation_left_request();
-    void handle_navigation_right_request();
-    void handle_navigation_up_request();
-    void handle_navigation_down_request();
-
 protected:
     void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void handle_navigation_jump_requested(const u32 from_gate, const u32 via_net, const u32 to_gate);
-    void expanded();
 
 private:
-    void expand(const u32 selected_gate, const u32 new_net, const u32 new_gate);
+    void handle_navigation_left_request();
+    void handle_navigation_right_request();
+    void handle_navigation_up_request();
+    void handle_navigation_down_request();
 
     void debug_create_context();
     void debug_change_context();
+
+    void handle_updating_scene();
+    void handle_scene_available();
 
     graphics_widget* m_graphics_widget;
     graph_context* m_context;

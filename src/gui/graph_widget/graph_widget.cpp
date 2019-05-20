@@ -1,17 +1,17 @@
-#include "graph_widget/graph_widget.h"
+#include "gui/graph_widget/graph_widget.h"
 
 #include "netlist/gate.h"
 #include "netlist/module.h"
 #include "netlist/net.h"
 
-#include "graph_widget/graph_context_manager.h"
-#include "graph_widget/graph_navigation_widget.h"
-#include "graph_widget/graph_layout_progress_widget.h"
-#include "graph_widget/graphics_scene.h"
-#include "graph_widget/graphics_widget.h"
-#include "gui_globals.h"
-#include "overlay/dialog_overlay.h"
-#include "toolbar/toolbar.h"
+#include "gui/graph_widget/graph_context_manager.h"
+#include "gui/graph_widget/graph_navigation_widget.h"
+#include "gui/graph_widget/graph_layout_progress_widget.h"
+#include "gui/graph_widget/graphics_scene.h"
+#include "gui/graph_widget/graphics_widget.h"
+#include "gui/gui_globals.h"
+#include "gui/overlay/dialog_overlay.h"
+#include "gui/toolbar/toolbar.h"
 
 #include <QInputDialog>
 #include <QToolButton>
@@ -53,6 +53,118 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
 
     toolbar->addWidget(create_context_button);
     toolbar->addWidget(change_context_button);
+}
+
+void graph_widget::keyPressEvent(QKeyEvent* event)
+{
+    if (!m_context)
+        return;
+
+    if (!m_context->available())
+        return;
+
+    //if (m_context && m_context->available())
+
+    switch (event->key())
+    {
+    case Qt::Key_Left:
+    {
+        handle_navigation_left_request();
+        break;
+    }
+    case Qt::Key_Right:
+    {
+        handle_navigation_right_request();
+        break;
+    }
+    case Qt::Key_Up:
+    {
+        handle_navigation_up_request();
+        break;
+    }
+    case Qt::Key_Down:
+    {
+        handle_navigation_down_request();
+        break;
+    }
+    default: break;
+    }
+}
+
+void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u32 via_net, const u32 to_gate)
+{
+    // ASSERT INPUTS ARE VALID ?
+    std::shared_ptr<gate> g = g_netlist->get_gate_by_id(from_gate);
+
+    if (!g)
+        return;
+
+    std::shared_ptr<net> n = g_netlist->get_net_by_id(via_net);
+
+    if (!n)
+        return;
+
+    g = g_netlist->get_gate_by_id(to_gate);
+
+    if (!g)
+        return;
+
+    bool contains_net = false;
+    bool contains_gate = false;
+
+    if (m_context->nets().contains(via_net))
+        contains_net = true;
+
+    if (m_context->gates().contains(to_gate))
+        contains_gate = true;
+
+    bool update_necessary = false;
+
+    if (!contains_net || !contains_gate)
+    {
+        if (m_context->scope())
+        {
+            // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
+            std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
+
+            if (!m)
+                return; // INVALID SCOPE
+
+            if (!m->contains_net(n, true))
+                return; // NET OUT OF SCOPE
+
+            if (!m->contains_gate(g, true))
+                return; // GATE OUT OF SCOPE
+        }
+
+        QSet<u32> gates;
+        QSet<u32> nets;
+
+        if (!contains_net)
+            nets.insert(via_net);
+
+        if (!contains_gate)
+            gates.insert(to_gate);
+
+        // ADD TO CONTEXT
+        m_context->add(gates, nets);
+        update_necessary = true;
+    }
+    // SELECT IN RELAY
+    g_selection_relay.m_selected_gates[0] = to_gate;
+    g_selection_relay.m_number_of_selected_gates = 1;
+    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
+    g_selection_relay.m_focus_id = to_gate;
+    g_selection_relay.m_subfocus = selection_relay::subfocus::left;
+    g_selection_relay.m_subfocus_index = 0; // TODO
+
+    g_selection_relay.relay_selection_changed(nullptr);
+
+    // RELAYOUT
+    if (update_necessary)
+        m_context->update();
+
+    // JUMP TO THE GATE
 }
 
 // TODO ADD SOUND OR ERROR MESSAGE TO FAILED NAVIGATION ATTEMPTS
@@ -231,183 +343,6 @@ void graph_widget::handle_navigation_down_request()
             g_selection_relay.navigate_down();
 }
 
-void graph_widget::keyPressEvent(QKeyEvent* event)
-{
-    if (!m_context)
-        return;
-
-    if (!m_context->available())
-        return;
-
-    //if (m_context && m_context->available())
-
-    switch (event->key())
-    {
-    case Qt::Key_Left:
-    {
-        handle_navigation_left_request();
-        break;
-    }
-    case Qt::Key_Right:
-    {
-        handle_navigation_right_request();
-        break;
-    }
-    case Qt::Key_Up:
-    {
-        handle_navigation_up_request();
-        break;
-    }
-    case Qt::Key_Down:
-    {
-        handle_navigation_down_request();
-        break;
-    }
-    default: break;
-    }
-}
-
-void graph_widget::expanded()
-{
-    connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
-
-    m_overlay->hide();
-    m_progress_widget->stop();
-    m_overlay->set_widget(m_navigation_widget);
-
-    //m_layouter->scene()->connect_all();
-
-    //m_graphics_widget->view()->setScene(m_layouter->scene());
-
-    m_graphics_widget->setFocus();
-
-    // FIND BETTER WAY TO DO THIS
-    g_selection_relay.m_selected_gates[0] = m_current_expansion;
-    g_selection_relay.m_number_of_selected_gates = 1;
-    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
-    g_selection_relay.m_focus_id = m_current_expansion;
-    // TODO SET CORRECT SUBSELECTION
-    g_selection_relay.m_subfocus = selection_relay::subfocus::none;
-    g_selection_relay.relay_selection_changed(nullptr);
-
-    // JUMP TO THE GATE
-//    const QGraphicsItem* item = m_layouter->scene()->get_gate_item(m_current_expansion);
-
-//    qDebug() << "item in scene: " << (bool)item;
-
-//    if (item)
-//        m_graphics_widget->view()->ensureVisible(item);
-}
-
-void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u32 via_net, const u32 to_gate)
-{
-    // ASSERT INPUTS ARE VALID ?
-    std::shared_ptr<gate> g = g_netlist->get_gate_by_id(from_gate);
-
-    if (!g)
-        return;
-
-    std::shared_ptr<net> n = g_netlist->get_net_by_id(via_net);
-
-    if (!n)
-        return;
-
-    g = g_netlist->get_gate_by_id(to_gate);
-
-    if (!g)
-        return;
-
-    bool contains_net = false;
-    bool contains_gate = false;
-
-    if (m_context->nets().contains(via_net))
-        contains_net = true;
-
-    if (m_context->gates().contains(to_gate))
-        contains_gate = true;
-
-    bool update_necessary = false;
-
-    if (!contains_net || !contains_gate)
-    {
-        if (m_context->scope())
-        {
-            // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
-            std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
-
-            if (!m)
-                return; // INVALID SCOPE
-
-            if (!m->contains_net(n, true))
-                return; // NET OUT OF SCOPE
-
-            if (!m->contains_gate(g, true))
-                return; // GATE OUT OF SCOPE
-        }
-
-        QSet<u32> gates;
-        QSet<u32> nets;
-
-        if (!contains_net)
-            nets.insert(via_net);
-
-        if (!contains_gate)
-            gates.insert(to_gate);
-
-        // ADD TO CONTEXT
-        m_context->add(gates, nets);
-        update_necessary = true;
-    }
-    // SELECT IN RELAY
-    g_selection_relay.m_selected_gates[0] = to_gate;
-    g_selection_relay.m_number_of_selected_gates = 1;
-    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
-    g_selection_relay.m_focus_id = to_gate;
-    g_selection_relay.m_subfocus = selection_relay::subfocus::left;
-    g_selection_relay.m_subfocus_index = 0; // TODO
-
-    g_selection_relay.relay_selection_changed(nullptr);
-
-    // RELAYOUT
-    if (update_necessary)
-        m_context->update();
-
-    // JUMP TO THE GATE
-    //const QGraphicsItem* item = m_layouter->scene()->get_gate_item(to_gate);
-
-    //        if (item)
-    //            m_graphics_widget->view()->ensureVisible(item);
-
-    m_overlay->hide();
-    m_graphics_widget->setFocus();
-
-//    expand(from_gate, via_net, to_gate);
-}
-
-void graph_widget::expand(const u32 selected_gate, const u32 new_net, const u32 new_gate)
-{
-    disconnect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
-
-    // TEST
-    // CHECK POINTERS
-    if (g_netlist->get_net_by_id(new_net)->get_src().get_gate()->get_id() == selected_gate)
-        m_progress_widget->set_direction(graph_layout_progress_widget::direction::right);
-    else
-        m_progress_widget->set_direction(graph_layout_progress_widget::direction::left);
-
-    m_graphics_widget->view()->setScene(nullptr);
-
-    //m_layouter->scene()->disconnect_all();
-
-    m_overlay->set_widget(m_progress_widget);
-    m_progress_widget->start();
-
-    if (m_overlay->isHidden())
-        m_overlay->show();
-
-    m_current_expansion = new_gate;
-}
-
 void graph_widget::debug_create_context()
 {
     graph_context* context = graph_context_manager::debug_instance()->debug_add_context("Debug", 1);
@@ -432,17 +367,67 @@ void graph_widget::debug_change_context()
 
     if (ok && !item.isEmpty())
     {
-        // SWITCH CONTEXT PROPERLY
         // UNSUB FROM OLD CONTEXT
-        // DISCONNECT
+        disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+        disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
         // SUB TO NEW
-        // CONNECT
-        // IF NOT BUSY SET SCENE AND STUFF
         m_context = graph_context_manager::debug_instance()->debug_get_context(item);
 
         if (!m_context)
             return;
 
-        m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+        connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+        connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+
+        if (m_context->available())
+            m_graphics_widget->view()->setScene(m_context->layouter()->scene());
     }
+}
+
+void graph_widget::handle_updating_scene()
+{
+    m_graphics_widget->view()->setScene(nullptr);
+
+    disconnect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
+
+    m_progress_widget->set_direction(graph_layout_progress_widget::direction::right);
+    //m_progress_widget->set_direction(graph_layout_progress_widget::direction::left);
+
+    //m_layouter->scene()->disconnect_all();
+
+    m_overlay->set_widget(m_progress_widget);
+    m_progress_widget->start();
+
+    if (m_overlay->isHidden())
+        m_overlay->show();
+}
+
+void graph_widget::handle_scene_available()
+{
+    m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+
+    connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
+
+    m_overlay->hide();
+    m_progress_widget->stop();
+    m_overlay->set_widget(m_navigation_widget);
+
+    //m_layouter->scene()->connect_all();
+
+    if (hasFocus())
+        m_graphics_widget->setFocus();
+
+    // FIND BETTER WAY TO DO THIS
+    g_selection_relay.m_selected_gates[0] = m_current_expansion;
+    g_selection_relay.m_number_of_selected_gates = 1;
+    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
+    g_selection_relay.m_focus_id = m_current_expansion;
+    // TODO SET CORRECT SUBSELECTION
+    g_selection_relay.m_subfocus = selection_relay::subfocus::none;
+    g_selection_relay.relay_selection_changed(nullptr);
+
+    // JUMP TO THE GATE
+    // JUMP SHOULD BE HANDLED SEPARATELY
+//    if (item)
+//        m_graphics_widget->view()->ensureVisible(item);
 }

@@ -88,7 +88,7 @@ namespace gui_utility
             --h;
 
         QColor c;
-        c.setHsvF(h, 0.7, 0.95);
+        c.setHsvF(h, 0.8, 0.95); // (MAYBE) TODO GET S AND V FROM STYLESHEET OR CYCLE 3 DIMENSIONAL
         return c;
     }
 }

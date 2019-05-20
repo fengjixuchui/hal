@@ -236,6 +236,13 @@ const QString standard_graph_layouter_v3::description() const
 
 void standard_graph_layouter_v3::layout()
 {
+    // ARTIFICIAL LAG FOR TESTING PURPOSES, REMOVE LATER
+    QTime time = QTime::currentTime().addSecs(10);
+    while (QTime::currentTime() < time)
+    {
+        //qDebug() << "im doing stuff";
+    }
+
     // CLEANUP
     m_scene->delete_all_items();
     m_boxes.clear();
