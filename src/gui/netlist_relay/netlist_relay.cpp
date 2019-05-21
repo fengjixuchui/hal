@@ -52,6 +52,11 @@ void netlist_relay::register_callbacks()
                 (std::bind(&netlist_relay::relay_module_event, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 }
 
+module_item* netlist_relay::get_module_item(const u32 id)
+{
+    return m_module_items.value(id);
+}
+
 module_model* netlist_relay::get_module_model()
 {
     return m_module_model;

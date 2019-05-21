@@ -1,15 +1,16 @@
-#include "graph_widget/graphics_scene.h"
+#include "gui/graph_widget/graphics_scene.h"
 
 #include "netlist/gate.h"
 #include "netlist/net.h"
 
-#include "graph_widget/graph_widget_constants.h"
-#include "graph_widget/graphics_gate_factory.h"
-#include "graph_widget/graphics_items/graphics_gate.h"
-#include "graph_widget/graphics_items/graphics_item.h"
-#include "graph_widget/graphics_items/graphics_net.h"
-#include "graph_widget/graphics_items/utility_items/gate_navigation_popup.h"
-#include "gui_globals.h"
+#include "gui/graph_widget/graph_widget_constants.h"
+#include "gui/graph_widget/graphics_gate_factory.h"
+#include "gui/graph_widget/graphics_items/graphics_gate.h"
+#include "gui/graph_widget/graphics_items/graphics_item.h"
+#include "gui/graph_widget/graphics_items/graphics_module.h"
+#include "gui/graph_widget/graphics_items/graphics_net.h"
+#include "gui/graph_widget/graphics_items/utility_items/gate_navigation_popup.h"
+#include "gui/gui_globals.h"
 
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -106,9 +107,10 @@ graphics_scene::graphics_scene(QObject* parent) : QGraphicsScene(parent),
     QGraphicsScene::addItem(m_left_gate_navigation_popup);
 }
 
-// IMPORTANT TODO UPDATE SELECTION WHEN ITEM GETS ADDED !!!
 void graphics_scene::addItem(graphics_item* item)
 {
+    // SELECTION HAS TO BE UPDATED MANUALLY AFTER ADDING / REMOVING ITEMS
+
     if (!item)
         return;
 
@@ -117,42 +119,54 @@ void graphics_scene::addItem(graphics_item* item)
     switch (item->get_item_class())
     {
     case graphics_item::item_class::gate:
+    {
+        graphics_gate* g = static_cast<graphics_gate*>(item);
+        int i = 0;
+        while (i < m_gate_vector.size())
         {
-            graphics_gate* g = static_cast<graphics_gate*>(item);
-            int i = 0;
-            while (i < m_gate_vector.size())
-            {
-                if (g->get_gate()->get_id() < m_gate_vector.at(i).first)
-                    break;
+            if (g->id() < m_gate_vector.at(i).first)
+                break;
 
-                i++;
-            }
-            m_gate_vector.insert(i, QPair<u32, graphics_gate*>(g->get_gate()->get_id(), g));
-            return;
+            i++;
         }
+        m_gate_vector.insert(i, QPair<u32, graphics_gate*>(g->id(), g));
+        return;
+    }
     case graphics_item::item_class::net:
+    {
+        graphics_net* n = static_cast<graphics_net*>(item);
+        int i = 0;
+        while (i < m_net_vector.size())
         {
-            graphics_net* n = static_cast<graphics_net*>(item);
-            int i = 0;
-            while (i < m_net_vector.size())
-            {
-                if (n->get_net()->get_id() < m_net_vector.at(i).first)
-                    break;
+            if (n->id() < m_net_vector.at(i).first)
+                break;
 
-                i++;
-            }
-            m_net_vector.insert(i, QPair<u32, graphics_net*>(n->get_net()->get_id(), n));
-            return;
+            i++;
         }
+        m_net_vector.insert(i, QPair<u32, graphics_net*>(n->id(), n));
+        return;
+    }
     case graphics_item::item_class::submodule:
     {
-        return; // TODO
+        graphics_module* m = static_cast<graphics_module*>(item);
+        int i = 0;
+        while (i < m_module_items.size())
+        {
+            if (m->id() < m_module_items.at(i).id)
+                break;
+
+            i++;
+        }
+        m_module_items.insert(i, module_data{m->id(), m});
+        return;
     }
     }
 }
 
 void graphics_scene::removeItem(graphics_item* item)
 {
+    // SELECTION HAS TO BE UPDATED MANUALLY AFTER ADDING / REMOVING ITEMS
+
     if (!item)
         return;
 
@@ -161,27 +175,47 @@ void graphics_scene::removeItem(graphics_item* item)
     switch (item->get_item_class())
     {
     case graphics_item::item_class::gate:
-        {
-            graphics_gate* g = static_cast<graphics_gate*>(item);
-            m_gate_vector.removeOne(QPair<u32, graphics_gate*>(g->get_gate()->get_id(), g));
+    {
+        graphics_gate* g = static_cast<graphics_gate*>(item);
+
+        if (m_gate_vector.removeOne(QPair<u32, graphics_gate*>(g->id(), g)))
             delete(g);
-            return;
-        }
+
+        return;
+    }
     case graphics_item::item_class::net:
-        {
-            graphics_net* n = static_cast<graphics_net*>(item);
-            m_net_vector.removeOne(QPair<u32, graphics_net*>(n->get_net()->get_id(), n));
+    {
+        graphics_net* n = static_cast<graphics_net*>(item);
+
+        if (m_net_vector.removeOne(QPair<u32, graphics_net*>(n->id(), n)))
             delete(n);
-            return;
-        }
+
+        return;
+    }
     case graphics_item::item_class::submodule:
     {
-        return; // TODO
+        graphics_module* m = static_cast<graphics_module*>(item);
+        u32 id = m->id();
+
+        int i = 0;
+        while (i < m_module_items.size())
+        {
+            if (m_module_items[i].id == id)
+            {
+                m_module_items.remove(i);
+                delete m;
+                return;
+            }
+
+            ++i;
+        }
+
+        return;
     }
     }
 }
 
-const graphics_gate *graphics_scene::get_gate_item(const u32 id) const
+const graphics_gate* graphics_scene::get_gate_item(const u32 id) const
 {
     for (const QPair<u32, graphics_gate*>& pair : m_gate_vector)
     {
@@ -220,11 +254,6 @@ void graphics_scene::update_utility_items()
         m_left_gate_navigation_popup->stop();
 }
 
-bool graphics_scene::grid_enabled() const
-{
-    return s_grid_enabled;
-}
-
 void graphics_scene::connect_all()
 {
     connect(this, &graphics_scene::selectionChanged, this, &graphics_scene::handle_intern_selection_changed);
@@ -246,6 +275,7 @@ void graphics_scene::disconnect_all()
 void graphics_scene::delete_all_items()
 {
     clear();
+    m_module_items.clear();
     m_gate_vector.clear();
     m_net_vector.clear();
 }

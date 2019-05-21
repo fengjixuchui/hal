@@ -10,6 +10,7 @@
 class gate_navigation_popup;
 class graphics_gate;
 class graphics_item;
+class graphics_module;
 class graphics_net;
 
 namespace graph_widget_constants
@@ -20,19 +21,6 @@ enum class grid_type;
 class graphics_scene : public QGraphicsScene
 {
     Q_OBJECT
-
-    // TODO USE THESE TO IMPROVE READABILITY
-//    struct gate_data
-//    {
-//        u32 id;
-//        graphics_gate* item;
-//    };
-
-//    struct net_data
-//    {
-//        u32 id;
-//        graphics_net* item;
-//    };
 
 public:
     static void set_lod(const qreal& lod);
@@ -57,8 +45,6 @@ public:
 
     void update_utility_items();
 
-    bool grid_enabled() const;
-
     // EXPERIMENTAL METHODS
     void connect_all();
     void disconnect_all();
@@ -75,6 +61,24 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
 
 private:
+    struct module_data
+    {
+        u32 id;
+        graphics_module* item;
+    };
+
+    struct gate_data
+    {
+        u32 id;
+        graphics_gate* item;
+    };
+
+    struct net_data
+    {
+        u32 id;
+        graphics_net* item;
+    };
+
     static qreal s_lod;
 
     static const qreal s_grid_fade_start;
@@ -95,6 +99,7 @@ private:
 
     void drawBackground(QPainter* painter, const QRectF& rect) Q_DECL_OVERRIDE;
 
+    QVector<module_data> m_module_items;
     QVector<QPair<u32, graphics_gate*>> m_gate_vector;
     QVector<QPair<u32, graphics_net*>> m_net_vector;
 

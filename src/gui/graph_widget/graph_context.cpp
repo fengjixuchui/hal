@@ -12,10 +12,10 @@
 graph_context::graph_context(const QString& name, const u32 scope, QObject* parent) : QObject(parent),
     m_name(name),
     m_scope(scope),
-    m_watcher(new QFutureWatcher<void>(this)),
     m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
     m_conform_to_grid(false),
+    m_watcher(new QFutureWatcher<void>(this)),
     m_scene_available(true)
 {
     connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_scene_update_finished);
@@ -105,6 +105,11 @@ const QSet<u32>& graph_context::gates() const
     return m_gates;
 }
 
+const QSet<u32>& graph_context::modules() const
+{
+    return m_modules;
+}
+
 const QSet<u32>& graph_context::nets() const
 {
     return m_nets;
@@ -167,7 +172,8 @@ void graph_context::handle_module_event(module_event_handler::event ev, std::sha
 
 void graph_context::handle_scene_update_finished()
 {
-    // CALL SHADER
+    // SHADER MIGHT HAVE TO BE THREADED ASWELL
+    m_shader->update();
 
     m_scene_available = true;
     Q_EMIT scene_available();
@@ -177,4 +183,9 @@ void graph_context::update_scene()
 {
     Q_EMIT updating_scene();
     m_watcher->setFuture(QtConcurrent::run(m_layouter, &graph_layouter::layout));
+}
+
+void graph_context::apply_shading()
+{
+
 }

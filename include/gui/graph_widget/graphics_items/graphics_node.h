@@ -8,13 +8,13 @@ class graphics_node : public graphics_item
 public:
     struct visuals
     {
+        QColor main_color;
         QColor name_color;
         QColor type_color;
         QColor pin_color;
         QColor background_color;
         QColor border_color;
         QColor highlight_color;
-        QVector<QColor> info_colors;
 
         // DRAW TYPE ENUM
     };

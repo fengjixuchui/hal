@@ -27,6 +27,7 @@ public:
     QString name() const;
     u32 scope() const;
 
+    const QSet<u32>& modules() const;
     const QSet<u32>& gates() const;
     const QSet<u32>& nets() const;
 
@@ -55,22 +56,21 @@ private Q_SLOTS:
 
 private:
     void update_scene();
+    void apply_shading();
 
     QString m_name;
     u32 m_scope;
 
-    QFutureWatcher<void>* m_watcher;
-
+    QSet<u32> m_modules;
     QSet<u32> m_gates;
     QSet<u32> m_nets;
-
-    QSet<u32> m_modules;
 
     graph_layouter* m_layouter;
     graph_shader* m_shader;
 
     bool m_conform_to_grid;
 
+    QFutureWatcher<void>* m_watcher;
     bool m_scene_available;
 
     // GATE TYPE

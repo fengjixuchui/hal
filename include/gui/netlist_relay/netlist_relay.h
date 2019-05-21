@@ -45,6 +45,7 @@ public:
 
     void register_callbacks();
 
+    module_item* get_module_item(const u32 id);
     module_model* get_module_model();
 
     void debug_change_module_color(module_item* item);
@@ -75,6 +76,9 @@ private:
     void relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
     void relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
     void relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data);
+
+    QMap<u32, QString> m_gate_aliases;
+    QMap<u32, QString> m_net_aliases;
 
     QMap<u32, module_item*> m_module_items;
     module_model* m_module_model;
