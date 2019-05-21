@@ -100,8 +100,8 @@ private:
     void drawBackground(QPainter* painter, const QRectF& rect) Q_DECL_OVERRIDE;
 
     QVector<module_data> m_module_items;
-    QVector<QPair<u32, graphics_gate*>> m_gate_vector;
-    QVector<QPair<u32, graphics_net*>> m_net_vector;
+    QVector<gate_data> m_gate_items;
+    QVector<net_data> m_net_items;
 
     gate_navigation_popup* m_left_gate_navigation_popup;
     gate_navigation_popup* m_right_gate_navigation_popup;

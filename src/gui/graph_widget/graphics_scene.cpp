@@ -122,28 +122,28 @@ void graphics_scene::addItem(graphics_item* item)
     {
         graphics_gate* g = static_cast<graphics_gate*>(item);
         int i = 0;
-        while (i < m_gate_vector.size())
+        while (i < m_gate_items.size())
         {
-            if (g->id() < m_gate_vector.at(i).first)
+            if (g->id() < m_gate_items.at(i).id)
                 break;
 
             i++;
         }
-        m_gate_vector.insert(i, QPair<u32, graphics_gate*>(g->id(), g));
+        m_gate_items.insert(i, gate_data{g->id(), g});
         return;
     }
     case graphics_item::item_class::net:
     {
         graphics_net* n = static_cast<graphics_net*>(item);
         int i = 0;
-        while (i < m_net_vector.size())
+        while (i < m_net_items.size())
         {
-            if (n->id() < m_net_vector.at(i).first)
+            if (n->id() < m_net_items.at(i).id)
                 break;
 
             i++;
         }
-        m_net_vector.insert(i, QPair<u32, graphics_net*>(n->id(), n));
+        m_net_items.insert(i, net_data{n->id(), n});
         return;
     }
     case graphics_item::item_class::submodule:
@@ -177,18 +177,40 @@ void graphics_scene::removeItem(graphics_item* item)
     case graphics_item::item_class::gate:
     {
         graphics_gate* g = static_cast<graphics_gate*>(item);
+        u32 id = g->id();
 
-        if (m_gate_vector.removeOne(QPair<u32, graphics_gate*>(g->id(), g)))
-            delete(g);
+        int i = 0;
+        while (i < m_gate_items.size())
+        {
+            if (m_gate_items[i].id == id)
+            {
+                m_gate_items.remove(i);
+                delete g;
+                return;
+            }
+
+            ++i;
+        }
 
         return;
     }
     case graphics_item::item_class::net:
     {
         graphics_net* n = static_cast<graphics_net*>(item);
+        u32 id = n->id();
 
-        if (m_net_vector.removeOne(QPair<u32, graphics_net*>(n->id(), n)))
-            delete(n);
+        int i = 0;
+        while (i < m_net_items.size())
+        {
+            if (m_net_items[i].id == id)
+            {
+                m_net_items.remove(i);
+                delete n;
+                return;
+            }
+
+            ++i;
+        }
 
         return;
     }
@@ -217,13 +239,13 @@ void graphics_scene::removeItem(graphics_item* item)
 
 const graphics_gate* graphics_scene::get_gate_item(const u32 id) const
 {
-    for (const QPair<u32, graphics_gate*>& pair : m_gate_vector)
+    for (const gate_data& d : m_gate_items)
     {
-        if (pair.first > id)
+        if (d.id > id)
             break;
 
-        if (pair.first == id)
-            return pair.second;
+        if (d.id == id)
+            return d.item;
     }
 
     return nullptr;
@@ -236,11 +258,11 @@ void graphics_scene::update_utility_items()
 
     if (g_selection_relay.m_focus_type == selection_relay::item_type::gate)
     {
-        for (QPair<u32, graphics_gate*>& pair : m_gate_vector)
+        for (gate_data& d : m_gate_items)
         {
-            if (pair.first == g_selection_relay.m_selected_gates[0])
+            if (d.id == g_selection_relay.m_selected_gates[0])
             {
-                graphics_gate* g = pair.second;
+                graphics_gate* g = d.item;
 
                 // IF (ANIMATE) ANIMATE ELSE DONT
                 // ALTERNATIVELY ANIMATE IF SCENE HAS LESS THAN X ITEMS
@@ -276,8 +298,8 @@ void graphics_scene::delete_all_items()
 {
     clear();
     m_module_items.clear();
-    m_gate_vector.clear();
-    m_net_vector.clear();
+    m_gate_items.clear();
+    m_net_items.clear();
 }
 
 void graphics_scene::handle_intern_selection_changed()
@@ -369,11 +391,11 @@ void graphics_scene::handle_extern_selection_changed(void* sender)
     {
         u32 index = 0;
 
-        for (auto& element : m_gate_vector)
+        for (auto& element : m_gate_items)
         {
-            if (element.first == g_selection_relay.m_selected_gates[index])
+            if (element.id == g_selection_relay.m_selected_gates[index])
             {
-                element.second->setSelected(true);
+                element.item->setSelected(true);
 
                 if (++index == g_selection_relay.m_number_of_selected_gates)
                     break;
@@ -385,11 +407,11 @@ void graphics_scene::handle_extern_selection_changed(void* sender)
     {
         u32 index = 0;
 
-        for (auto& element : m_net_vector)
+        for (auto& element : m_net_items)
         {
-            if (element.first == g_selection_relay.m_selected_nets[index])
+            if (element.id == g_selection_relay.m_selected_nets[index])
             {
-                element.second->setSelected(true);
+                element.item->setSelected(true);
 
                 if (++index == g_selection_relay.m_number_of_selected_nets)
                     break;
