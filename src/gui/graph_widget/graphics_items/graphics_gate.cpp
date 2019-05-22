@@ -1,17 +1,14 @@
-#include "graph_widget/graphics_items/graphics_gate.h"
+#include "gui/graph_widget/graphics_items/graphics_gate.h"
 
-#include "graph_widget/graph_widget_constants.h"
+#include "gui/graph_widget/graph_widget_constants.h"
 
 #include "netlist/gate.h"
 
 #include <QApplication>
 #include <qmath.h>
 
-graphics_gate::graphics_gate(std::shared_ptr<gate> g)
+graphics_gate::graphics_gate(std::shared_ptr<gate> g) : graphics_item(item_type::gate, g->get_id())
 {
-    m_id = g->get_id();
-    m_class = item_class::gate;
-
     m_name = QString::fromStdString(g->get_name());
     m_type = QString::fromStdString(g->get_type());
 

@@ -18,17 +18,10 @@ void graphics_net::load_settings()
     s_stroke_width = 0.3;
 }
 
-graphics_net::graphics_net(std::shared_ptr<net> n)
+graphics_net::graphics_net(std::shared_ptr<net> n) : graphics_item(item_type::net, n->get_id())
 {
-    if (n)
-        m_id = n->get_id();
-    else
-    {
-        m_id = -1;
-        log_error("gui graph", "inconsistency error (net is nullptr).");
-    }
+    // WILL CRASH IF NET IS NULLPTR
 
-    m_class = item_class::net;
     m_net   = n;
 }
 

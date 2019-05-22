@@ -9,20 +9,20 @@
 class graphics_item : public QGraphicsItem
 {
 public:
-    enum class item_class
+    enum class item_type
     {
+        module,
         gate,
-        net,
-        module
+        net
     };
 
     static void load_settings();
     static void set_lod(const qreal lod);
 
-    graphics_item();
+    graphics_item(const item_type type, const u32 id);
 
     u32 id() const;
-    item_class get_item_class() const;
+    item_type get_item_type() const;
 
     void set_color(const QColor& color);
 
@@ -33,7 +33,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
 
-    item_class m_class;
+    item_type m_class;
     u32 m_id;
     QColor m_color;
 };

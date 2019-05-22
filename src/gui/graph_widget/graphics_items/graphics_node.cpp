@@ -1,11 +1,12 @@
-#include "graph_widget/graphics_items/graphics_node.h"
+#include "gui/graph_widget/graphics_items/graphics_node.h"
 
 #include <QApplication>
 
-graphics_node::graphics_node(const QString& name) :
+graphics_node::graphics_node(const item_type type, const u32 id, const QString& name) : graphics_item(type, id),
     m_name(name)
 {
-
+    //setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsGeometryChanges | ItemIsFocusable);
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
 }
 
 QRectF graphics_node::boundingRect() const

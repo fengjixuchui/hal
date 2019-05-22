@@ -116,9 +116,9 @@ void graphics_scene::addItem(graphics_item* item)
 
     QGraphicsScene::addItem(item);
 
-    switch (item->get_item_class())
+    switch (item->get_item_type())
     {
-    case graphics_item::item_class::gate:
+    case graphics_item::item_type::gate:
     {
         graphics_gate* g = static_cast<graphics_gate*>(item);
         int i = 0;
@@ -132,7 +132,7 @@ void graphics_scene::addItem(graphics_item* item)
         m_gate_items.insert(i, gate_data{g->id(), g});
         return;
     }
-    case graphics_item::item_class::net:
+    case graphics_item::item_type::net:
     {
         graphics_net* n = static_cast<graphics_net*>(item);
         int i = 0;
@@ -146,7 +146,7 @@ void graphics_scene::addItem(graphics_item* item)
         m_net_items.insert(i, net_data{n->id(), n});
         return;
     }
-    case graphics_item::item_class::module:
+    case graphics_item::item_type::module:
     {
         graphics_module* m = static_cast<graphics_module*>(item);
         int i = 0;
@@ -172,9 +172,9 @@ void graphics_scene::removeItem(graphics_item* item)
 
     QGraphicsScene::removeItem(item);
 
-    switch (item->get_item_class())
+    switch (item->get_item_type())
     {
-    case graphics_item::item_class::gate:
+    case graphics_item::item_type::gate:
     {
         graphics_gate* g = static_cast<graphics_gate*>(item);
         u32 id = g->id();
@@ -194,7 +194,7 @@ void graphics_scene::removeItem(graphics_item* item)
 
         return;
     }
-    case graphics_item::item_class::net:
+    case graphics_item::item_type::net:
     {
         graphics_net* n = static_cast<graphics_net*>(item);
         u32 id = n->id();
@@ -214,7 +214,7 @@ void graphics_scene::removeItem(graphics_item* item)
 
         return;
     }
-    case graphics_item::item_class::module:
+    case graphics_item::item_type::module:
     {
         graphics_module* m = static_cast<graphics_module*>(item);
         u32 id = m->id();
@@ -310,21 +310,21 @@ void graphics_scene::handle_intern_selection_changed()
 
     for (const QGraphicsItem* const item : selectedItems())
     {
-        switch (static_cast<const graphics_item* const>(item)->get_item_class())
+        switch (static_cast<const graphics_item* const>(item)->get_item_type())
         {
-        case graphics_item::item_class::gate:
+        case graphics_item::item_type::gate:
         {
             g_selection_relay.m_selected_gates[gates] = static_cast<const graphics_item* const>(item)->id();
             ++gates;
             break;
         }
-        case graphics_item::item_class::net:
+        case graphics_item::item_type::net:
         {
             g_selection_relay.m_selected_nets[nets] = static_cast<const graphics_item* const>(item)->id();
             ++nets;
             break;
         }
-        case graphics_item::item_class::module:
+        case graphics_item::item_type::module:
         {
             g_selection_relay.m_selected_modules[modules] = static_cast<const graphics_item* const>(item)->id();
             ++modules;

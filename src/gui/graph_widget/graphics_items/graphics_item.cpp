@@ -1,4 +1,4 @@
-#include "graph_widget/graphics_items/graphics_item.h"
+#include "gui/graph_widget/graphics_items/graphics_item.h"
 
 qreal graphics_item::s_lod;
 
@@ -14,7 +14,9 @@ void graphics_item::set_lod(const qreal lod)
     s_lod = lod;
 }
 
-graphics_item::graphics_item()
+graphics_item::graphics_item(const item_type type, const u32 id) :
+    m_class(type),
+    m_id(id)
 {
     m_color = Qt::lightGray;
 
@@ -27,7 +29,7 @@ u32 graphics_item::id() const
     return m_id;
 }
 
-graphics_item::item_class graphics_item::get_item_class() const
+graphics_item::item_type graphics_item::get_item_type() const
 {
     return m_class;
 }

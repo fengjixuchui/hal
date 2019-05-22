@@ -165,9 +165,9 @@ void graph_graphics_view::show_context_menu(const QPoint& pos)
     {
         m_item = static_cast<graphics_item*>(item);
 
-        switch (m_item->get_item_class())
+        switch (m_item->get_item_type())
         {
-            case graphics_item::item_class::gate:
+            case graphics_item::item_type::gate:
             {
                 QAction* color_action = context_menu.addAction("Change Color");
                 QObject::connect(color_action, &QAction::triggered, this, &graph_graphics_view::handle_change_color_action);

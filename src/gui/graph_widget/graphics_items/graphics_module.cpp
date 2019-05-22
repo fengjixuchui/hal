@@ -3,9 +3,7 @@
 #include "netlist/module.h"
 #include "netlist/net.h"
 
-graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(QString::fromStdString(m->get_name()))
-//    m_id(m->get_id()),
-//    m_class(item_class::module)
+graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(item_type::module, m->get_id(), QString::fromStdString(m->get_name()))
 {
     for (const std::shared_ptr<net>& n : m->get_input_nets())
     {
@@ -31,7 +29,4 @@ graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(QStr
         if (e.gate)
             m_output_pins.append(QString::fromStdString(e.pin_type));
     }
-
-    //setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsGeometryChanges | ItemIsFocusable);
-    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
 }
