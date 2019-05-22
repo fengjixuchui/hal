@@ -3,11 +3,11 @@
 #include "netlist/gate.h"
 #include "netlist/net.h"
 
-#include "graph_widget/graphics_items/global_graphics_net.h"
-#include "graph_widget/graphics_items/standard_graphics_net.h"
-#include "graph_widget/graphics_scene.h"
-#include "graph_widget/graphics_gate_factory.h"
-#include "gui_globals.h"
+#include "gui/graph_widget/graphics_items/global_graphics_net.h"
+#include "gui/graph_widget/graphics_items/standard_graphics_net.h"
+#include "gui/graph_widget/graphics_scene.h"
+#include "gui/graph_widget/graphics_gate_factory.h"
+#include "gui/gui_globals.h"
 
 #include <QDebug>
 #include "qmath.h"

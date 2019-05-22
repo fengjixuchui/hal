@@ -3,8 +3,8 @@
 
 #include "def.h"
 
-#include "graph_widget/graphics_items/graphics_gate.h"
-#include "graph_widget/layouters/graph_layouter.h"
+#include "gui/graph_widget/graphics_items/graphics_gate.h"
+#include "gui/graph_widget/layouters/graph_layouter.h"
 
 #include <QSet>
 #include <QVector>
