@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_NODE_H
 #define GRAPHICS_NODE_H
 
-#include "graph_widget/graphics_items/graphics_item.h"
+#include "gui/graph_widget/graphics_items/graphics_item.h"
 
 class graphics_node : public graphics_item
 {
@@ -19,13 +19,13 @@ public:
         // DRAW TYPE ENUM
     };
 
-    graphics_node();
+    graphics_node(const QString& name);
 
     virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
     virtual QPainterPath shape() const Q_DECL_OVERRIDE;
 
-    virtual QPointF get_input_pin_scene_position(const QString& type) const = 0;
-    virtual QPointF get_output_pin_scene_position(const QString& type) const = 0;
+    virtual QPointF get_input_scene_position(const u32 net, const QString& pin_type) const = 0;
+    virtual QPointF get_output_scene_position(const u32 net, const QString& pin_type) const = 0;
 
 //    virtual std::string get_input_pin_type_at_position(const size_t pos) const = 0;
 //    virtual std::string get_output_pin_type_at_position(const size_t pos) const = 0;

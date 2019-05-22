@@ -13,7 +13,7 @@ public:
     {
         gate,
         net,
-        submodule
+        module
     };
 
     static void load_settings();

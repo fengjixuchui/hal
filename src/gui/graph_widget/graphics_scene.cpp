@@ -146,7 +146,7 @@ void graphics_scene::addItem(graphics_item* item)
         m_net_items.insert(i, net_data{n->id(), n});
         return;
     }
-    case graphics_item::item_class::submodule:
+    case graphics_item::item_class::module:
     {
         graphics_module* m = static_cast<graphics_module*>(item);
         int i = 0;
@@ -214,7 +214,7 @@ void graphics_scene::removeItem(graphics_item* item)
 
         return;
     }
-    case graphics_item::item_class::submodule:
+    case graphics_item::item_class::module:
     {
         graphics_module* m = static_cast<graphics_module*>(item);
         u32 id = m->id();
@@ -324,7 +324,7 @@ void graphics_scene::handle_intern_selection_changed()
             ++nets;
             break;
         }
-        case graphics_item::item_class::submodule:
+        case graphics_item::item_class::module:
         {
             g_selection_relay.m_selected_modules[modules] = static_cast<const graphics_item* const>(item)->id();
             ++modules;

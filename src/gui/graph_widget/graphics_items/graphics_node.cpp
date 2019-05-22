@@ -2,7 +2,8 @@
 
 #include <QApplication>
 
-graphics_node::graphics_node()
+graphics_node::graphics_node(const QString& name) :
+    m_name(name)
 {
 
 }
