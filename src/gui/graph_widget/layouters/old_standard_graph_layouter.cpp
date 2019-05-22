@@ -1,3 +1,4 @@
+/*
 #include "graph_widget/layouters/old_standard_graph_layouter.h"
 #include "graph_widget/graphics_items/global_graphics_net.h"
 #include "graph_widget/graphics_items/graphics_gate.h"
@@ -657,3 +658,4 @@ void old_standard_graph_layouter::calculate_net(std::shared_ptr<net> n, int sub_
     graphics_net->finalize();
     m_scene->addItem(graphics_net);
 }
+*/

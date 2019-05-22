@@ -18,8 +18,6 @@ graphics_gate::graphics_gate(std::shared_ptr<gate> g) : graphics_item(item_type:
     for (std::string output_pin : g->get_output_pin_types())
         m_output_pins.append(QString::fromStdString(output_pin));
 
-    m_gate  = g;
-
     //setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemSendsGeometryChanges | ItemIsFocusable);
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
 }
@@ -44,37 +42,4 @@ qreal graphics_gate::get_width() const
 qreal graphics_gate::get_height() const
 {
     return m_height;
-}
-
-std::string graphics_gate::get_input_pin_type_at_position(const size_t pos) const
-{
-    return (pos < (size_t)m_input_pins.size()) ? m_input_pins.at(pos).toStdString() : "";
-}
-
-std::string graphics_gate::get_output_pin_type_at_position(const size_t pos) const
-{
-    return (pos < (size_t)m_output_pins.size()) ? m_output_pins.at(pos).toStdString() : "";
-}
-
-QVariant graphics_gate::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant& value)
-{
-    if (change == ItemPositionChange)
-    {
-            if(QApplication::mouseButtons() == Qt::LeftButton)
-            {
-                QPointF new_position = value.toPointF();
-                int adjusted_x = qRound(new_position.x() / graph_widget_constants::grid_size) * graph_widget_constants::grid_size;
-                int adjusted_y = qRound(new_position.y() / graph_widget_constants::grid_size) * graph_widget_constants::grid_size;
-                return QPoint(adjusted_x, adjusted_y);
-            }
-            else
-                return value;
-        }
-        else
-            return QGraphicsItem::itemChange(change, value);
-}
-
-std::shared_ptr<gate> graphics_gate::get_gate() const
-{
-    return m_gate;
 }

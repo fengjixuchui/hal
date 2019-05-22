@@ -24,15 +24,15 @@ graph_layouter_manager::graph_layouter_manager(QObject* parent) : QObject(parent
     // DEBUG CODE, NULLPTRS HERE ARE WRONG, NO NEED TO FIX, CLASS WILL BE REMOVED EVENTUALLY
     m_layouters.append(qMakePair(new minimal_graph_layouter(nullptr), 0));
     m_layouters.append(qMakePair(new orthogonal_graph_layouter(nullptr), 0));
-    m_layouters.append(qMakePair(new old_standard_graph_layouter(nullptr), 0));
-    m_layouters.append(qMakePair(new placeholder_layouter(nullptr), 0));
+//    m_layouters.append(qMakePair(new old_standard_graph_layouter(nullptr), 0));
+//    m_layouters.append(qMakePair(new placeholder_layouter(nullptr), 0));
 
     // DEPRECATED, REPLACE WITH STYLE ADAPTER
     graphics_item::load_settings();
     //graphics_gate::load_settings();
     advanced_graphics_gate::load_settings();
     standard_graphics_gate::load_settings();
-    red_pin_gate::load_settings();
+//    red_pin_gate::load_settings();
 
     graphics_net::load_settings();
     global_graphics_net::load_settings();

@@ -1,3 +1,4 @@
+/*
 #include "graph_widget/layouters/placeholder_layouter.h"
 #include "graph_widget/graphics_items/global_graphics_net.h"
 #include "graph_widget/graphics_items/separated_graphics_net.h"
@@ -422,3 +423,4 @@ void placeholder_layouter::init_settings()
     //TODO: Other settings: if you want the default computation, set the variables for
     //compute_cw_and_scc
 }
+*/

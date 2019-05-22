@@ -44,15 +44,7 @@ public:
     qreal get_width() const;
     qreal get_height() const;
 
-    std::string get_input_pin_type_at_position(const size_t pos) const;
-    std::string get_output_pin_type_at_position(const size_t pos) const;
-
-    //uncertain about this one, might not be necessary
-    std::shared_ptr<gate> get_gate() const;
-
 protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant& value) Q_DECL_OVERRIDE;
-
     qreal m_width;
     qreal m_height;
 
@@ -61,8 +53,6 @@ protected:
 
     QVector<QString> m_input_pins;
     QVector<QString> m_output_pins;
-
-    std::shared_ptr<gate> m_gate;
 };
 
 #endif // GRAPHICS_GATE_H

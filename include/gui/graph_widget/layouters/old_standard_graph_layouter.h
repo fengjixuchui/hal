@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+/*
 #ifndef OLD_STANDARD_GRAPH_LAYOUTER_H
 #define OLD_STANDARD_GRAPH_LAYOUTER_H
 
@@ -99,3 +100,4 @@ private:
 };
 
 #endif // OLD_STANDARD_GRAPH_LAYOUTER_H
+*/

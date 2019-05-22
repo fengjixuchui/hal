@@ -1,5 +1,7 @@
 #include "gui/graph_widget/graphics_items/graphics_node.h"
 
+#include "gui/graph_widget/graph_widget_constants.h"
+
 #include <QApplication>
 
 graphics_node::graphics_node(const item_type type, const u32 id, const QString& name) : graphics_item(type, id),
@@ -39,8 +41,8 @@ QVariant graphics_node::itemChange(QGraphicsItem::GraphicsItemChange change, con
             if(QApplication::mouseButtons() == Qt::LeftButton)
             {
                 QPointF new_position = value.toPointF();
-                int adjusted_x = 0;
-                int adjusted_y = 0;
+                int adjusted_x = qRound(new_position.x() / graph_widget_constants::grid_size) * graph_widget_constants::grid_size;
+                int adjusted_y = qRound(new_position.y() / graph_widget_constants::grid_size) * graph_widget_constants::grid_size;
                 return QPoint(adjusted_x, adjusted_y);
             }
             else

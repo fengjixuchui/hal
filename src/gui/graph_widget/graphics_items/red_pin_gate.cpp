@@ -1,3 +1,4 @@
+/*
 #include "graph_widget/graphics_items/red_pin_gate.h"
 #include "core/log.h"
 #include <QDebug>
@@ -150,3 +151,4 @@ qreal red_pin_gate::s_overall_pin_height;
 qreal red_pin_gate::s_pin_name_rect_stretching;
 qreal red_pin_gate::s_name_rect_stretching;
 qreal red_pin_gate::s_drawn_pin_height;
+*/
