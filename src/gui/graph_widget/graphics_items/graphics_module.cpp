@@ -27,6 +27,11 @@ graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(item
         endpoint e = n->get_src();
 
         if (e.gate)
-            m_output_pins.append(QString::fromStdString(e.pin_type));
+            m_output_pins.append(module_pin{n->get_id(), QString::fromStdString(e.pin_type)});
     }
+}
+
+void graphics_module::set_visuals(const graphics_node::visuals& v)
+{
+
 }

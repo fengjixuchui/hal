@@ -73,7 +73,7 @@ void minimal_graph_layouter::layout()
             continue;
         }
 
-        QPointF src_position = src_node->get_output_pin_scene_position(QString::fromStdString(src_end.pin_type));
+        QPointF src_position = src_node->get_output_scene_position(n->get_id(), QString::fromStdString(src_end.pin_type));
         net_item->setPos(src_position);
 
         for (endpoint& dst_end : n->get_dsts())
@@ -85,7 +85,7 @@ void minimal_graph_layouter::layout()
                 continue;
             }
 
-            QPointF dst_position = dst_node->get_input_pin_scene_position(QString::fromStdString(dst_end.pin_type));
+            QPointF dst_position = dst_node->get_input_scene_position(n->get_id(), QString::fromStdString(dst_end.pin_type));
             net_item->line_to(dst_position);
             net_item->move_pen_to(src_position);
         }

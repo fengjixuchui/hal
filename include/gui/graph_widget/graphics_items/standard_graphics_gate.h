@@ -29,16 +29,18 @@
 class standard_graphics_gate : public graphics_gate
 {
 public:
+    static void load_settings();
+
     standard_graphics_gate(std::shared_ptr<gate> g);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0) Q_DECL_OVERRIDE;
 
     QPainterPath shape() const Q_DECL_OVERRIDE;
 
-    QPointF get_input_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
-    QPointF get_output_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
+    QPointF get_input_scene_position(const u32 net_id, const QString& pin_type) const Q_DECL_OVERRIDE;
+    QPointF get_output_scene_position(const u32 net_id, const QString& pin_type) const Q_DECL_OVERRIDE;
 
-    static void load_settings();
+    virtual void set_visuals(const visuals& v) Q_DECL_OVERRIDE;
 
 private:
     static QPen s_pen;

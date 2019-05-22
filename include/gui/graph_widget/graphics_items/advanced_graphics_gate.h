@@ -12,8 +12,10 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) Q_DECL_OVERRIDE;
 
-    QPointF get_input_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
-    QPointF get_output_pin_scene_position(const QString& type) const Q_DECL_OVERRIDE;
+    QPointF get_input_scene_position(const u32 net_id, const QString& pin_type) const Q_DECL_OVERRIDE;
+    QPointF get_output_scene_position(const u32 net_id, const QString& pin_type) const Q_DECL_OVERRIDE;
+
+    virtual void set_visuals(const visuals& v) Q_DECL_OVERRIDE;
 
 private:
     static QPen s_pen;

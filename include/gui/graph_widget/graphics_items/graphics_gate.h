@@ -24,31 +24,18 @@
 #ifndef GRAPHICS_GATE_H
 #define GRAPHICS_GATE_H
 
-#include "gui/graph_widget/graphics_items/graphics_item.h"
+#include "gui/graph_widget/graphics_items/graphics_node.h"
 
 #include <memory>
 
 class gate;
 
-class graphics_gate : public graphics_item
+class graphics_gate : public graphics_node
 {
 public:
     graphics_gate(std::shared_ptr<gate> g);
 
-    virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
-    virtual QPainterPath shape() const Q_DECL_OVERRIDE;
-
-    virtual QPointF get_input_pin_scene_position(const QString& type) const  = 0;
-    virtual QPointF get_output_pin_scene_position(const QString& type) const = 0;
-
-    qreal get_width() const;
-    qreal get_height() const;
-
 protected:
-    qreal m_width;
-    qreal m_height;
-
-    QString m_name;
     QString m_type;
 
     QVector<QString> m_input_pins;

@@ -898,8 +898,8 @@ void standard_graph_layouter::find_max_box_dimensions()
 {
     for (const gate_box& box : m_boxes)
     {
-        store_max(m_max_gate_width_for_x, box.x, box.item->get_width());
-        store_max(m_max_gate_height_for_y, box.y, box.item->get_height());
+        store_max(m_max_gate_width_for_x, box.x, box.item->width());
+        store_max(m_max_gate_height_for_y, box.y, box.item->height());
 
         store_max(m_max_right_io_padding_for_channel_x, box.x, box.input_padding);
         store_max(m_max_left_io_padding_for_channel_x, box.x + 1, box.output_padding);
@@ -1141,7 +1141,7 @@ void standard_graph_layouter::draw_nets()
                 {
                     if (box.id == src_end.get_gate()->get_id())
                     {
-                        net_item->setPos(box.item->get_output_pin_scene_position(QString::fromStdString(src_end.pin_type)));
+                        net_item->setPos(box.item->get_output_scene_position(n->get_id(), QString::fromStdString(src_end.pin_type)));
                         net_item->add_output();
                     }
                 }
@@ -1153,7 +1153,7 @@ void standard_graph_layouter::draw_nets()
                 for (const gate_box& box : m_boxes)
                 {
                     if (box.id == dst_end.get_gate()->get_id())
-                        net_item->add_input(box.item->get_input_pin_scene_position(QString::fromStdString(dst_end.pin_type)));
+                        net_item->add_input(box.item->get_input_scene_position(n->get_id(), QString::fromStdString(dst_end.pin_type)));
                 }
             }
 
@@ -1176,7 +1176,7 @@ void standard_graph_layouter::draw_nets()
             used_paths used;
 
             standard_graphics_net* graphics_net = new standard_graphics_net(n);
-            QPointF src_pin_position = src_box->item->get_output_pin_scene_position(QString::fromStdString(n->get_src().pin_type));
+            QPointF src_pin_position = src_box->item->get_output_scene_position(n->get_id(), QString::fromStdString(n->get_src().pin_type));
             graphics_net->setPos(src_pin_position);
 
             // FOR EVERY DST
@@ -1192,7 +1192,7 @@ void standard_graph_layouter::draw_nets()
                 if (!dst_box)
                     continue;
 
-                QPointF dst_pin_position = dst_box->item->get_input_pin_scene_position(QString::fromStdString(dst.pin_type));
+                QPointF dst_pin_position = dst_box->item->get_input_scene_position(n->get_id(), QString::fromStdString(dst.pin_type));
 
                 // ROAD BASED DISTANCE (x_distance - 1)
                 const int x_distance = dst_box->x - src_box->x - 1;

@@ -73,7 +73,7 @@ void orthogonal_graph_layouter::layout()
             continue;
         }
 
-        QPointF src_position            = src_node->get_output_pin_scene_position(QString::fromStdString(src_end.pin_type));
+        QPointF src_position            = src_node->get_output_scene_position(n->get_id(), QString::fromStdString(src_end.pin_type));
         unrestricted_graphics_net* net_item = new unrestricted_graphics_net(n);
         net_item->setPos(src_position);
 
@@ -86,7 +86,7 @@ void orthogonal_graph_layouter::layout()
                 continue;
             }
 
-            QPointF dst_position = dst_node->get_input_pin_scene_position(QString::fromStdString(dst_end.pin_type));
+            QPointF dst_position = dst_node->get_input_scene_position(n->get_id(), QString::fromStdString(dst_end.pin_type));
 
             //            net_item->line_to(QPointF(net_item->current_scene_position().x() + 2, net_item->current_scene_position().y()));
             //            net_item->line_to(QPointF(net_item->current_scene_position().x(), dst_position.y()));

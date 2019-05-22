@@ -24,8 +24,8 @@ public:
     virtual QRectF boundingRect() const Q_DECL_OVERRIDE;
     virtual QPainterPath shape() const Q_DECL_OVERRIDE;
 
-    virtual QPointF get_input_scene_position(const u32 net, const QString& pin_type) const = 0;
-    virtual QPointF get_output_scene_position(const u32 net, const QString& pin_type) const = 0;
+    virtual QPointF get_input_scene_position(const u32 net_id, const QString& pin_type) const = 0;
+    virtual QPointF get_output_scene_position(const u32 net_id, const QString& pin_type) const = 0;
 
 //    virtual std::string get_input_pin_type_at_position(const size_t pos) const = 0;
 //    virtual std::string get_output_pin_type_at_position(const size_t pos) const = 0;

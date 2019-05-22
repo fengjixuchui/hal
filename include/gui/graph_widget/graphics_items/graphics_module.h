@@ -18,9 +18,11 @@ class graphics_module : public graphics_node
 public:
     graphics_module(std::shared_ptr<module> m);
 
+    virtual void set_visuals(const visuals& v) Q_DECL_OVERRIDE;
+
 private:
     QVector<module_pin> m_input_pins;
-    QVector<QString> m_output_pins;
+    QVector<module_pin> m_output_pins;
 };
 
 #endif // GRAPHICS_MODULE_H

@@ -267,7 +267,7 @@ void graphics_scene::update_utility_items()
                 // IF (ANIMATE) ANIMATE ELSE DONT
                 // ALTERNATIVELY ANIMATE IF SCENE HAS LESS THAN X ITEMS
                 m_left_gate_navigation_popup->stop();
-                m_left_gate_navigation_popup->set_height(g->get_height());
+                m_left_gate_navigation_popup->set_height(g->height());
                 m_left_gate_navigation_popup->start(QPointF(g->pos().x() - 120, g->pos().y()));
             }
         }

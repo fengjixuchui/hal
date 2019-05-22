@@ -210,9 +210,11 @@ void advanced_graphics_gate::paint(QPainter* painter, const QStyleOptionGraphics
     }
 }
 
-QPointF advanced_graphics_gate::get_input_pin_scene_position(const QString& type) const
+QPointF advanced_graphics_gate::get_input_scene_position(const u32 net_id, const QString& pin_type) const
 {
-    int index = m_input_pins.indexOf(type);
+    Q_UNUSED(net_id)
+
+    int index = m_input_pins.indexOf(pin_type);
 
     if (index == -1)
     {
@@ -230,9 +232,11 @@ QPointF advanced_graphics_gate::get_input_pin_scene_position(const QString& type
     return mapToScene(QPointF(0, y));
 }
 
-QPointF advanced_graphics_gate::get_output_pin_scene_position(const QString& type) const
+QPointF advanced_graphics_gate::get_output_scene_position(const u32 net_id, const QString& pin_type) const
 {
-    int index = m_output_pins.indexOf(type);
+    Q_UNUSED(net_id)
+
+    int index = m_output_pins.indexOf(pin_type);
 
     if (index == -1)
     {
@@ -248,6 +252,11 @@ QPointF advanced_graphics_gate::get_output_pin_scene_position(const QString& typ
     y += s_pin_font_height / 2;
 
     return mapToScene(QPointF(m_width, y));
+}
+
+void advanced_graphics_gate::set_visuals(const graphics_node::visuals& v)
+{
+
 }
 
 void advanced_graphics_gate::format(const bool& adjust_size_to_grid)
