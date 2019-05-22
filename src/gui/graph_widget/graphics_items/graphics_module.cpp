@@ -3,7 +3,8 @@
 #include "netlist/module.h"
 #include "netlist/net.h"
 
-graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(item_type::module, m->get_id(), QString::fromStdString(m->get_name()))
+graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(item_type::module, m->get_id(), QString::fromStdString(m->get_name())),
+    m_type("Module") // REMOVE THIS ???
 {
     for (const std::shared_ptr<net>& n : m->get_input_nets())
     {
