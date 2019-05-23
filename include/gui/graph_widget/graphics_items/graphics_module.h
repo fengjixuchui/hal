@@ -26,6 +26,8 @@ protected:
         }
     };
 
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
+
     QString m_type; // REMOVE THIS ???
 
     QVector<module_pin> m_input_pins;

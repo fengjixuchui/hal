@@ -15,6 +15,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
+#include <QDebug> // REMOVE THIS LATER
+
 qreal graphics_scene::s_lod = 0;
 
 const qreal graphics_scene::s_grid_fade_start = 0.4;
@@ -300,6 +302,12 @@ void graphics_scene::delete_all_items()
     m_module_items.clear();
     m_gate_items.clear();
     m_net_items.clear();
+}
+
+void graphics_scene::handle_module_doubleclicked(u32 id)
+{
+    // TODO
+    qDebug() << "module " + QString::number(id) + " clicked";
 }
 
 void graphics_scene::handle_intern_selection_changed()

@@ -51,6 +51,8 @@ public:
 
     void delete_all_items();
 
+    void handle_module_doubleclicked(u32 id);
+
 public Q_SLOTS:
     void handle_intern_selection_changed();
     void handle_extern_selection_changed(void* sender);

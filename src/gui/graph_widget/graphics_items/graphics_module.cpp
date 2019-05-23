@@ -3,6 +3,8 @@
 #include "netlist/module.h"
 #include "netlist/net.h"
 
+#include "gui/graph_widget/graphics_scene.h"
+
 graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(item_type::module, m->get_id(), QString::fromStdString(m->get_name())),
     m_type("Module") // REMOVE THIS ???
 {
@@ -35,4 +37,12 @@ graphics_module::graphics_module(std::shared_ptr<module> m) : graphics_node(item
 void graphics_module::set_visuals(const graphics_node::visuals& v)
 {
 
+}
+
+void graphics_module::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+    Q_UNUSED(event)
+
+    if (scene())
+        static_cast<graphics_scene*>(scene())->handle_module_doubleclicked(m_id);
 }
