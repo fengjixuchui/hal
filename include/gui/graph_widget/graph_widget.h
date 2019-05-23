@@ -56,6 +56,8 @@ private:
     void handle_navigation_up_request();
     void handle_navigation_down_request();
 
+    void handle_module_up_request();
+
     void debug_create_context();
     void debug_change_context();
 

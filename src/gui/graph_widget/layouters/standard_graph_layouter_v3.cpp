@@ -29,6 +29,7 @@ standard_graph_layouter_v3::standard_graph_layouter_v3(graph_context* context, Q
 
 void standard_graph_layouter_v3::reset()
 {
+    m_modules.clear();
     m_gates.clear();
     m_nets.clear();
 

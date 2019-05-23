@@ -87,6 +87,11 @@ void graph_widget::keyPressEvent(QKeyEvent* event)
         handle_navigation_down_request();
         break;
     }
+    case Qt::Key_Backspace:
+    {
+        handle_module_up_request();
+        break;
+    }
     default: break;
     }
 }
@@ -349,6 +354,14 @@ void graph_widget::handle_navigation_down_request()
     if (g_selection_relay.m_focus_type == selection_relay::item_type::gate)
         if (m_context->gates().contains(g_selection_relay.m_focus_id))
             g_selection_relay.navigate_down();
+}
+
+void graph_widget::handle_module_up_request()
+{
+    // CHECK IF POSSIBLE
+    // GO TO CONTEXT MANAGER
+    // SET SCENE
+    // DISPLAY OVERLAY IF NECESSARY
 }
 
 void graph_widget::debug_create_context()
