@@ -150,6 +150,14 @@ void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u
         m_context->add(gates, nets);
         update_necessary = true;
     }
+    else
+    {
+        // TODO FIX THIS MESS
+        m_overlay->hide();
+        //if (hasFocus())
+            m_graphics_widget->setFocus();
+    }
+
     // SELECT IN RELAY
     g_selection_relay.m_selected_gates[0] = to_gate;
     g_selection_relay.m_number_of_selected_gates = 1;

@@ -236,7 +236,7 @@ const QString standard_graph_layouter_v3::description() const
 void standard_graph_layouter_v3::layout()
 {
     // ARTIFICIAL LAG FOR TESTING PURPOSES, REMOVE LATER
-    QTime time = QTime::currentTime().addSecs(10);
+    QTime time = QTime::currentTime().addSecs(1);
     while (QTime::currentTime() < time)
     {
         //qDebug() << "im doing stuff";
