@@ -110,7 +110,7 @@ void standard_graph_layouter_v3::expand(const u32 from_gate, const u32 via_net, 
     layout();
 }
 
-void standard_graph_layouter_v3::add(const QSet<u32> gates, const QSet<u32> nets)
+void standard_graph_layouter_v3::add(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)
 {
     QSet<u32> unvisited = gates;
 
@@ -216,8 +216,9 @@ void standard_graph_layouter_v3::add(const QSet<u32> gates, const QSet<u32> nets
     //layout();
 }
 
-void standard_graph_layouter_v3::remove(const QSet<u32> gates, const QSet<u32> nets)
+void standard_graph_layouter_v3::remove(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)
 {
+    Q_UNUSED(modules)
     Q_UNUSED(gates)
     Q_UNUSED(nets)
 }

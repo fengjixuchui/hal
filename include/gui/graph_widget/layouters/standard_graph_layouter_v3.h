@@ -121,8 +121,8 @@ public:
     void layout() Q_DECL_OVERRIDE;
     void reset() Q_DECL_OVERRIDE;
 
-    virtual void add(const QSet<u32> gates, const QSet<u32> nets) Q_DECL_OVERRIDE;
-    virtual void remove(const QSet<u32> gates, const QSet<u32> nets) Q_DECL_OVERRIDE;
+    virtual void add(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets) Q_DECL_OVERRIDE;
+    virtual void remove(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets) Q_DECL_OVERRIDE;
 
     virtual const QString name() const Q_DECL_OVERRIDE;
     virtual const QString description() const Q_DECL_OVERRIDE;

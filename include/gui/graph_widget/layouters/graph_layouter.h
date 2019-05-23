@@ -29,7 +29,7 @@
 #include "netlist/gate.h"
 #include "netlist/net.h"
 
-#include "netlist_relay/netlist_relay.h"
+#include "gui/netlist_relay/netlist_relay.h"
 
 #include <QObject>
 #include <QPair>
@@ -52,13 +52,13 @@ public:
     explicit graph_layouter(graph_context* context, QObject* parent = nullptr);
     virtual ~graph_layouter();
 
-    virtual void layout() = 0;
-    virtual void reset()  = 0; // PROBABLY DOESNT NEED TO BE VIRTUAL
-
-    virtual void add(const QSet<u32> gates, const QSet<u32> nets)    = 0;
-    virtual void remove(const QSet<u32> gates, const QSet<u32> nets) = 0;
+    virtual void add(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)    = 0;
+    virtual void remove(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets) = 0;
 
     virtual void expand(const u32 from_gate, const u32 via_net, const u32 to_gate) = 0;
+
+    virtual void layout() = 0;
+    virtual void reset()  = 0; // PROBABLY DOESNT NEED TO BE VIRTUAL
 
     virtual const QString name() const        = 0;
     virtual const QString description() const = 0;

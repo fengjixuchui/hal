@@ -38,7 +38,7 @@ void graph_context::add(const QSet<u32>& gates, const QSet<u32>& nets)
     m_gates += new_gates;
     m_nets += new_nets;
 
-    m_layouter->add(new_gates, new_nets);
+    m_layouter->add(QSet<u32>(), new_gates, new_nets); // EMPTY SET DEBUG CODE
     m_shader->add(QSet<u32>(), new_gates, new_nets); // EMPTY SET DEBUG CODE
 }
 
@@ -51,7 +51,7 @@ void graph_context::remove(const QSet<u32>& gates, const QSet<u32>& nets)
     m_gates -= old_gates;
     m_nets -= old_nets;
 
-    m_layouter->remove(old_gates, old_nets);
+    m_layouter->remove(QSet<u32>(), old_gates, old_nets); // EMPTY SET DEBUG CODE
     m_shader->remove(QSet<u32>(), old_gates, old_nets); // EMPTY SET DEBUG CODE
 }
 
@@ -80,7 +80,7 @@ void graph_context::add_module(const u32 id)
     m_gates += new_gates;
     m_nets += new_nets;
 
-    m_layouter->add(new_gates, new_nets);
+    m_layouter->add(QSet<u32>(), new_gates, new_nets); // EMPTY SET DEBUG CODE
     m_shader->add(QSet<u32>(), new_gates, new_nets); // EMPTY SET DEBUG CODE
 }
 
@@ -130,7 +130,7 @@ void graph_context::debug_show_module(const u32 id)
     m_gates += new_gates;
     m_nets += new_nets;
 
-    m_layouter->add(new_gates, new_nets);
+    m_layouter->add(new_modules, new_gates, new_nets);
     m_shader->add(new_modules, new_gates, new_nets);
 }
 
