@@ -31,14 +31,12 @@ void standard_graph_layouter_v3::reset()
 {
     m_gates.clear();
     m_nets.clear();
+
     m_gate_levels.clear();
+
     m_zero_gates.clear();
     m_positive_gates.clear();
     m_negative_gates.clear();
-
-    //add_gate(m_origin, 0);
-
-    layout();
 }
 
 void standard_graph_layouter_v3::expand(const u32 from_gate, const u32 via_net, const u32 to_gate)

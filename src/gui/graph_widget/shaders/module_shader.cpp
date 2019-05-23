@@ -9,13 +9,13 @@ module_shader::module_shader(const graph_context* const context) : graph_shader(
 
 }
 
-void module_shader::added(const QSet<u32> gates, const QSet<u32> nets)
+void module_shader::add(const QSet<u32> gates, const QSet<u32> nets)
 {
     Q_UNUSED(gates)
     Q_UNUSED(nets)
 }
 
-void module_shader::removed(const QSet<u32> gates, const QSet<u32> nets)
+void module_shader::remove(const QSet<u32> gates, const QSet<u32> nets)
 {
     Q_UNUSED(gates)
     Q_UNUSED(nets)
@@ -41,4 +41,11 @@ void module_shader::update()
         v.main_color = item->color();
         m_shading.module_visuals.insert(id, v);
     }
+}
+
+void module_shader::reset()
+{
+    m_shading.module_visuals.clear();
+    m_shading.gate_visuals.clear();
+    m_shading.net_visuals.clear();
 }

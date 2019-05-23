@@ -1,11 +1,11 @@
-#include "graph_widget/graph_context.h"
+#include "gui/graph_widget/graph_context.h"
 
 #include "netlist/module.h"
 
-#include "graph_widget/layouters/standard_graph_layouter.h"
-#include "graph_widget/layouters/standard_graph_layouter_v3.h"
-#include "graph_widget/shaders/module_shader.h"
-#include "gui_globals.h"
+#include "gui/graph_widget/layouters/standard_graph_layouter.h"
+#include "gui/graph_widget/layouters/standard_graph_layouter_v3.h"
+#include "gui/graph_widget/shaders/module_shader.h"
+#include "gui/gui_globals.h"
 
 #include <QtConcurrent>
 
@@ -18,7 +18,7 @@ graph_context::graph_context(const QString& name, const u32 scope, QObject* pare
     m_watcher(new QFutureWatcher<void>(this)),
     m_scene_available(true)
 {
-    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_scene_update_finished);
+    connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_layouter_finished);
 
     // DEBUG CODE
     static int i = 1;
@@ -39,7 +39,7 @@ void graph_context::add(const QSet<u32>& gates, const QSet<u32>& nets)
     m_nets += new_nets;
 
     m_layouter->add(new_gates, new_nets);
-    m_shader->added(new_gates, new_nets);
+    m_shader->add(new_gates, new_nets);
 }
 
 void graph_context::remove(const QSet<u32>& gates, const QSet<u32>& nets)
@@ -52,7 +52,7 @@ void graph_context::remove(const QSet<u32>& gates, const QSet<u32>& nets)
     m_nets -= old_nets;
 
     m_layouter->remove(old_gates, old_nets);
-    m_shader->removed(old_gates, old_nets);
+    m_shader->remove(old_gates, old_nets);
 }
 
 void graph_context::add_module(const u32 id)
@@ -81,13 +81,57 @@ void graph_context::add_module(const u32 id)
     m_nets += new_nets;
 
     m_layouter->add(new_gates, new_nets);
-    m_shader->added(new_gates, new_nets);
+    m_shader->add(new_gates, new_nets);
 }
 
 void graph_context::remove_module(const u32 id)
 {
     Q_UNUSED(id)
     // TODO
+}
+
+void graph_context::debug_show_module(const u32 id)
+{
+    std::shared_ptr<module> m = g_netlist->get_module_by_id(id);
+
+    if (!m)
+        return;
+
+    m_modules.clear();
+    m_gates.clear();
+    m_nets.clear();
+
+    m_layouter->reset();
+    m_shader->reset();
+
+    QSet<u32> new_modules;
+    QSet<u32> new_gates;
+    QSet<u32> new_nets;
+
+    for (std::shared_ptr<module> s : m->get_submodules())
+    {
+        if (!m_modules.contains(s->get_id()))
+            new_modules.insert(s->get_id());
+    }
+
+    for (std::shared_ptr<gate> g : m->get_gates())
+    {
+        if (!m_gates.contains(g->get_id()))
+            new_gates.insert(g->get_id());
+    }
+
+    for (std::shared_ptr<net> n : m->get_nets())
+    {
+        if (!m_nets.contains(n->get_id()))
+            new_nets.insert(n->get_id());
+    }
+
+    m_modules += new_modules;
+    m_gates += new_gates;
+    m_nets += new_nets;
+
+    m_layouter->add(new_gates, new_nets);
+    m_shader->add(new_gates, new_nets);
 }
 
 QString graph_context::name() const
@@ -170,7 +214,7 @@ void graph_context::handle_module_event(module_event_handler::event ev, std::sha
     Q_UNUSED(associated_data);
 }
 
-void graph_context::handle_scene_update_finished()
+void graph_context::handle_layouter_finished()
 {
     // SHADER MIGHT HAVE TO BE THREADED ASWELL
     m_shader->update();

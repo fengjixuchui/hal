@@ -3,8 +3,8 @@
 
 #include "def.h"
 
-#include "graph_widget/layouters/graph_layouter.h"
-#include "graph_widget/shaders/graph_shader.h"
+#include "gui/graph_widget/layouters/graph_layouter.h"
+#include "gui/graph_widget/shaders/graph_shader.h"
 
 #include <QFutureWatcher>
 #include <QObject>
@@ -23,6 +23,8 @@ public:
     // NAME AMBIGUOUS, TODO RENAME
     void add_module(const u32 id);
     void remove_module(const u32 id);
+
+    void debug_show_module(const u32 id);
 
     QString name() const;
     u32 scope() const;
@@ -52,7 +54,7 @@ private Q_SLOTS:
     void handle_net_event(net_event_handler::event ev, std::shared_ptr<net> net, u32 associated_data);
     void handle_module_event(module_event_handler::event ev, std::shared_ptr<module> module, u32 associated_data);
 
-    void handle_scene_update_finished();
+    void handle_layouter_finished();
 
 private:
     void update_scene();
