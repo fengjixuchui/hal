@@ -9,14 +9,16 @@ module_shader::module_shader(const graph_context* const context) : graph_shader(
 
 }
 
-void module_shader::add(const QSet<u32> gates, const QSet<u32> nets)
+void module_shader::add(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)
 {
+    Q_UNUSED(modules)
     Q_UNUSED(gates)
     Q_UNUSED(nets)
 }
 
-void module_shader::remove(const QSet<u32> gates, const QSet<u32> nets)
+void module_shader::remove(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)
 {
+    Q_UNUSED(modules)
     Q_UNUSED(gates)
     Q_UNUSED(nets)
 }
