@@ -2,6 +2,8 @@
 
 #include "netlist/module.h"
 
+#include "gui/graph_widget/graphics_scene.h"
+#include "gui/graph_widget/layouters/orthogonal_graph_layouter.h"
 #include "gui/graph_widget/layouters/standard_graph_layouter.h"
 #include "gui/graph_widget/layouters/standard_graph_layouter_v3.h"
 #include "gui/graph_widget/shaders/module_shader.h"
@@ -12,7 +14,8 @@
 graph_context::graph_context(const QString& name, const u32 scope, QObject* parent) : QObject(parent),
     m_name(name),
     m_scope(scope),
-    m_layouter(new standard_graph_layouter_v3(this)),
+    m_layouter(new orthogonal_graph_layouter(this)),
+    //m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
     m_conform_to_grid(false),
     m_watcher(new QFutureWatcher<void>(this)),
@@ -218,6 +221,7 @@ void graph_context::handle_layouter_finished()
 {
     // SHADER MIGHT HAVE TO BE THREADED ASWELL
     m_shader->update();
+    m_layouter->scene()->update_visuals(m_shader->get_shading());
 
     m_scene_available = true;
     Q_EMIT scene_available();

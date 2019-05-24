@@ -1,17 +1,17 @@
-#include "graph_widget/layouters/graph_layouter.h"
+#include "gui/graph_widget/layouters/graph_layouter.h"
 
-#include "graph_widget/graph_context.h"
-#include "graph_widget/graphics_scene.h"
-#include "graph_widget/graphics_gate_factory.h"
-#include "graph_widget/graphics_items/global_graphics_net.h"
-#include "graph_widget/graphics_items/graphics_gate.h"
-#include "graph_widget/graphics_items/graphics_item.h"
-#include "graph_widget/graphics_items/graphics_net.h"
-#include "graph_widget/graphics_items/separated_graphics_net.h"
-#include "graph_widget/graphics_items/standard_graphics_net.h"
-#include "gui_globals.h"
+#include "gui/graph_widget/graph_context.h"
+#include "gui/graph_widget/graphics_scene.h"
+#include "gui/graph_widget/graphics_gate_factory.h"
+#include "gui/graph_widget/graphics_items/global_graphics_net.h"
+#include "gui/graph_widget/graphics_items/graphics_gate.h"
+#include "gui/graph_widget/graphics_items/graphics_item.h"
+#include "gui/graph_widget/graphics_items/graphics_net.h"
+#include "gui/graph_widget/graphics_items/separated_graphics_net.h"
+#include "gui/graph_widget/graphics_items/standard_graphics_net.h"
+#include "gui/gui_globals.h"
 
-graph_layouter::graph_layouter(graph_context* context, QObject* parent) : QObject(parent),
+graph_layouter::graph_layouter(const graph_context* const context, QObject* parent) : QObject(parent),
     m_scene(new graphics_scene(this)),
     m_context(context)
 {

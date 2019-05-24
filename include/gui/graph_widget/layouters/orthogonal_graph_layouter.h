@@ -21,10 +21,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //  SOFTWARE.
 
-#ifndef PARALLEL_GRAPH_LAYOUTER_H
-#define PARALLEL_GRAPH_LAYOUTER_H
+#ifndef ORTHOGONAL_GRAPH_LAYOUTER_H
+#define ORTHOGONAL_GRAPH_LAYOUTER_H
 
-#include "graph_widget/layouters/graph_layouter.h"
+#include "gui/graph_widget/layouters/graph_layouter.h"
 
 class orthogonal_graph_layouter : public graph_layouter
 {
@@ -33,16 +33,16 @@ class orthogonal_graph_layouter : public graph_layouter
 public:
     orthogonal_graph_layouter(graph_context* context, QObject* parent = nullptr);
 
-    virtual void layout() Q_DECL_OVERRIDE;
-    virtual void reset() Q_DECL_OVERRIDE;
-
     virtual void add(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets) Q_DECL_OVERRIDE;
     virtual void remove(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets) Q_DECL_OVERRIDE;
 
     virtual void expand(const u32 from_gate, const u32 via_net, const u32 to_gate) Q_DECL_OVERRIDE;
 
+    virtual void layout() Q_DECL_OVERRIDE;
+    virtual void reset() Q_DECL_OVERRIDE;
+
     virtual const QString name() const Q_DECL_OVERRIDE;
     virtual const QString description() const Q_DECL_OVERRIDE;
 };
 
-#endif // PARALLEL_GRAPH_LAYOUTER_H
+#endif // ORTHOGONAL_GRAPH_LAYOUTER_H

@@ -31,6 +31,12 @@ class standard_graph_layouter_v3 : public graph_layouter
         qreal output_padding;
     };
 
+    enum class node_type
+    {
+        module,
+        gate
+    };
+
     // ROADS AND JUNCTIONS FILLED LEFT TO RIGHT, TOP TO BOTTOM
     struct road
     {

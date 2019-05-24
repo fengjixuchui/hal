@@ -48,11 +48,16 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
     QToolButton* change_context_button = new QToolButton();
     change_context_button->setText("Change Context");
 
+    QToolButton* update_context_button = new QToolButton();
+    update_context_button->setText("Update Context");
+
     connect(create_context_button, &QToolButton::clicked, this, &graph_widget::debug_create_context);
     connect(change_context_button, &QToolButton::clicked, this, &graph_widget::debug_change_context);
+    connect(update_context_button, &QToolButton::clicked, this, &graph_widget::debug_update_context);
 
     toolbar->addWidget(create_context_button);
     toolbar->addWidget(change_context_button);
+    toolbar->addWidget(update_context_button);
 }
 
 void graph_widget::keyPressEvent(QKeyEvent* event)
@@ -403,6 +408,13 @@ void graph_widget::debug_change_context()
         if (m_context->available())
             m_graphics_widget->view()->setScene(m_context->layouter()->scene());
     }
+}
+
+void graph_widget::debug_update_context()
+{
+    graph_context* context = graph_context_manager::debug_instance()->debug_get_context("Context 1");
+    context->debug_show_module(1);
+    context->update();
 }
 
 void graph_widget::handle_updating_scene()

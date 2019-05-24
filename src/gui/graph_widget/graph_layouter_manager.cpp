@@ -14,6 +14,7 @@
 #include "graph_widget/layouters/orthogonal_graph_layouter.h"
 #include "graph_widget/layouters/placeholder_layouter.h"
 #include "graph_widget/layouters/old_standard_graph_layouter.h"
+#include "graph_widget/graphics_items/standard_graphics_module.h"
 
 #include "gui_globals.h"
 
@@ -33,6 +34,8 @@ graph_layouter_manager::graph_layouter_manager(QObject* parent) : QObject(parent
     advanced_graphics_gate::load_settings();
     standard_graphics_gate::load_settings();
 //    red_pin_gate::load_settings();
+
+    standard_graphics_module::load_settings();
 
     graphics_net::load_settings();
     global_graphics_net::load_settings();

@@ -60,6 +60,7 @@ private:
 
     void debug_create_context();
     void debug_change_context();
+    void debug_update_context();
 
     void handle_updating_scene();
     void handle_scene_available();

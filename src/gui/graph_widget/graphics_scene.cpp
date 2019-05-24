@@ -310,6 +310,14 @@ void graphics_scene::handle_module_doubleclicked(u32 id)
     qDebug() << "module " + QString::number(id) + " clicked";
 }
 
+void graphics_scene::update_visuals(const graph_shader::shading& s)
+{
+    for (module_data m : m_module_items)
+    {
+        m.item->set_visuals(s.module_visuals.value(m.id));
+    }
+}
+
 void graphics_scene::handle_intern_selection_changed()
 {
     int gates = 0;

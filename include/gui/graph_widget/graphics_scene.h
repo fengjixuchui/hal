@@ -3,6 +3,8 @@
 
 #include "def.h"
 
+#include "gui/graph_widget/shaders/graph_shader.h"
+
 #include <QGraphicsScene>
 #include <QPair>
 #include <QVector>
@@ -52,6 +54,7 @@ public:
     void delete_all_items();
 
     void handle_module_doubleclicked(u32 id);
+    void update_visuals(const graph_shader::shading& s);
 
 public Q_SLOTS:
     void handle_intern_selection_changed();

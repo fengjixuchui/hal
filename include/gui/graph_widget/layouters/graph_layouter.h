@@ -49,7 +49,7 @@ class graph_layouter : public QObject
     Q_OBJECT
 
 public:
-    explicit graph_layouter(graph_context* context, QObject* parent = nullptr);
+    explicit graph_layouter(const graph_context* const context, QObject* parent = nullptr);
     virtual ~graph_layouter();
 
     virtual void add(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)    = 0;
@@ -58,7 +58,7 @@ public:
     virtual void expand(const u32 from_gate, const u32 via_net, const u32 to_gate) = 0;
 
     virtual void layout() = 0;
-    virtual void reset()  = 0; // PROBABLY DOESNT NEED TO BE VIRTUAL
+    virtual void reset()  = 0;
 
     virtual const QString name() const        = 0;
     virtual const QString description() const = 0;
@@ -73,14 +73,13 @@ public:
 
 protected:
     graphics_scene* m_scene;
+    const graph_context* const m_context;
 
 private:
 //    void sort_into_net_vector(graphics_net* item);
 
 //    QVector<QPair<u32, graphics_gate*>> m_gate_vector;
 //    QVector<QPair<u32, graphics_net*>> m_net_vector;
-
-    const graph_context* const m_context;
 };
 
 #endif // GRAPH_LAYOUTER_H
