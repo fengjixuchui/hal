@@ -1,7 +1,7 @@
 #include "gui/graph_widget/shaders/module_shader.h"
 
 #include "gui/gui_globals.h"
-#include "gui/graph_widget/graph_context.h"
+#include "gui/graph_widget/contexts/graph_context.h"
 #include "gui/module_model/module_item.h"
 
 module_shader::module_shader(const graph_context* const context) : graph_shader(context)

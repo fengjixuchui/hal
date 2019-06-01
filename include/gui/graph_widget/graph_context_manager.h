@@ -3,7 +3,7 @@
 
 #include "def.h"
 
-#include "graph_widget/graph_context.h"
+#include "graph_widget/contexts/graph_context.h"
 
 #include "QStringList"
 

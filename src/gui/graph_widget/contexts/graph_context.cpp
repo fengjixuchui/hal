@@ -1,4 +1,4 @@
-#include "gui/graph_widget/graph_context.h"
+#include "gui/graph_widget/contexts/graph_context.h"
 
 #include "netlist/module.h"
 

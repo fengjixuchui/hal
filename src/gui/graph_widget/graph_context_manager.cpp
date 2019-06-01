@@ -1,6 +1,6 @@
-#include "graph_widget/graph_context_manager.h"
+#include "gui/graph_widget/graph_context_manager.h"
 
-#include "graph_widget/graph_context.h"
+#include "gui/graph_widget/contexts/graph_context.h"
 
 static const int max_contexts = 10; // USE SETTINGS FOR THIS
 

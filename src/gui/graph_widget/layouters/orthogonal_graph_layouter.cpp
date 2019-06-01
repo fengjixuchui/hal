@@ -1,6 +1,6 @@
 #include "gui/graph_widget/layouters/orthogonal_graph_layouter.h"
 
-#include "gui/graph_widget/graph_context.h"
+#include "gui/graph_widget/contexts/graph_context.h"
 #include "gui/graph_widget/graphics_scene.h"
 #include "gui/graph_widget/graphics_gate_factory.h"
 #include "gui/graph_widget/graphics_items/separated_graphics_net.h"
