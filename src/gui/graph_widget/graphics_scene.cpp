@@ -308,6 +308,7 @@ void graphics_scene::handle_module_doubleclicked(u32 id)
 {
     // TODO
     qDebug() << "module " + QString::number(id) + " clicked";
+    // VIEW IS AMBIGUOUS
 }
 
 void graphics_scene::update_visuals(const graph_shader::shading& s)

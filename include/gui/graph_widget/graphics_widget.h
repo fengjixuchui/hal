@@ -12,10 +12,12 @@ class graphics_widget : public QFrame
 {
     Q_OBJECT
 
+    // THIS WIDGET WILL LIKELY BE REMOVED
+
 public:
     explicit graphics_widget(QWidget* parent = nullptr);
 
-    graph_graphics_view* view() const; // WHY ???
+    graph_graphics_view* view() const;
 
 private Q_SLOTS:
     void zoom_in(int level = 1);

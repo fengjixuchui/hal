@@ -30,6 +30,8 @@ graph_widget::graph_widget(QWidget* parent) : content_widget("Graph", parent),
 
     connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
 
+    connect(m_graphics_widget->view(), &graph_graphics_view::module_double_clicked, this, &graph_widget::handle_module_double_clicked);
+
     m_overlay->hide();
     m_overlay->set_widget(m_navigation_widget);
 
@@ -183,6 +185,13 @@ void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u
         m_context->update();
 
     // JUMP TO THE GATE
+}
+
+void graph_widget::handle_module_double_clicked(const u32 id)
+{
+    // CONNECT DIRECTLY TO HANDLE ???
+    // MAYBE ADDITIONAL CODE NECESSARY HERE...
+    handle_module_down_requested(id);
 }
 
 // TODO ADD SOUND OR ERROR MESSAGE TO FAILED NAVIGATION ATTEMPTS
@@ -367,6 +376,11 @@ void graph_widget::handle_module_up_request()
     // GO TO CONTEXT MANAGER
     // SET SCENE
     // DISPLAY OVERLAY IF NECESSARY
+}
+
+void graph_widget::handle_module_down_requested(const u32 id)
+{
+    // CHANGE CONTEXT
 }
 
 void graph_widget::debug_create_context()

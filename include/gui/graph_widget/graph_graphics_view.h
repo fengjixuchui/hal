@@ -24,6 +24,8 @@
 #ifndef GRAPH_GRAPHICS_VIEW_H
 #define GRAPH_GRAPHICS_VIEW_H
 
+#include "def.h"
+
 #include <QGraphicsView>
 
 class graphics_item;
@@ -41,6 +43,7 @@ public:
     graph_graphics_view(QWidget* parent = nullptr);
 
 Q_SIGNALS:
+    void module_double_clicked(u32 id);
     void zoomed_in(int value);
     void zoomed_out(int value);
 
@@ -48,20 +51,29 @@ private Q_SLOTS:
     void conditional_update();
     void handle_change_color_action();    //TODO REPLACE WITH RELAY
     void handle_cone_view_action();       //DEBUG CODE, TODO REPLACE
+    void adjust_min_scale();
 
 private:
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
-    //    void drawForeground(QPainter* painter, const QRectF& rect) Q_DECL_OVERRIDE;
+    void drawForeground(QPainter* painter, const QRectF& rect) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+    void mouseDoubleClickEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent* event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent* event) Q_DECL_OVERRIDE;
 
     void show_context_menu(const QPoint& pos);
+
+    void update_matrix(const int delta);
 
     void toggle_antialiasing();
 
     //TODO REPLACE WITH RELAY
     graphics_item* m_item;
+
+    bool m_minimap_enabled;
 
     bool m_antialiasing_enabled;
     bool m_cosmetic_nets_enabled;
@@ -69,6 +81,10 @@ private:
     bool m_grid_enabled;
     bool m_grid_clusters_enabled;
     graph_widget_constants::grid_type m_grid_type;
+
+    QPoint m_move_position;
+    QPoint m_zoom_position; // DEBUG CODE
+    qreal m_min_scale;
 };
 
 #endif // GRAPH_GRAPHICS_VIEW_H

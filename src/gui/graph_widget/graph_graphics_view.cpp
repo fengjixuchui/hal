@@ -13,11 +13,15 @@
 
 #include <QAction>
 #include <QColorDialog>
+#include <qmath.h>
 #include <QMenu>
 #include <QStyleOptionGraphicsItem>
 #include <QWheelEvent>
 
+#include <QScrollBar> // DEBUG CODE
+
 graph_graphics_view::graph_graphics_view(QWidget* parent) : QGraphicsView(parent),
+    m_minimap_enabled(false),
     m_antialiasing_enabled(false),
     m_cosmetic_nets_enabled(false),
     m_grid_enabled(true),
@@ -62,6 +66,14 @@ void graph_graphics_view::handle_cone_view_action()
         return;
 }
 
+void graph_graphics_view::adjust_min_scale()
+{
+    if (!scene())
+        return;
+
+   m_min_scale = std::min(viewport()->width() / scene()->width(), viewport()->height() / scene()->height());
+}
+
 void graph_graphics_view::paintEvent(QPaintEvent* event)
 {
     qreal lod = QStyleOptionGraphicsItem::levelOfDetailFromTransform(transform());
@@ -80,14 +92,72 @@ void graph_graphics_view::paintEvent(QPaintEvent* event)
     QGraphicsView::paintEvent(event);
 }
 
-//void graph_graphics_view::drawForeground(QPainter* painter, const QRectF& rect)
-//{
-//    Q_UNUSED(rect)
+void graph_graphics_view::mouseDoubleClickEvent(QMouseEvent* event)
+{
+    graphics_item* item = static_cast<graphics_item*>(itemAt(event->pos()));
+
+    if(item->get_item_type() == graphics_item::item_type::module)
+        Q_EMIT module_double_clicked(item->id());
+}
+
+void graph_graphics_view::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    Q_UNUSED(rect)
+
+    if (!m_minimap_enabled)
+        return;
 
 //    QRectF bar(0, 0, viewport()->width(), 30);
 //    painter->resetTransform();
 //    painter->fillRect(bar, QColor(0, 0, 0, 170));
-//}
+
+    QRectF map(viewport()->width() - 210, viewport()->height() - 130, 200, 120);
+    painter->resetTransform();
+    painter->fillRect(map, QColor(0, 0, 0, 170));
+}
+
+void graph_graphics_view::mousePressEvent(QMouseEvent* event)
+{
+    if (event->modifiers() == Qt::ShiftModifier)
+    {
+        if (event->button() == Qt::LeftButton)
+            m_move_position = event->pos();
+    }
+    else
+        if (event->button() == Qt::MidButton)
+            m_zoom_position = event->pos();
+        else
+            QGraphicsView::mousePressEvent(event);
+}
+
+void graph_graphics_view::mouseMoveEvent(QMouseEvent* event)
+{
+    if (event->modifiers() == Qt::ShiftModifier)
+    {
+        if (event->buttons().testFlag(Qt::LeftButton))
+        {
+            QScrollBar *hBar = horizontalScrollBar();
+            QScrollBar *vBar = verticalScrollBar();
+            QPoint delta = event->pos() - m_move_position;
+            m_move_position = event->pos();
+            hBar->setValue(hBar->value() + (isRightToLeft() ? delta.x() : -delta.x()));
+            vBar->setValue(vBar->value() - delta.y());
+        }
+    }
+    else if (event->buttons().testFlag(Qt::MidButton))
+    {
+        int delta = m_zoom_position.y() - event->pos().y();
+
+        if (delta)
+            delta = std::min(delta, 100);
+        else
+            delta = std::max(delta, -100);
+
+        update_matrix(delta);
+    }
+    else
+        QGraphicsView::mouseMoveEvent(event);
+}
 
 void graph_graphics_view::wheelEvent(QWheelEvent* event)
 {
@@ -151,6 +221,13 @@ void graph_graphics_view::keyReleaseEvent(QKeyEvent* event)
     }
 }
 
+void graph_graphics_view::resizeEvent(QResizeEvent* event)
+{
+    Q_UNUSED(event)
+
+    adjust_min_scale();
+}
+
 void graph_graphics_view::show_context_menu(const QPoint& pos)
 {
     graphics_scene* s = static_cast<graphics_scene*>(scene());
@@ -198,6 +275,16 @@ void graph_graphics_view::show_context_menu(const QPoint& pos)
     context_menu.exec(mapToGlobal(pos));
     update();
 }
+
+void graph_graphics_view::update_matrix(const int delta)
+{
+    qreal scale = qPow(qreal(2), (delta) / qreal(100));
+
+    QMatrix matrix;
+    matrix.scale(scale, scale);
+    setMatrix(matrix);
+}
+
 
 void graph_graphics_view::toggle_antialiasing()
 {

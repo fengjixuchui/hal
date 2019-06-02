@@ -45,7 +45,6 @@ public:
 Q_SIGNALS:
     void updating_scene();
     void scene_available();
-    // MAYBE DELETING SCENE IS FASTER, TODO CHECK
     // ABOUT TO BE DELETED SIGNAL ?
 
 private Q_SLOTS:

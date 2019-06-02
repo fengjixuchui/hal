@@ -9,7 +9,7 @@
 class graphics_item : public QGraphicsItem
 {
 public:
-    enum class item_type
+    enum class item_type // USE QT ITEM TYPE SYSTEM INSTEAD ???
     {
         module,
         gate,
