@@ -15,10 +15,9 @@
 #include <QColorDialog>
 #include <qmath.h>
 #include <QMenu>
+#include <QScrollBar>
 #include <QStyleOptionGraphicsItem>
 #include <QWheelEvent>
-
-#include <QScrollBar> // DEBUG CODE
 
 graph_graphics_view::graph_graphics_view(QWidget* parent) : QGraphicsView(parent),
     m_minimap_enabled(false),
@@ -38,10 +37,6 @@ graph_graphics_view::graph_graphics_view(QWidget* parent) : QGraphicsView(parent
     setContextMenuPolicy(Qt::CustomContextMenu);
     setOptimizationFlags(QGraphicsView::DontSavePainterState);
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-    //setOptimizationFlags(QGraphicsView::DontSavePainterState | QGraphicsView::DontAdjustForAntialiasing);
-    //setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
-    //setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
 }
 
 void graph_graphics_view::conditional_update()
@@ -54,8 +49,8 @@ void graph_graphics_view::handle_change_color_action()
 {
     QColor color = QColorDialog::getColor();
 
-    if (color.isValid())
-        m_item->set_color(color);
+    if (!color.isValid())
+        return;
 }
 
 void graph_graphics_view::handle_cone_view_action()
@@ -94,7 +89,13 @@ void graph_graphics_view::paintEvent(QPaintEvent* event)
 
 void graph_graphics_view::mouseDoubleClickEvent(QMouseEvent* event)
 {
+    if (event->button() != Qt::LeftButton)
+        return;
+
     graphics_item* item = static_cast<graphics_item*>(itemAt(event->pos()));
+
+    if (!item)
+        return;
 
     if(item->get_item_type() == graphics_item::item_type::module)
         Q_EMIT module_double_clicked(item->id());
@@ -125,7 +126,10 @@ void graph_graphics_view::mousePressEvent(QMouseEvent* event)
     }
     else
         if (event->button() == Qt::MidButton)
+        {
             m_zoom_position = event->pos();
+            m_zoom_scene_position = mapToScene(event->pos());
+        }
         else
             QGraphicsView::mousePressEvent(event);
 }
@@ -154,6 +158,7 @@ void graph_graphics_view::mouseMoveEvent(QMouseEvent* event)
             delta = std::max(delta, -100);
 
         update_matrix(delta);
+        centerOn(m_zoom_scene_position);
     }
     else
         QGraphicsView::mouseMoveEvent(event);

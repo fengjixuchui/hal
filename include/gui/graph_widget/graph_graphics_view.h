@@ -83,7 +83,8 @@ private:
     graph_widget_constants::grid_type m_grid_type;
 
     QPoint m_move_position;
-    QPoint m_zoom_position; // DEBUG CODE
+    QPoint m_zoom_position;
+    QPointF m_zoom_scene_position;
     qreal m_min_scale;
 };
 
