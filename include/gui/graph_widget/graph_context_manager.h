@@ -3,25 +3,30 @@
 
 #include "def.h"
 
-#include "graph_widget/contexts/graph_context.h"
+#include <QStringList>
+#include <QVector>
 
-#include "QStringList"
+class dynamic_context;
+class module_context;
 
 class graph_context_manager
 {
 public:
     static graph_context_manager* debug_instance();
 
-    graph_context* debug_add_context(const QString& name, const u32 scope);
+    module_context* get_module_context(const u32 id);
 
-    graph_context* debug_get_context(const QString& name);
+    dynamic_context* add_dynamic_context(const QString& name, const u32 scope);
 
-    QStringList debug_context_list();
+    dynamic_context* get_dynamic_context(const QString& name);
+
+    QStringList dynamic_context_list();
 
 private:
     graph_context_manager();
 
-    QVector<graph_context*> m_contexts;
+    QVector<module_context*> m_module_contexts;
+    QVector<dynamic_context*> m_dynamic_contexts;
 };
 
 #endif // GRAPH_CONTEXT_MANAGER_H

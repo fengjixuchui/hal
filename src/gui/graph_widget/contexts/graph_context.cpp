@@ -11,9 +11,7 @@
 
 #include <QtConcurrent>
 
-graph_context::graph_context(const QString& name, const u32 scope, QObject* parent) : QObject(parent),
-    m_name(name),
-    m_scope(scope),
+graph_context::graph_context(QObject* parent) : QObject(parent),
     m_layouter(new orthogonal_graph_layouter(this)),
     //m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
@@ -22,14 +20,6 @@ graph_context::graph_context(const QString& name, const u32 scope, QObject* pare
     m_scene_available(true)
 {
     connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_layouter_finished);
-
-    // DEBUG CODE
-    static int i = 1;
-    m_name = "Context " + QString::number(i);
-    ++i;
-
-    // USE SEPARATE CLASSES FOR MODULE AND FREE CONTEXTS
-    // SPLIT CONTEXT INTO LAYOUT, SHADING, ITEM TYPES ... AND CONTEXT TYPE
 }
 
 void graph_context::add(const QSet<u32>& gates, const QSet<u32>& nets)
@@ -137,16 +127,6 @@ void graph_context::debug_show_module(const u32 id)
     m_shader->add(new_modules, new_gates, new_nets);
 }
 
-QString graph_context::name() const
-{
-    return m_name;
-}
-
-u32 graph_context::scope() const
-{
-    return m_scope;
-}
-
 const QSet<u32>& graph_context::gates() const
 {
     return m_gates;
@@ -187,34 +167,6 @@ void graph_context::update()
     // TODO
     //m_layouter->layout();
     update_scene();
-}
-
-void graph_context::handle_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> netlist, u32 associated_data)
-{
-    Q_UNUSED(ev);
-    Q_UNUSED(netlist);
-    Q_UNUSED(associated_data);
-}
-
-void graph_context::handle_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> gate, u32 associated_data)
-{
-    Q_UNUSED(ev);
-    Q_UNUSED(gate);
-    Q_UNUSED(associated_data);
-}
-
-void graph_context::handle_net_event(net_event_handler::event ev, std::shared_ptr<net> net, u32 associated_data)
-{
-    Q_UNUSED(ev);
-    Q_UNUSED(net);
-    Q_UNUSED(associated_data);
-}
-
-void graph_context::handle_module_event(module_event_handler::event ev, std::shared_ptr<module> module, u32 associated_data)
-{
-    Q_UNUSED(ev);
-    Q_UNUSED(module);
-    Q_UNUSED(associated_data);
 }
 
 void graph_context::handle_layouter_finished()

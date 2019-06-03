@@ -4,6 +4,8 @@
 #include "netlist/module.h"
 #include "netlist/net.h"
 
+#include "gui/graph_widget/contexts/dynamic_context.h"
+#include "gui/graph_widget/contexts/module_context.h"
 #include "gui/graph_widget/graph_context_manager.h"
 #include "gui/graph_widget/graph_navigation_widget.h"
 #include "gui/graph_widget/graph_layout_progress_widget.h"
@@ -44,6 +46,9 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
     // DEPRECATED
     // DELETE THIS METHOD AFTER CONTENT WIDGET REFACTOR
 
+    QToolButton* context_one_button = new QToolButton();
+    context_one_button->setText("Context 1");
+
     QToolButton* create_context_button = new QToolButton();
     create_context_button->setText("Create Context");
 
@@ -53,10 +58,12 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
     QToolButton* update_context_button = new QToolButton();
     update_context_button->setText("Update Context");
 
+    connect(context_one_button, &QToolButton::clicked, this, &graph_widget::debug_module_one);
     connect(create_context_button, &QToolButton::clicked, this, &graph_widget::debug_create_context);
     connect(change_context_button, &QToolButton::clicked, this, &graph_widget::debug_change_context);
     connect(update_context_button, &QToolButton::clicked, this, &graph_widget::debug_update_context);
 
+    toolbar->addWidget(context_one_button);
     toolbar->addWidget(create_context_button);
     toolbar->addWidget(change_context_button);
     toolbar->addWidget(update_context_button);
@@ -134,20 +141,21 @@ void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u
 
     if (!contains_net || !contains_gate)
     {
-        if (m_context->scope())
-        {
-            // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
-            std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
+        // THIS HAS TO BE DELEGATED TO THE CONTEXT
+//        if (m_context->scope())
+//        {
+//            // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
+//            std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
 
-            if (!m)
-                return; // INVALID SCOPE
+//            if (!m)
+//                return; // INVALID SCOPE
 
-            if (!m->contains_net(n, true))
-                return; // NET OUT OF SCOPE
+//            if (!m->contains_net(n, true))
+//                return; // NET OUT OF SCOPE
 
-            if (!m->contains_gate(g, true))
-                return; // GATE OUT OF SCOPE
-        }
+//            if (!m->contains_gate(g, true))
+//                return; // GATE OUT OF SCOPE
+//        }
 
         QSet<u32> gates;
         QSet<u32> nets;
@@ -236,20 +244,21 @@ void graph_widget::handle_navigation_left_request()
 
                 if (!contains_net || !contains_gate)
                 {
-                    if (m_context->scope())
-                    {
-                        // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
-                        std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
+                    // THIS HAS TO BE DELEGATED TO THE CONTEXT
+//                    if (m_context->scope())
+//                    {
+//                        // DRAW NON MEMBER NETS AND GATES AND SHADE THEM DIFFERENTLY ?
+//                        std::shared_ptr<module> m = g_netlist->get_module_by_id(m_context->scope());
 
-                        if (!m)
-                            return; // INVALID SCOPE
+//                        if (!m)
+//                            return; // INVALID SCOPE
 
-                        if (!m->contains_net(n, true))
-                            return; // NET OUT OF SCOPE
+//                        if (!m->contains_net(n, true))
+//                            return; // NET OUT OF SCOPE
 
-                        if (!m->contains_gate(n->get_src().gate, true))
-                            return; // GATE OUT OF SCOPE
-                    }
+//                        if (!m->contains_gate(n->get_src().gate, true))
+//                            return; // GATE OUT OF SCOPE
+//                    }
 
                     QSet<u32> gates;
                     QSet<u32> nets;
@@ -383,9 +392,31 @@ void graph_widget::handle_module_down_requested(const u32 id)
     // CHANGE CONTEXT
 }
 
+void graph_widget::debug_module_one()
+{
+    if (m_context)
+    {
+        // UNSUB FROM OLD CONTEXT
+        disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+        disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+    }
+
+    // SUB TO NEW
+    m_context = graph_context_manager::debug_instance()->get_module_context(1);
+
+    if (!m_context)
+        return;
+
+    connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+    connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+
+    if (m_context->available())
+        m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+}
+
 void graph_widget::debug_create_context()
 {
-    graph_context* context = graph_context_manager::debug_instance()->debug_add_context("Debug", 1);
+    dynamic_context* context = graph_context_manager::debug_instance()->add_dynamic_context("Debug", 1);
 
     QSet<u32> gates;
     QSet<u32> nets;
@@ -403,7 +434,7 @@ void graph_widget::debug_create_context()
 void graph_widget::debug_change_context()
 {
     bool ok;
-    QString item = QInputDialog::getItem(this, "Debug", "Context:", graph_context_manager::debug_instance()->debug_context_list(), 0, false, &ok);
+    QString item = QInputDialog::getItem(this, "Debug", "Context:", graph_context_manager::debug_instance()->dynamic_context_list(), 0, false, &ok);
 
     if (ok && !item.isEmpty())
     {
@@ -411,7 +442,7 @@ void graph_widget::debug_change_context()
         disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
         disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
         // SUB TO NEW
-        m_context = graph_context_manager::debug_instance()->debug_get_context(item);
+        m_context = graph_context_manager::debug_instance()->get_dynamic_context(item);
 
         if (!m_context)
             return;
@@ -426,9 +457,8 @@ void graph_widget::debug_change_context()
 
 void graph_widget::debug_update_context()
 {
-    graph_context* context = graph_context_manager::debug_instance()->debug_get_context("Context 1");
-    context->debug_show_module(1);
-    context->update();
+    if (m_context)
+        m_context->update();
 }
 
 void graph_widget::handle_updating_scene()

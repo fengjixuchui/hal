@@ -60,6 +60,7 @@ private:
     void handle_module_up_request();
     void handle_module_down_requested(const u32 id);
 
+    void debug_module_one();
     void debug_create_context();
     void debug_change_context();
     void debug_update_context();
