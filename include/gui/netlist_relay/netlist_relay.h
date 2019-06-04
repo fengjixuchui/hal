@@ -53,29 +53,56 @@ public:
     void debug_add_child_module(module_item* item);
 
 Q_SIGNALS:
-    void netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
-    void net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
-    void gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
-    void module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data);
+    // PROBABLY OBSOLETE
+    void netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data) const;
+    void module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data) const;
+    void gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data) const;
+    void net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data) const;
 
-    void module_created(std::shared_ptr<module> m);
-    void module_removed(std::shared_ptr<module> m);
-    void module_name_changed(std::shared_ptr<module> m);
-    void module_submodule_added(std::shared_ptr<module> m, u32 added_module);
-    void module_submodule_removed(std::shared_ptr<module> m, u32 removed_module);
-    void module_gate_inserted(std::shared_ptr<module> m, u32 inserted_gate);
-    void module_gate_removed(std::shared_ptr<module> m, u32 removed_gate);
-    void module_net_inserted(std::shared_ptr<module> m, u32 inserted_net);
-    void module_net_removed(std::shared_ptr<module> m, u32 removed_net);
+    void netlist_id_changed(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_input_filename_changed(const std::shared_ptr<netlist> n) const;
+    void netlist_design_name_changed(const std::shared_ptr<netlist> n) const;
+    void netlist_device_name_changed(const std::shared_ptr<netlist> n) const;
+    void netlist_marked_global_vcc(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_marked_global_gnd(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_unmarked_global_vcc(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_unmarked_global_gnd(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_marked_global_input(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_marked_global_output(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_marked_global_inout(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_unmarked_global_input(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_unmarked_global_output(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+    void netlist_unmarked_global_inout(const std::shared_ptr<netlist> n, const u32 associated_data) const;
+
+    void module_created(const std::shared_ptr<module> m) const;
+    void module_removed(const std::shared_ptr<module> m) const;
+    void module_name_changed(const std::shared_ptr<module> m) const;
+    void module_submodule_added(const std::shared_ptr<module> m, const u32 added_module) const;
+    void module_submodule_removed(const std::shared_ptr<module> m, const u32 removed_module) const;
+    void module_gate_inserted(const std::shared_ptr<module> m, const u32 inserted_gate) const;
+    void module_gate_removed(const std::shared_ptr<module> m, const u32 removed_gate) const;
+    void module_net_inserted(const std::shared_ptr<module> m, const u32 inserted_net) const;
+    void module_net_removed(const std::shared_ptr<module> m, const u32 removed_net) const;
+
+    void gate_created(const std::shared_ptr<gate> g) const;
+    void gate_removed(const std::shared_ptr<gate> g) const;
+    void gate_name_changed(const std::shared_ptr<gate> g) const;
+
+    void created(const std::shared_ptr<net> n) const;
+    void removed(const std::shared_ptr<net> n) const;
+    void name_changed(const std::shared_ptr<net> n) const;
+    void src_changed(const std::shared_ptr<net> n) const;
+    void dst_added(const std::shared_ptr<net> n, const u32 associated_data) const;
+    void dst_removed(const std::shared_ptr<net> n, const u32 associated_data) const;
 
 private Q_SLOTS:
     void debug_handle_file_opened();
 
 private:
     void relay_netlist_event(netlist_event_handler::event ev, std::shared_ptr<netlist> object, u32 associated_data);
-    void relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
-    void relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
     void relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data);
+    void relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data);
+    void relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data);
 
     QMap<u32, QString> m_gate_aliases;
     QMap<u32, QString> m_net_aliases;

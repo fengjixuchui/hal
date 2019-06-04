@@ -141,25 +141,81 @@ void netlist_relay::relay_netlist_event(netlist_event_handler::event ev, std::sh
         return; // SHOULD NEVER BE REACHED
 
     //qDebug() << "relay_netlist_event called: event ID =" << ev << "for object at" << object.get();
-    Q_EMIT netlist_event(ev, object, associated_data);
-}
+    //Q_EMIT netlist_event(ev, object, associated_data);
 
-void netlist_relay::relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data)
-{
-    if (!object)
-        return; // SHOULD NEVER BE REACHED
-
-    //qDebug() << "relay_net_event called: event ID =" << ev << "for object at" << object.get();
-    Q_EMIT net_event(ev, object, associated_data);
-}
-
-void netlist_relay::relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data)
-{
-    if (!object)
-        return; // SHOULD NEVER BE REACHED
-
-    //qDebug() << "relay_gate_event called: event ID =" << ev << "for object at" << object.get();
-    Q_EMIT gate_event(ev, object, associated_data);
+    switch (ev)
+    {
+    case netlist_event_handler::event::id_changed:
+    {
+        ///< associated_data = old id
+        break;
+    }
+    case netlist_event_handler::event::input_filename_changed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case netlist_event_handler::event::design_name_changed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case netlist_event_handler::event::device_name_changed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case netlist_event_handler::event::marked_global_vcc:
+    {
+        ///< associated_data = id of gate
+        break;
+    }
+    case netlist_event_handler::event::marked_global_gnd:
+    {
+        ///< associated_data = id of gate
+        break;
+    }
+    case netlist_event_handler::event::unmarked_global_vcc:
+    {
+        ///< associated_data = id of gate
+        break;
+    }
+    case netlist_event_handler::event::unmarked_global_gnd:
+    {
+        ///< associated_data = id of gate
+        break;
+    }
+    case netlist_event_handler::event::marked_global_input:
+    {
+        ///< associated_data = id of net
+        break;
+    }
+    case netlist_event_handler::event::marked_global_output:
+    {
+        ///< associated_data = id of net
+        break;
+    }
+    case netlist_event_handler::event::marked_global_inout:
+    {
+        ///< associated_data = id of net
+        break;
+    }
+    case netlist_event_handler::event::unmarked_global_input:
+    {
+        ///< associated_data = id of net
+        break;
+    }
+    case netlist_event_handler::event::unmarked_global_output:
+    {
+        ///< associated_data = id of net
+        break;
+    }
+    case netlist_event_handler::event::unmarked_global_inout:
+    {
+        ///< associated_data = id of net
+        break;
+    }
+    }
 }
 
 void netlist_relay::relay_module_event(module_event_handler::event ev, std::shared_ptr<module> object, u32 associated_data)
@@ -250,6 +306,77 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
         //< associated_data = id of removed net
 
         Q_EMIT module_net_removed(object, associated_data);
+        break;
+    }
+    }
+}
+
+void netlist_relay::relay_gate_event(gate_event_handler::event ev, std::shared_ptr<gate> object, u32 associated_data)
+{
+    if (!object)
+        return; // SHOULD NEVER BE REACHED
+
+    //qDebug() << "relay_gate_event called: event ID =" << ev << "for object at" << object.get();
+    //Q_EMIT gate_event(ev, object, associated_data);
+
+    switch (ev)
+    {
+    case gate_event_handler::event::created:
+    {
+        ///< no associated_data
+        break;
+    }
+    case gate_event_handler::removed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case gate_event_handler::name_changed:
+    {
+        ///< no associated_data
+        break;
+    }
+    }
+}
+
+void netlist_relay::relay_net_event(net_event_handler::event ev, std::shared_ptr<net> object, u32 associated_data)
+{
+    if (!object)
+        return; // SHOULD NEVER BE REACHED
+
+    //qDebug() << "relay_net_event called: event ID =" << ev << "for object at" << object.get();
+    //Q_EMIT net_event(ev, object, associated_data);
+
+    switch (ev)
+    {
+    case net_event_handler::event::created:
+    {
+        ///< no associated_data
+        break;
+    }
+    case net_event_handler::event::removed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case net_event_handler::event::name_changed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case net_event_handler::event::src_changed:
+    {
+        ///< no associated_data
+        break;
+    }
+    case net_event_handler::event::dst_added:
+    {
+        ///< associated_data = id of dst gate
+        break;
+    }
+    case net_event_handler::event::dst_removed:
+    {
+        ///< associated_data = id of dst gate
         break;
     }
     }
