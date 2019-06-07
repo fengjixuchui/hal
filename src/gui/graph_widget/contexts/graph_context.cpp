@@ -11,6 +11,8 @@
 
 #include <QtConcurrent>
 
+static const bool lazy_update = false; // USE SETTINGS FOR THIS
+
 graph_context::graph_context(QObject* parent) : QObject(parent),
     m_layouter(new orthogonal_graph_layouter(this)),
     //m_layouter(new standard_graph_layouter_v3(this)),

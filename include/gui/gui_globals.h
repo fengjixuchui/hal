@@ -26,6 +26,7 @@
 
 #include "netlist/netlist.h"
 
+#include "gui/graph_widget/graph_context_manager.h"
 #include "gui/netlist_relay/netlist_relay.h"
 #include "gui/notifications/notification_manager.h"
 #include "gui/plugin_management/plugin_relay.h"
@@ -48,6 +49,8 @@ extern netlist_relay g_netlist_relay;
 extern plugin_relay g_plugin_relay;
 extern selection_relay g_selection_relay;
 extern settings_relay g_settings_relay;
+
+extern graph_context_manager g_graph_context_manager;
 
 extern std::unique_ptr<python_context> g_python_context;
 

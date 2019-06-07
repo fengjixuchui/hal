@@ -7,6 +7,7 @@
 #include "netlist/gate_library/gate_library_manager.h"
 
 #include "gui/file_manager/file_manager.h"
+#include "gui/graph_widget/graph_context_manager.h"
 #include "gui/main_window/main_window.h"
 #include "gui/netlist_relay/netlist_relay.h"
 #include "gui/notifications/notification_manager.h"
@@ -39,6 +40,8 @@ netlist_relay g_netlist_relay;
 plugin_relay g_plugin_relay;
 selection_relay g_selection_relay;
 settings_relay g_settings_relay;
+
+graph_context_manager g_graph_context_manager;
 
 std::unique_ptr<python_context> g_python_context = nullptr;
 

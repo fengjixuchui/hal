@@ -60,6 +60,8 @@ private:
     void update_scene();
     void apply_shading();
 
+    bool m_unhandled_changes;
+
     bool m_conform_to_grid;
 
     QFutureWatcher<void>* m_watcher;

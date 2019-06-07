@@ -402,7 +402,7 @@ void graph_widget::debug_module_one()
     }
 
     // SUB TO NEW
-    m_context = graph_context_manager::debug_instance()->get_module_context(1);
+    m_context = g_graph_context_manager.get_module_context(1);
 
     if (!m_context)
         return;
@@ -416,7 +416,7 @@ void graph_widget::debug_module_one()
 
 void graph_widget::debug_create_context()
 {
-    dynamic_context* context = graph_context_manager::debug_instance()->add_dynamic_context("Debug", 1);
+    dynamic_context* context = g_graph_context_manager.add_dynamic_context("Debug", 1);
 
     QSet<u32> gates;
     QSet<u32> nets;
@@ -434,7 +434,7 @@ void graph_widget::debug_create_context()
 void graph_widget::debug_change_context()
 {
     bool ok;
-    QString item = QInputDialog::getItem(this, "Debug", "Context:", graph_context_manager::debug_instance()->dynamic_context_list(), 0, false, &ok);
+    QString item = QInputDialog::getItem(this, "Debug", "Context:", g_graph_context_manager.dynamic_context_list(), 0, false, &ok);
 
     if (ok && !item.isEmpty())
     {
@@ -442,7 +442,7 @@ void graph_widget::debug_change_context()
         disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
         disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
         // SUB TO NEW
-        m_context = graph_context_manager::debug_instance()->get_dynamic_context(item);
+        m_context = g_graph_context_manager.get_dynamic_context(item);
 
         if (!m_context)
             return;

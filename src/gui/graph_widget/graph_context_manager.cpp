@@ -6,10 +6,24 @@
 
 static const int max_module_contexts = 10; // USE SETTINGS FOR THIS
 
-graph_context_manager* graph_context_manager::debug_instance()
+graph_context_manager::graph_context_manager()
 {
-    static graph_context_manager instance;
-    return &instance;
+
+}
+
+module_context* graph_context_manager::get_module_context(const u32 id)
+{
+    for (module_context* c : m_module_contexts)
+        if (c->get_id() == id)
+            return c;
+
+    std::shared_ptr<module> m = g_netlist->get_module_by_id(id);
+    if (!m)
+        return nullptr;
+
+    module_context* c = new module_context(m);
+    m_module_contexts.append(c); // USE LRU
+    return c;
 }
 
 dynamic_context* graph_context_manager::add_dynamic_context(const QString& name, const u32 scope)
@@ -28,7 +42,7 @@ dynamic_context* graph_context_manager::get_dynamic_context(const QString& name)
     return nullptr;
 }
 
-QStringList graph_context_manager::dynamic_context_list()
+QStringList graph_context_manager::dynamic_context_list() const
 {
     QStringList list;
 
@@ -36,25 +50,4 @@ QStringList graph_context_manager::dynamic_context_list()
         list.append(context->name());
 
     return list;
-}
-
-module_context* graph_context_manager::get_module_context(const u32 id)
-{
-    for (module_context* c : m_module_contexts)
-        if (c->get_id() == id)
-            return c;
-
-    std::shared_ptr<module> m = g_netlist->get_module_by_id(id);
-    if (!m)
-        return nullptr;
-
-    module_context* c = new module_context(m);
-    m_module_contexts.append(c); // USE LRU
-    return c;
-}
-
-graph_context_manager::graph_context_manager()
-{
-    // DEBUG CODE
-    get_module_context(1);
 }

@@ -92,8 +92,8 @@ Q_SIGNALS:
     void removed(const std::shared_ptr<net> n) const;
     void name_changed(const std::shared_ptr<net> n) const;
     void src_changed(const std::shared_ptr<net> n) const;
-    void dst_added(const std::shared_ptr<net> n, const u32 associated_data) const;
-    void dst_removed(const std::shared_ptr<net> n, const u32 associated_data) const;
+    void dst_added(const std::shared_ptr<net> n, const u32 dst_gate_id) const;
+    void dst_removed(const std::shared_ptr<net> n, const u32 dst_gate_id) const;
 
 private Q_SLOTS:
     void debug_handle_file_opened();

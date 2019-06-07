@@ -129,13 +129,35 @@ void graph_graphics_view::mousePressEvent(QMouseEvent* event)
         {
             m_zoom_position = event->pos();
             m_zoom_scene_position = mapToScene(event->pos());
+
+            // HIDE CURSOR
+            // SHOW DUMMY ???
+            // ZOOM
+            // MOVE ACTUAL CURSOR TO FINAL POSITION
+            // SHOW ACTUAL CURSOR
+
+            QCursor cursor(Qt::BlankCursor);
+            setCursor(cursor);
         }
         else
             QGraphicsView::mousePressEvent(event);
 }
 
+void graph_graphics_view::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::MidButton)
+    {
+        QCursor cursor;
+        cursor.setPos(mapToGlobal(mapFromScene(m_zoom_scene_position)));
+        setCursor(cursor);
+    }
+}
+
 void graph_graphics_view::mouseMoveEvent(QMouseEvent* event)
 {
+    if (!scene())
+        return;
+
     if (event->modifiers() == Qt::ShiftModifier)
     {
         if (event->buttons().testFlag(Qt::LeftButton))
