@@ -10,12 +10,18 @@
 #include <QObject>
 #include <QSet>
 
+class graph_context_subscriber;
+
 class graph_context : public QObject
 {
     Q_OBJECT
 
 public:
     explicit graph_context(QObject* parent = nullptr);
+    ~graph_context();
+
+    void subscribe(graph_context_subscriber* const subscriber);
+    void unsubscribe(graph_context_subscriber* const subscriber);
 
     void add(const QSet<u32>& gates, const QSet<u32>& nets);
     void remove(const QSet<u32>& gates, const QSet<u32>& nets);
@@ -59,6 +65,8 @@ protected:
 private:
     void update_scene();
     void apply_shading();
+
+    QList<graph_context_subscriber*> m_subscribers;
 
     bool m_unhandled_changes;
 

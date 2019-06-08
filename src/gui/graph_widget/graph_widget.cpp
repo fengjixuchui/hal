@@ -69,6 +69,63 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
     toolbar->addWidget(update_context_button);
 }
 
+void graph_widget::handle_scene_available()
+{
+    m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+
+    connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
+
+    m_overlay->hide();
+    m_progress_widget->stop();
+    m_overlay->set_widget(m_navigation_widget);
+
+    //m_layouter->scene()->connect_all();
+
+    if (hasFocus())
+        m_graphics_widget->setFocus();
+
+    // FIND BETTER WAY TO DO THIS
+    g_selection_relay.m_selected_gates[0] = m_current_expansion;
+    g_selection_relay.m_number_of_selected_gates = 1;
+    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
+    g_selection_relay.m_focus_id = m_current_expansion;
+    // TODO SET CORRECT SUBSELECTION
+    g_selection_relay.m_subfocus = selection_relay::subfocus::none;
+    g_selection_relay.relay_selection_changed(nullptr);
+
+    // JUMP TO THE GATE
+    // JUMP SHOULD BE HANDLED SEPARATELY
+//    if (item)
+    //        m_graphics_widget->view()->ensureVisible(item);
+}
+
+void graph_widget::handle_scene_unavailable()
+{
+    m_graphics_widget->view()->setScene(nullptr);
+
+    disconnect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
+
+    m_progress_widget->set_direction(graph_layout_progress_widget::direction::right);
+    //m_progress_widget->set_direction(graph_layout_progress_widget::direction::left);
+
+    //m_layouter->scene()->disconnect_all();
+
+    m_overlay->set_widget(m_progress_widget);
+    m_progress_widget->start();
+
+    if (m_overlay->isHidden())
+        m_overlay->show();
+}
+
+void graph_widget::handle_context_deleted()
+{
+    m_graphics_widget->view()->setScene(nullptr);
+    m_context = nullptr;
+
+    // SHOW SOME KIND OF "NO CONTEXT SELECTED" WIDGET
+    // UPDATE OTHER DATA, LIKE TOOLBUTTONS
+}
+
 void graph_widget::keyPressEvent(QKeyEvent* event)
 {
     if (!m_context)
@@ -397,7 +454,7 @@ void graph_widget::debug_module_one()
     if (m_context)
     {
         // UNSUB FROM OLD CONTEXT
-        disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+        //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
         disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
     }
 
@@ -407,7 +464,7 @@ void graph_widget::debug_module_one()
     if (!m_context)
         return;
 
-    connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+    //connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
     connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
     if (m_context->available())
@@ -439,7 +496,7 @@ void graph_widget::debug_change_context()
     if (ok && !item.isEmpty())
     {
         // UNSUB FROM OLD CONTEXT
-        disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+        //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
         disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
         // SUB TO NEW
         m_context = g_graph_context_manager.get_dynamic_context(item);
@@ -447,7 +504,7 @@ void graph_widget::debug_change_context()
         if (!m_context)
             return;
 
-        connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+        //connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
         connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
         if (m_context->available())
@@ -459,52 +516,4 @@ void graph_widget::debug_update_context()
 {
     if (m_context)
         m_context->update();
-}
-
-void graph_widget::handle_updating_scene()
-{
-    m_graphics_widget->view()->setScene(nullptr);
-
-    disconnect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
-
-    m_progress_widget->set_direction(graph_layout_progress_widget::direction::right);
-    //m_progress_widget->set_direction(graph_layout_progress_widget::direction::left);
-
-    //m_layouter->scene()->disconnect_all();
-
-    m_overlay->set_widget(m_progress_widget);
-    m_progress_widget->start();
-
-    if (m_overlay->isHidden())
-        m_overlay->show();
-}
-
-void graph_widget::handle_scene_available()
-{
-    m_graphics_widget->view()->setScene(m_context->layouter()->scene());
-
-    connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
-
-    m_overlay->hide();
-    m_progress_widget->stop();
-    m_overlay->set_widget(m_navigation_widget);
-
-    //m_layouter->scene()->connect_all();
-
-    if (hasFocus())
-        m_graphics_widget->setFocus();
-
-    // FIND BETTER WAY TO DO THIS
-    g_selection_relay.m_selected_gates[0] = m_current_expansion;
-    g_selection_relay.m_number_of_selected_gates = 1;
-    g_selection_relay.m_focus_type = selection_relay::item_type::gate;
-    g_selection_relay.m_focus_id = m_current_expansion;
-    // TODO SET CORRECT SUBSELECTION
-    g_selection_relay.m_subfocus = selection_relay::subfocus::none;
-    g_selection_relay.relay_selection_changed(nullptr);
-
-    // JUMP TO THE GATE
-    // JUMP SHOULD BE HANDLED SEPARATELY
-//    if (item)
-//        m_graphics_widget->view()->ensureVisible(item);
 }

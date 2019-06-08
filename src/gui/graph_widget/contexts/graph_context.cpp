@@ -2,6 +2,7 @@
 
 #include "netlist/module.h"
 
+#include "gui/graph_widget/contexts/graph_context_subscriber.h"
 #include "gui/graph_widget/graphics_scene.h"
 #include "gui/graph_widget/layouters/orthogonal_graph_layouter.h"
 #include "gui/graph_widget/layouters/standard_graph_layouter.h"
@@ -22,6 +23,26 @@ graph_context::graph_context(QObject* parent) : QObject(parent),
     m_scene_available(true)
 {
     connect(m_watcher, &QFutureWatcher<void>::finished, this, &graph_context::handle_layouter_finished);
+}
+
+graph_context::~graph_context()
+{
+    for (graph_context_subscriber* subscriber : m_subscribers)
+        subscriber->handle_context_deleted();
+
+}
+
+void graph_context::subscribe(graph_context_subscriber* const subscriber)
+{
+    if (!subscriber || m_subscribers.contains(subscriber))
+        return;
+
+    m_subscribers.append(subscriber);
+}
+
+void graph_context::unsubscribe(graph_context_subscriber* const subscriber)
+{
+    m_subscribers.removeOne(subscriber);
 }
 
 void graph_context::add(const QSet<u32>& gates, const QSet<u32>& nets)

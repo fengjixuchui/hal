@@ -26,7 +26,8 @@
 
 #include "def.h"
 
-#include "content_widget/content_widget.h"
+#include "gui/content_widget/content_widget.h"
+#include "gui/graph_widget/contexts/graph_context_subscriber.h"
 
 class dialog_overlay;
 class cone_layouter;
@@ -35,7 +36,7 @@ class graph_layout_progress_widget;
 class graph_navigation_widget;
 class graphics_widget;
 
-class graph_widget : public content_widget
+class graph_widget : public content_widget, public graph_context_subscriber
 {
     Q_OBJECT
 
@@ -43,6 +44,10 @@ public:
     graph_widget(QWidget* parent = nullptr);
 
     virtual void setup_toolbar(toolbar* toolbar) Q_DECL_OVERRIDE;
+
+    virtual void handle_scene_available() Q_DECL_OVERRIDE;
+    virtual void handle_scene_unavailable() Q_DECL_OVERRIDE;
+    virtual void handle_context_deleted() Q_DECL_OVERRIDE;
 
 protected:
     void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
@@ -66,7 +71,7 @@ private:
     void debug_update_context();
 
     void handle_updating_scene();
-    void handle_scene_available();
+    //void handle_scene_available();
 
     graphics_widget* m_graphics_widget;
     graph_context* m_context;
