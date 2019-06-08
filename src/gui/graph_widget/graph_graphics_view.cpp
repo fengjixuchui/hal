@@ -151,6 +151,8 @@ void graph_graphics_view::mouseReleaseEvent(QMouseEvent* event)
         cursor.setPos(mapToGlobal(mapFromScene(m_zoom_scene_position)));
         setCursor(cursor);
     }
+    else
+        QGraphicsView::mouseReleaseEvent(event);
 }
 
 void graph_graphics_view::mouseMoveEvent(QMouseEvent* event)
