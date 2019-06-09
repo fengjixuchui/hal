@@ -71,7 +71,7 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
 
 void graph_widget::handle_scene_available()
 {
-    m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+    m_graphics_widget->view()->setScene(m_context->scene());
 
     connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
 
@@ -224,7 +224,7 @@ void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u
             gates.insert(to_gate);
 
         // ADD TO CONTEXT
-        m_context->add(gates, nets);
+        m_context->add(QSet<u32>(), gates, nets); // EMPTY SET DEBUG CODE
         update_necessary = true;
     }
     else
@@ -327,7 +327,7 @@ void graph_widget::handle_navigation_left_request()
                         gates.insert(n->get_src().get_gate()->get_id());
 
                     // ADD TO CONTEXT
-                    m_context->add(gates, nets);
+                    m_context->add(QSet<u32>(), gates, nets); // EMPTY SET DEBUG CODE
                     update_necessary = true;
                 }
                 // SELECT IN RELAY
@@ -468,7 +468,7 @@ void graph_widget::debug_module_one()
     connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
     if (m_context->available())
-        m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+        m_graphics_widget->view()->setScene(m_context->scene());
 }
 
 void graph_widget::debug_create_context()
@@ -484,7 +484,7 @@ void graph_widget::debug_create_context()
     for (u32 i = 0; i < g_selection_relay.m_number_of_selected_nets; ++i)
         nets.insert(g_selection_relay.m_selected_nets[i]);
 
-    context->add(gates, nets);
+    context->add(QSet<u32>(), gates, nets); // EMPTY SET DEBUG CODE
     context->update();
 }
 
@@ -508,7 +508,7 @@ void graph_widget::debug_change_context()
         connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
         if (m_context->available())
-            m_graphics_widget->view()->setScene(m_context->layouter()->scene());
+            m_graphics_widget->view()->setScene(m_context->scene());
     }
 }
 

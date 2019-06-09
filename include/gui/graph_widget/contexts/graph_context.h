@@ -23,21 +23,18 @@ public:
     void subscribe(graph_context_subscriber* const subscriber);
     void unsubscribe(graph_context_subscriber* const subscriber);
 
-    void add(const QSet<u32>& gates, const QSet<u32>& nets);
-    void remove(const QSet<u32>& gates, const QSet<u32>& nets);
-
-    // NAME AMBIGUOUS, TODO RENAME
-    void add_module(const u32 id);
-    void remove_module(const u32 id);
-
-    void debug_show_module(const u32 id);
+    void add(const QSet<u32>& modules, const QSet<u32>& gates, const QSet<u32>& nets);
+    void remove(const QSet<u32>& modules, const QSet<u32>& gates, const QSet<u32>& nets);
 
     const QSet<u32>& modules() const;
     const QSet<u32>& gates() const;
     const QSet<u32>& nets() const;
 
-    graph_layouter* layouter();
-    graph_shader* shader();
+    graphics_scene* scene();
+
+    // PROBABLY OBSOLETE
+    //graph_layouter* layouter();
+    //graph_shader* shader();
 
     bool conform_to_grid() const;
 
@@ -46,25 +43,23 @@ public:
     void update();
 
 Q_SIGNALS:
-    void updating_scene();
     void scene_available();
-    // ABOUT TO BE DELETED SIGNAL ?
+    void scene_unavailable();
+    void about_to_be_deleted();
 
 private Q_SLOTS:
     void handle_layouter_finished();
 
 protected:
-    // REPLACE WITH VECTORS ???
     QSet<u32> m_modules;
     QSet<u32> m_gates;
     QSet<u32> m_nets;
 
     graph_layouter* m_layouter;
-    graph_shader* m_shader;
+    graph_shader* m_shader; // MOVE SHADER TO VIEW ? USE BASE SHADER AND ADDITIONAL SHADERS ?
 
 private:
     void update_scene();
-    void apply_shading();
 
     QList<graph_context_subscriber*> m_subscribers;
 
