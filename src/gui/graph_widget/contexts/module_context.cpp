@@ -14,8 +14,6 @@ module_context::module_context(const std::shared_ptr<module> m) :
 
     m_layouter->add(m_modules, m_gates, m_nets);
     m_shader->add(m_modules, m_gates, m_nets);
-
-    update(); // DEBUG CODE, USE DIRTY AND UPDATE WHEN SUBSCRIBED TO
 }
 
 u32 module_context::get_id() const

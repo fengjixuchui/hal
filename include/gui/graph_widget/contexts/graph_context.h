@@ -40,8 +40,6 @@ public:
 
     bool available() const; // TODO FIX BAD NAMING
 
-    void update();
-
 Q_SIGNALS:
     void scene_available();
     void scene_unavailable();
@@ -59,7 +57,15 @@ protected:
     graph_shader* m_shader; // MOVE SHADER TO VIEW ? USE BASE SHADER AND ADDITIONAL SHADERS ?
 
 private:
-    void update_scene();
+    void update();
+
+    QSet<u32> m_added_modules;
+    QSet<u32> m_added_gates;
+    QSet<u32> m_added_nets;
+
+    QSet<u32> m_removed_modules;
+    QSet<u32> m_removed_gates;
+    QSet<u32> m_removed_nets;
 
     QList<graph_context_subscriber*> m_subscribers;
 
@@ -69,6 +75,7 @@ private:
 
     QFutureWatcher<void>* m_watcher;
     bool m_scene_available;
+    bool m_update_in_progress;
 
     // GATE TYPE
 

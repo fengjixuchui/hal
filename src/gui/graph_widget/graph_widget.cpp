@@ -55,18 +55,13 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
     QToolButton* change_context_button = new QToolButton();
     change_context_button->setText("Change Context");
 
-    QToolButton* update_context_button = new QToolButton();
-    update_context_button->setText("Update Context");
-
     connect(context_one_button, &QToolButton::clicked, this, &graph_widget::debug_module_one);
     connect(create_context_button, &QToolButton::clicked, this, &graph_widget::debug_create_context);
     connect(change_context_button, &QToolButton::clicked, this, &graph_widget::debug_change_context);
-    connect(update_context_button, &QToolButton::clicked, this, &graph_widget::debug_update_context);
 
     toolbar->addWidget(context_one_button);
     toolbar->addWidget(create_context_button);
     toolbar->addWidget(change_context_button);
-    toolbar->addWidget(update_context_button);
 }
 
 void graph_widget::handle_scene_available()
@@ -245,10 +240,6 @@ void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u
 
     g_selection_relay.relay_selection_changed(nullptr);
 
-    // RELAYOUT
-    if (update_necessary)
-        m_context->update();
-
     // JUMP TO THE GATE
 }
 
@@ -339,10 +330,6 @@ void graph_widget::handle_navigation_left_request()
                 g_selection_relay.m_subfocus_index = 0; // TODO
 
                 g_selection_relay.relay_selection_changed(nullptr);
-
-                // RELAYOUT
-                if (update_necessary)
-                    m_context->update();
             }
             else
             {
@@ -485,7 +472,6 @@ void graph_widget::debug_create_context()
         nets.insert(g_selection_relay.m_selected_nets[i]);
 
     context->add(QSet<u32>(), gates, nets); // EMPTY SET DEBUG CODE
-    context->update();
 }
 
 void graph_widget::debug_change_context()
@@ -510,10 +496,4 @@ void graph_widget::debug_change_context()
         if (m_context->available())
             m_graphics_widget->view()->setScene(m_context->scene());
     }
-}
-
-void graph_widget::debug_update_context()
-{
-    if (m_context)
-        m_context->update();
 }
