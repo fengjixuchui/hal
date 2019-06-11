@@ -39,11 +39,12 @@ public:
     bool conform_to_grid() const;
 
     bool available() const; // TODO FIX BAD NAMING
+    bool update_in_progress() const;
 
-Q_SIGNALS:
-    void scene_available();
-    void scene_unavailable();
-    void about_to_be_deleted();
+//Q_SIGNALS:
+//    void scene_available();
+//    void scene_unavailable();
+//    void about_to_be_deleted();
 
 private Q_SLOTS:
     void handle_layouter_finished();
@@ -57,7 +58,11 @@ protected:
     graph_shader* m_shader; // MOVE SHADER TO VIEW ? USE BASE SHADER AND ADDITIONAL SHADERS ?
 
 private:
+    void update_if_necessary();
     void update();
+    void conditional_update();
+    void apply_changes();
+    void update_scene();
 
     QSet<u32> m_added_modules;
     QSet<u32> m_added_gates;

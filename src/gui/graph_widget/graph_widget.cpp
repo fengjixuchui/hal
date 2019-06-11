@@ -112,7 +112,7 @@ void graph_widget::handle_scene_unavailable()
         m_overlay->show();
 }
 
-void graph_widget::handle_context_deleted()
+void graph_widget::handle_context_about_to_be_deleted()
 {
     m_graphics_widget->view()->setScene(nullptr);
     m_context = nullptr;
@@ -433,7 +433,10 @@ void graph_widget::handle_module_up_request()
 
 void graph_widget::handle_module_down_requested(const u32 id)
 {
-    // CHANGE CONTEXT
+    graph_context* context = g_graph_context_manager.get_module_context(id);
+
+    if (context)
+        change_context(context);
 }
 
 void graph_widget::debug_module_one()
@@ -442,7 +445,7 @@ void graph_widget::debug_module_one()
     {
         // UNSUB FROM OLD CONTEXT
         //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-        disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+        //disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
     }
 
     // SUB TO NEW
@@ -452,7 +455,7 @@ void graph_widget::debug_module_one()
         return;
 
     //connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-    connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+    //connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
     if (m_context->available())
         m_graphics_widget->view()->setScene(m_context->scene());
@@ -483,7 +486,7 @@ void graph_widget::debug_change_context()
     {
         // UNSUB FROM OLD CONTEXT
         //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-        disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+        //disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
         // SUB TO NEW
         m_context = g_graph_context_manager.get_dynamic_context(item);
 
@@ -491,9 +494,24 @@ void graph_widget::debug_change_context()
             return;
 
         //connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-        connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
+        //connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
         if (m_context->available())
             m_graphics_widget->view()->setScene(m_context->scene());
     }
+}
+
+void graph_widget::change_context(graph_context* const context)
+{
+    if (!context)
+        return;
+
+    if (m_context)
+        m_context->unsubscribe(this);
+
+    m_context = context;
+    m_context->subscribe(this);
+
+    if (!m_context->update_in_progress())
+        m_graphics_widget->view()->setScene(m_context->scene());
 }

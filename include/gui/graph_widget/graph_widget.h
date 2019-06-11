@@ -47,7 +47,7 @@ public:
 
     virtual void handle_scene_available() Q_DECL_OVERRIDE;
     virtual void handle_scene_unavailable() Q_DECL_OVERRIDE;
-    virtual void handle_context_deleted() Q_DECL_OVERRIDE;
+    virtual void handle_context_about_to_be_deleted() Q_DECL_OVERRIDE;
 
 protected:
     void keyPressEvent(QKeyEvent* event) Q_DECL_OVERRIDE;
@@ -69,6 +69,8 @@ private:
     void debug_create_context();
     void debug_change_context();
     void debug_update_context();
+
+    void change_context(graph_context* const context);
 
     void handle_updating_scene();
     //void handle_scene_available();
