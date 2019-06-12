@@ -42,6 +42,8 @@ public:
     bool available() const; // TODO FIX BAD NAMING
     bool update_in_progress() const;
 
+    void update();
+
 //Q_SIGNALS:
 //    void scene_available();
 //    void scene_unavailable();
@@ -60,7 +62,6 @@ protected:
 
 private:
     void update_if_necessary();
-    void update();
     void conditional_update();
     void apply_changes();
     void update_scene();

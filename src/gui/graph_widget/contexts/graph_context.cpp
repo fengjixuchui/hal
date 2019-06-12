@@ -173,15 +173,32 @@ void graph_context::update_if_necessary()
 
 void graph_context::update()
 {   
-    m_update_in_progress = true;
+    if (m_update_in_progress)
+        return;
 
-    for (graph_context_subscriber* s : m_subscribers)
-        s->handle_scene_unavailable();
+    if (lazy_updates)
+        if (m_subscribers.empty())
+            return;
+
+//    for (graph_context_subscriber* s : m_subscribers)
+//        s->handle_scene_unavailable();
 
     if (m_unhandled_changes)
         apply_changes();
 
-    update_scene();
+    if (m_scene_update_required)
+        update_scene();
+
+    // OLD
+//    m_update_in_progress = true;
+
+//    for (graph_context_subscriber* s : m_subscribers)
+//        s->handle_scene_unavailable();
+
+//    if (m_unhandled_changes)
+//        apply_changes();
+
+//    update_scene();
 }
 
 void graph_context::conditional_update()
@@ -229,5 +246,8 @@ void graph_context::apply_changes()
 
 void graph_context::update_scene()
 {
+    for (graph_context_subscriber* s : m_subscribers)
+        s->handle_scene_unavailable();
+
     m_watcher->setFuture(QtConcurrent::run(m_layouter, &graph_layouter::layout));
 }
