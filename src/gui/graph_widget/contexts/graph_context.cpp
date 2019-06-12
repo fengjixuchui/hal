@@ -19,6 +19,7 @@ graph_context::graph_context(QObject* parent) : QObject(parent),
     m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
     m_unhandled_changes(false),
+    m_scene_update_required(false),
     m_conform_to_grid(false),
     m_watcher(new QFutureWatcher<void>(this)),
     m_scene_available(true),
@@ -31,8 +32,6 @@ graph_context::~graph_context()
 {
     for (graph_context_subscriber* subscriber : m_subscribers)
         subscriber->handle_context_about_to_be_deleted();
-
-    // Q_EMIT about_to_be_deleted();
 }
 
 void graph_context::subscribe(graph_context_subscriber* const subscriber)
@@ -152,8 +151,6 @@ void graph_context::handle_layouter_finished()
 
         for (graph_context_subscriber* s : m_subscribers)
             s->handle_scene_available();
-
-        //Q_EMIT scene_available();
     }
 }
 
@@ -185,8 +182,6 @@ void graph_context::update()
         apply_changes();
 
     update_scene();
-
-    //Q_EMIT scene_unavailable();
 }
 
 void graph_context::conditional_update()
@@ -202,8 +197,6 @@ void graph_context::conditional_update()
         s->handle_scene_unavailable();
 
     update_scene();
-
-    //Q_EMIT scene_unavailable();
 }
 
 void graph_context::apply_changes()
@@ -231,6 +224,7 @@ void graph_context::apply_changes()
     m_removed_nets.clear();
 
     m_unhandled_changes = false;
+    m_scene_update_required = true;
 }
 
 void graph_context::update_scene()

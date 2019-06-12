@@ -24,9 +24,10 @@ public:
     dynamic_context* get_dynamic_context(const QString& name);
     QStringList dynamic_context_list() const; // PROBABLY DEBUG METHOD, WILL BE REPLACED BY DIFFERENT SELECTION INTERFACE
 
-    //void handle_module_created(const std::shared_ptr<module> m) const;
+    //void handle_module_created(const std::shared_ptr<module> m) const; // PRECACHING ???
     void handle_module_removed(const std::shared_ptr<module> m) const;
     void handle_module_name_changed(const std::shared_ptr<module> m) const;
+    void handle_module_parent_changed(const std::shared_ptr<module> m) const;
     void handle_module_submodule_added(const std::shared_ptr<module> m, const u32 added_module) const;
     void handle_module_submodule_removed(const std::shared_ptr<module> m, const u32 removed_module) const;
     void handle_module_gate_inserted(const std::shared_ptr<module> m, const u32 inserted_gate) const;
@@ -46,7 +47,7 @@ public:
     void handle_dst_removed(const std::shared_ptr<net> n, const u32 dst_gate_id) const;
 
 private:
-    // TODO REPLACE WITH ARRAYS
+    // TODO REPLACE WITH RAW ARRAYS ???
     QVector<module_context*> m_module_contexts;
     QVector<dynamic_context*> m_dynamic_contexts;
 };

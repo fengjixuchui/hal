@@ -51,3 +51,75 @@ QStringList graph_context_manager::dynamic_context_list() const
 
     return list;
 }
+
+void graph_context_manager::handle_module_submodule_added(const std::shared_ptr<module> m, const u32 added_module) const
+{
+    // DEBUG IMPLEMENTATION
+
+    for (module_context* context : m_module_contexts)
+        if (context->get_id() == m->get_id())
+        {
+            context->add(QSet<u32>{added_module}, QSet<u32>(), QSet<u32>());
+            break;
+        }
+}
+
+void graph_context_manager::handle_module_submodule_removed(const std::shared_ptr<module> m, const u32 removed_module) const
+{
+    // DEBUG IMPLEMENTATION
+
+    for (module_context* context : m_module_contexts)
+        if (context->get_id() == m->get_id())
+        {
+            context->remove(QSet<u32>{removed_module}, QSet<u32>(), QSet<u32>());
+            break;
+        }
+}
+
+void graph_context_manager::handle_module_gate_inserted(const std::shared_ptr<module> m, const u32 inserted_gate) const
+{
+    // DEBUG IMPLEMENTATION
+
+    for (module_context* context : m_module_contexts)
+        if (context->get_id() == m->get_id())
+        {
+            context->add(QSet<u32>(), QSet<u32>{inserted_gate}, QSet<u32>());
+            break;
+        }
+}
+
+void graph_context_manager::handle_module_gate_removed(const std::shared_ptr<module> m, const u32 removed_gate) const
+{
+    // DEBUG IMPLEMENTATION
+
+    for (module_context* context : m_module_contexts)
+        if (context->get_id() == m->get_id())
+        {
+            context->remove(QSet<u32>(), QSet<u32>{removed_gate}, QSet<u32>());
+            break;
+        }
+}
+
+void graph_context_manager::handle_module_net_inserted(const std::shared_ptr<module> m, const u32 inserted_net) const
+{
+    // DEBUG IMPLEMENTATION
+
+    for (module_context* context : m_module_contexts)
+        if (context->get_id() == m->get_id())
+        {
+            context->add(QSet<u32>(), QSet<u32>(), QSet<u32>{inserted_net});
+            break;
+        }
+}
+
+void graph_context_manager::handle_module_net_removed(const std::shared_ptr<module> m, const u32 removed_net) const
+{
+    // DEBUG IMPLEMENTATION
+
+    for (module_context* context : m_module_contexts)
+        if (context->get_id() == m->get_id())
+        {
+            context->remove(QSet<u32>(), QSet<u32>(), QSet<u32>{removed_net});
+            break;
+        }
+}

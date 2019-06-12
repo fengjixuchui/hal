@@ -263,12 +263,14 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
     {
         //< no associated_data
 
-        Q_EMIT module_name_changed(object);
+        Q_EMIT module_parent_changed(object);
         break;
     }
     case module_event_handler::event::submodule_added:
     {
         //< associated_data = id of added module
+
+        g_graph_context_manager.handle_module_submodule_added(object, associated_data);
 
         Q_EMIT module_submodule_added(object, associated_data);
         break;
@@ -277,12 +279,16 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
     {
         //< associated_data = id of removed module
 
+        g_graph_context_manager.handle_module_submodule_removed(object, associated_data);
+
         Q_EMIT module_submodule_removed(object, associated_data);
         break;
     }
     case module_event_handler::event::gate_inserted:
     {
         //< associated_data = id of inserted gate
+
+        g_graph_context_manager.handle_module_gate_inserted(object, associated_data);
 
         Q_EMIT module_gate_inserted(object, associated_data);
         break;
@@ -291,6 +297,8 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
     {
         //< associated_data = id of removed gate
 
+        g_graph_context_manager.handle_module_gate_removed(object, associated_data);
+
         Q_EMIT module_gate_removed(object, associated_data);
         break;
     }
@@ -298,12 +306,16 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
     {
         //< associated_data = id of added net
 
+        g_graph_context_manager.handle_module_net_inserted(object, associated_data);
+
         Q_EMIT module_net_inserted(object, associated_data);
         break;
     }
     case module_event_handler::event::net_removed:
     {
         //< associated_data = id of removed net
+
+        g_graph_context_manager.handle_module_net_removed(object, associated_data);
 
         Q_EMIT module_net_removed(object, associated_data);
         break;

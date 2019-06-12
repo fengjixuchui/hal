@@ -77,6 +77,7 @@ Q_SIGNALS:
     void module_created(const std::shared_ptr<module> m) const;
     void module_removed(const std::shared_ptr<module> m) const;
     void module_name_changed(const std::shared_ptr<module> m) const;
+    void module_parent_changed(const std::shared_ptr<module> m) const;
     void module_submodule_added(const std::shared_ptr<module> m, const u32 added_module) const;
     void module_submodule_removed(const std::shared_ptr<module> m, const u32 removed_module) const;
     void module_gate_inserted(const std::shared_ptr<module> m, const u32 inserted_gate) const;

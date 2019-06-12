@@ -36,6 +36,7 @@ public:
     //graph_layouter* layouter();
     //graph_shader* shader();
 
+    // MOVE THIS SOMEWHERE ELSE; MAYBE ADD DEDICATED LAYOUTER SETTINGS CLASS ???
     bool conform_to_grid() const;
 
     bool available() const; // TODO FIX BAD NAMING
@@ -75,6 +76,7 @@ private:
     QList<graph_context_subscriber*> m_subscribers;
 
     bool m_unhandled_changes;
+    bool m_scene_update_required;
 
     bool m_conform_to_grid;
 
