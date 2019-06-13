@@ -2,14 +2,14 @@
 
 log_channel_manager::log_channel_manager()
 {
-    log_manager::get_instance().get_gui_callback().add_callback("gui", std::bind(&log_channel_manager::logmanager_callback, this, std::placeholders::_1));
+    //log_manager::get_instance().get_gui_callback().add_callback("gui", std::bind(&log_channel_manager::logmanager_callback, this, std::placeholders::_1));
 }
 
 void log_channel_manager::logmanager_callback(const spdlog::details::log_msg& msg)
 {
-    spdlog::level::level_enum t = msg.level;
-    std::string channel_name    = *msg.logger_name;
-    std::string msg_text        = msg.formatted.str();
+//    spdlog::level::level_enum t = msg.level;
+//    std::string channel_name    = *msg.logger_name;
+//    std::string msg_text        = msg.formatted.str();
 
 //    channel_item* all_channel = nullptr;
 //    channel_item* item        = nullptr;

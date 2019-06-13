@@ -88,7 +88,7 @@ void module_relay::handle_module_event(module_event_handler::event ev, std::shar
 
         break;
     }
-    case module_event_handler::event::gate_inserted:
+    case module_event_handler::event::gate_assigned:
     {
         //< associated_data = id of inserted gate
 
@@ -100,7 +100,7 @@ void module_relay::handle_module_event(module_event_handler::event ev, std::shar
 
         break;
     }
-    case module_event_handler::event::net_inserted:
+    case module_event_handler::event::net_assigned:
     {
         //< associated_data = id of added net
 

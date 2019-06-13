@@ -98,7 +98,7 @@ void netlist_relay::debug_add_selection_to_module(module_item* item)
             std::shared_ptr<gate> g = g_netlist->get_gate_by_id(g_selection_relay.m_selected_gates[i]);
 
             if (g)
-                m->insert_gate(g);
+                m->assign_gate(g);
         }
     }
 
@@ -109,7 +109,7 @@ void netlist_relay::debug_add_selection_to_module(module_item* item)
             std::shared_ptr<net> n = g_netlist->get_net_by_id(g_selection_relay.m_selected_nets[i]);
 
             if (n)
-                m->insert_net(n);
+                m->assign_net(n);
         }
     }
 }
@@ -284,13 +284,13 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
         Q_EMIT module_submodule_removed(object, associated_data);
         break;
     }
-    case module_event_handler::event::gate_inserted:
+    case module_event_handler::event::gate_assigned:
     {
         //< associated_data = id of inserted gate
 
         g_graph_context_manager.handle_module_gate_inserted(object, associated_data);
 
-        Q_EMIT module_gate_inserted(object, associated_data);
+        Q_EMIT module_gate_assigned(object, associated_data);
         break;
     }
     case module_event_handler::event::gate_removed:
@@ -302,13 +302,13 @@ void netlist_relay::relay_module_event(module_event_handler::event ev, std::shar
         Q_EMIT module_gate_removed(object, associated_data);
         break;
     }
-    case module_event_handler::event::net_inserted:
+    case module_event_handler::event::net_assigned:
     {
         //< associated_data = id of added net
 
         g_graph_context_manager.handle_module_net_inserted(object, associated_data);
 
-        Q_EMIT module_net_inserted(object, associated_data);
+        Q_EMIT module_net_assigned(object, associated_data);
         break;
     }
     case module_event_handler::event::net_removed:
