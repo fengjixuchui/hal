@@ -60,9 +60,11 @@ protected:
     graph_layouter* m_layouter;
     graph_shader* m_shader; // MOVE SHADER TO VIEW ? USE BASE SHADER AND ADDITIONAL SHADERS ?
 
+    bool m_unhandled_changes;
+    bool m_scene_update_required;
+
 private:
-    void update_if_necessary();
-    void conditional_update();
+    void evaluate_changes();
     void apply_changes();
     void update_scene();
 
@@ -75,9 +77,6 @@ private:
     QSet<u32> m_removed_nets;
 
     QList<graph_context_subscriber*> m_subscribers;
-
-    bool m_unhandled_changes;
-    bool m_scene_update_required;
 
     bool m_conform_to_grid;
 

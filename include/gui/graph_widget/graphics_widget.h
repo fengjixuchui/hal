@@ -23,7 +23,6 @@ private Q_SLOTS:
     void zoom_in(int level = 1);
     void zoom_out(int level = 1);
     void update_matrix();
-    void toggle_antialiasing();
 
 private:
     QHBoxLayout* m_layout;

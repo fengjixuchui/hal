@@ -16,6 +16,8 @@ orthogonal_graph_layouter::orthogonal_graph_layouter(graph_context* context, QOb
 
 void orthogonal_graph_layouter::layout()
 {
+    m_scene->delete_all_items();
+
     if (!m_context)
         return; // SHOULD NEVER BE REACHED
 

@@ -15,7 +15,7 @@ module_context::module_context(const std::shared_ptr<module> m) :
     m_layouter->add(m_modules, m_gates, m_nets);
     m_shader->add(m_modules, m_gates, m_nets);
 
-    // MARK SCENE NOT UPDATED
+    m_scene_update_required = true;
 }
 
 u32 module_context::get_id() const

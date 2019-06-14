@@ -317,5 +317,6 @@ void graph_graphics_view::update_matrix(const int delta)
 
 void graph_graphics_view::toggle_antialiasing()
 {
-    m_antialiasing_enabled ? setRenderHint(QPainter::Antialiasing, false) : setRenderHint(QPainter::Antialiasing, true);
+    //m_antialiasing_enabled ? setRenderHint(QPainter::Antialiasing, false) : setRenderHint(QPainter::Antialiasing, true);
+    setRenderHint(QPainter::Antialiasing, !(renderHints() & QPainter::Antialiasing));
 }

@@ -57,8 +57,3 @@ void graphics_widget::update_matrix()
     matrix.scale(scale, scale);
     m_view->setMatrix(matrix);
 }
-
-void graphics_widget::toggle_antialiasing()
-{
-    m_view->setRenderHint(QPainter::Antialiasing, !(m_view->renderHints() & QPainter::Antialiasing));
-}

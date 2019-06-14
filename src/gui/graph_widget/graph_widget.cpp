@@ -7,10 +7,10 @@
 #include "gui/graph_widget/contexts/dynamic_context.h"
 #include "gui/graph_widget/contexts/module_context.h"
 #include "gui/graph_widget/graph_context_manager.h"
+#include "gui/graph_widget/graph_graphics_view.h"
 #include "gui/graph_widget/graph_navigation_widget.h"
 #include "gui/graph_widget/graph_layout_progress_widget.h"
 #include "gui/graph_widget/graphics_scene.h"
-#include "gui/graph_widget/graphics_widget.h"
 #include "gui/gui_globals.h"
 #include "gui/overlay/dialog_overlay.h"
 #include "gui/toolbar/toolbar.h"
@@ -20,7 +20,7 @@
 #include <QVBoxLayout>
 
 graph_widget::graph_widget(QWidget* parent) : content_widget("Graph", parent),
-    m_graphics_widget(new graphics_widget(this)),
+    m_view(new graph_graphics_view(this)),
     m_context(nullptr),
     m_overlay(new dialog_overlay(this)),
     m_navigation_widget(new graph_navigation_widget(this)),
@@ -32,12 +32,17 @@ graph_widget::graph_widget(QWidget* parent) : content_widget("Graph", parent),
 
     connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
 
-    connect(m_graphics_widget->view(), &graph_graphics_view::module_double_clicked, this, &graph_widget::handle_module_double_clicked);
+    connect(m_view, &graph_graphics_view::module_double_clicked, this, &graph_widget::handle_module_double_clicked);
 
     m_overlay->hide();
     m_overlay->set_widget(m_navigation_widget);
 
-    m_content_layout->addWidget(m_graphics_widget);
+    m_content_layout->addWidget(m_view);
+
+    m_view->setFrameStyle(QFrame::NoFrame);
+    m_view->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    m_view->setRenderHint(QPainter::Antialiasing, false);
+    m_view->setDragMode(QGraphicsView::RubberBandDrag);
 }
 
 void graph_widget::setup_toolbar(toolbar* toolbar)
@@ -66,7 +71,7 @@ void graph_widget::setup_toolbar(toolbar* toolbar)
 
 void graph_widget::handle_scene_available()
 {
-    m_graphics_widget->view()->setScene(m_context->scene());
+    m_view->setScene(m_context->scene());
 
     connect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
 
@@ -74,10 +79,8 @@ void graph_widget::handle_scene_available()
     m_progress_widget->stop();
     m_overlay->set_widget(m_navigation_widget);
 
-    //m_layouter->scene()->connect_all();
-
     if (hasFocus())
-        m_graphics_widget->setFocus();
+        m_view->setFocus();
 
     // FIND BETTER WAY TO DO THIS
     g_selection_relay.m_selected_gates[0] = m_current_expansion;
@@ -96,14 +99,12 @@ void graph_widget::handle_scene_available()
 
 void graph_widget::handle_scene_unavailable()
 {
-    m_graphics_widget->view()->setScene(nullptr);
+    m_view->setScene(nullptr);
 
     disconnect(m_overlay, &dialog_overlay::clicked, m_overlay, &dialog_overlay::hide);
 
     m_progress_widget->set_direction(graph_layout_progress_widget::direction::right);
     //m_progress_widget->set_direction(graph_layout_progress_widget::direction::left);
-
-    //m_layouter->scene()->disconnect_all();
 
     m_overlay->set_widget(m_progress_widget);
     m_progress_widget->start();
@@ -114,7 +115,7 @@ void graph_widget::handle_scene_unavailable()
 
 void graph_widget::handle_context_about_to_be_deleted()
 {
-    m_graphics_widget->view()->setScene(nullptr);
+    m_view->setScene(nullptr);
     m_context = nullptr;
 
     // SHOW SOME KIND OF "NO CONTEXT SELECTED" WIDGET
@@ -227,7 +228,7 @@ void graph_widget::handle_navigation_jump_requested(const u32 from_gate, const u
         // TODO FIX THIS MESS
         m_overlay->hide();
         //if (hasFocus())
-            m_graphics_widget->setFocus();
+            m_view->setFocus();
     }
 
     // SELECT IN RELAY
@@ -441,24 +442,18 @@ void graph_widget::handle_module_down_requested(const u32 id)
 
 void graph_widget::debug_module_one()
 {
-    if (m_context)
-    {
-        // UNSUB FROM OLD CONTEXT
-        //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-        //disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
-    }
+    // UNSUB FROM OLD CONTEXT
+    //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
+    //disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
-    // SUB TO NEW
-    m_context = g_graph_context_manager.get_module_context(1);
-
-    if (!m_context)
-        return;
-
+    // SUB TO NEW CONTEXT
     //connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
     //connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
 
-    if (m_context->available())
-        m_graphics_widget->view()->setScene(m_context->scene());
+    graph_context* context = g_graph_context_manager.get_module_context(1);
+
+    if (context)
+        change_context(context);
 }
 
 void graph_widget::debug_create_context()
@@ -484,27 +479,20 @@ void graph_widget::debug_change_context()
 
     if (ok && !item.isEmpty())
     {
-        // UNSUB FROM OLD CONTEXT
-        //disconnect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-        //disconnect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
-        // SUB TO NEW
         m_context = g_graph_context_manager.get_dynamic_context(item);
 
         if (!m_context)
             return;
 
-        //connect(m_context, &graph_context::updating_scene, this, &graph_widget::handle_updating_scene);
-        //connect(m_context, &graph_context::scene_available, this, &graph_widget::handle_scene_available);
-
         if (m_context->available())
-            m_graphics_widget->view()->setScene(m_context->scene());
+            m_view->setScene(m_context->scene());
     }
 }
 
 void graph_widget::change_context(graph_context* const context)
 {
     if (!context)
-        return;
+        return; // SHOULD NEVER BE REACHED
 
     if (m_context)
         m_context->unsubscribe(this);
@@ -513,5 +501,5 @@ void graph_widget::change_context(graph_context* const context)
     m_context->subscribe(this);
 
     if (!m_context->update_in_progress())
-        m_graphics_widget->view()->setScene(m_context->scene());
+        m_view->setScene(m_context->scene());
 }

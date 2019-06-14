@@ -32,9 +32,9 @@
 class dialog_overlay;
 class cone_layouter;
 class graph_context;
+class graph_graphics_view;
 class graph_layout_progress_widget;
 class graph_navigation_widget;
-class graphics_widget;
 
 class graph_widget : public content_widget, public graph_context_subscriber
 {
@@ -68,14 +68,13 @@ private:
     void debug_module_one();
     void debug_create_context();
     void debug_change_context();
-    void debug_update_context();
 
     void change_context(graph_context* const context);
 
     void handle_updating_scene();
     //void handle_scene_available();
 
-    graphics_widget* m_graphics_widget;
+    graph_graphics_view* m_view;
     graph_context* m_context;
 
     dialog_overlay* m_overlay;
