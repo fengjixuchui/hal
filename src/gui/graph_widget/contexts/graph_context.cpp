@@ -15,8 +15,8 @@
 static const bool lazy_updates = false; // USE SETTINGS FOR THIS
 
 graph_context::graph_context(QObject* parent) : QObject(parent),
-    m_layouter(new orthogonal_graph_layouter(this)),
-    //m_layouter(new standard_graph_layouter_v3(this)),
+    //m_layouter(new orthogonal_graph_layouter(this)),
+    m_layouter(new standard_graph_layouter_v3(this)),
     m_shader(new module_shader(this)),
     m_unhandled_changes(false),
     m_scene_update_required(false),

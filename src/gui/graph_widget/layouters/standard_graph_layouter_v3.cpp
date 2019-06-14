@@ -213,15 +213,55 @@ void standard_graph_layouter_v3::add(const QSet<u32> modules, const QSet<u32> ga
 
     for (u32 n : nets)
         m_nets.append(n);
-
-    //layout();
 }
 
 void standard_graph_layouter_v3::remove(const QSet<u32> modules, const QSet<u32> gates, const QSet<u32> nets)
-{
-    Q_UNUSED(modules)
-    Q_UNUSED(gates)
-    Q_UNUSED(nets)
+{   
+//    m_modules -= modules;
+//    m_gates -= gates;
+//    m_nets -= nets;
+
+    for (u32 id : modules)
+        m_modules.removeOne(id);
+
+    for (u32 id : gates)
+        m_gates.removeOne(id);
+
+    for (u32 id : nets)
+        m_nets.removeOne(id);
+
+    for (u32 id : gates)
+        m_gate_levels.remove(id);
+
+    for (int i = 0; i < m_zero_gates.size();)
+    {
+        if (gates.contains(m_zero_gates.at(i)))
+            m_zero_gates.remove(i);
+        else
+            ++i;
+    }
+
+    for (QVector<u32> v : m_positive_gates)
+    {
+        for (int i = 0; i < v.size();)
+        {
+            if (gates.contains(v.at(i)))
+                v.remove(i);
+            else
+                ++i;
+        }
+    }
+
+    for (QVector<u32> v : m_negative_gates)
+    {
+        for (int i = 0; i < v.size();)
+        {
+            if (gates.contains(v.at(i)))
+                v.remove(i);
+            else
+                ++i;
+        }
+    }
 }
 
 const QString standard_graph_layouter_v3::name() const

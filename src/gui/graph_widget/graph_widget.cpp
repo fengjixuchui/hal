@@ -438,6 +438,9 @@ void graph_widget::handle_module_up_request()
 
     std::shared_ptr<module> p = m->get_parent_module();
 
+    if (!p)
+        return;
+
     graph_context* context = g_graph_context_manager.get_module_context(p->get_id());
 
     if (context)
