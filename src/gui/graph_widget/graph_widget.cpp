@@ -425,11 +425,23 @@ void graph_widget::handle_navigation_down_request()
 }
 
 void graph_widget::handle_module_up_request()
-{
-    // CHECK IF POSSIBLE
-    // GO TO CONTEXT MANAGER
-    // SET SCENE
-    // DISPLAY OVERLAY IF NECESSARY
+{   
+    if (!m_context)
+        return;
+
+    // UNCERTAIN HOW TO HANDLE DYNAMIC CONTEXTS
+    u32 id = static_cast<module_context*>(m_context)->get_id();
+    std::shared_ptr<module> m = g_netlist->get_module_by_id(id);
+
+    if (!m)
+        return;
+
+    std::shared_ptr<module> p = m->get_parent_module();
+
+    graph_context* context = g_graph_context_manager.get_module_context(p->get_id());
+
+    if (context)
+        change_context(context);
 }
 
 void graph_widget::handle_module_down_requested(const u32 id)
